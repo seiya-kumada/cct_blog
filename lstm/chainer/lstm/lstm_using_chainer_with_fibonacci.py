@@ -23,7 +23,7 @@ TOTAL_SIZE = 2000
 SPRIT_RATE = 0.9
 
 # 入力時の時系列データ長
-SEQUENCE_SIZE = 50
+SEQUENCE_SIZE = 20
 
 EPOCHS = 30
 BATCH_SIZE = 100
@@ -45,7 +45,7 @@ class MyNet(chainer.Chain):
     def __init__(self, n_in=1, n_hidden=20, n_out=1, train=True):
         super(MyNet, self).__init__()
         with self.init_scope():
-            self.l1 = L.LSTM(n_in, n_hidden)  # , lateral_init=chainer.initializers.Normal(scale=0.01))
+            self.l1 = L.LSTM(n_in, n_hidden, lateral_init=chainer.initializers.Normal(scale=0.01))
             self.l2 = L.Linear(n_hidden, n_out, initialW=chainer.initializers.Normal(scale=0.01))
             self.train = train
 

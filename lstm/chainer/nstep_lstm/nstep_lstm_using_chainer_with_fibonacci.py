@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from params import *  # noqa
 import chainer
 from chainer import optimizers
 import chainer.links as L
@@ -12,41 +12,14 @@ import nstep_lstm
 
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
 
-# fibonacci数列を割る値
-VALUE = 5
-
-# 常に同じ計算をする。
-np.random.seed(0)
-
-# 時系列データの全長
-TOTAL_SIZE = 2000
-
-# 訓練とテストの分割比
-SPRIT_RATE = 0.9
-
-# 入力時の時系列データ長
-SEQUENCE_SIZE = 50
-
-EPOCHS = 30
-BATCH_SIZE = 100
-
-# 入力層の次元
-N_IN = 1
-
-# 隠れ層の次元
-N_HIDDEN = 200
-
-# 出力層の次元
-N_OUT = 1
-
 
 # LSTM
 class MyNet(chainer.Chain):
 
-    def __init__(self, n_in=1, n_hidden=20, n_out=1, train=True):
+    def __init__(self, n_layers=1, n_in=1, n_hidden=20, n_out=1, dropout=0.5, train=True):
         super(MyNet, self).__init__()
         with self.init_scope():
-            self.l1 = nstep_lstm.LSTM(n_in, n_hidden, dropout=0.0)
+            self.l1 = nstep_lstm.LSTM(n_layers, n_in, n_hidden, dropout)
             self.l2 = L.Linear(n_hidden, n_out, initialW=chainer.initializers.Normal(scale=0.01))
             self.train = train
 
@@ -174,7 +147,7 @@ if __name__ == '__main__':
 
     # _/_/_/ モデルの設定
 
-    mynet = MyNet(N_IN, N_HIDDEN, N_OUT)
+    mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT, DROPOUT)
     loss_calculator = LossCalculator(mynet)
 
     # _/_/_/ 最適化器の作成
@@ -212,6 +185,6 @@ if __name__ == '__main__':
         val_losses.append(average_val_loss)
 
     # 保存する。
-    serializers.save_npz('./chainer_mynet.npz', mynet)
-    _pickle.dump(losses, open('./chainer_losses.pkl', 'wb'))
-    _pickle.dump(val_losses, open('./chainer_val_losses.pkl', 'wb'))
+    serializers.save_npz('./chainer_mynet_dropout={}.npz'.format(DROPOUT), mynet)
+    _pickle.dump(losses, open('./chainer_losses_dropout={}.pkl'.format(DROPOUT), 'wb'))
+    _pickle.dump(val_losses, open('./chainer_val_losses_dropout={}.pkl'.format(DROPOUT), 'wb'))

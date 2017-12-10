@@ -7,13 +7,8 @@ import chainer
 import numpy as np
 import matplotlib.pyplot as plt
 import _pickle
+from params import *  # noqa
 
-VALUE = 5
-N_IN = 1
-N_HIDDEN = 200
-N_OUT = 1
-TOTAL_SIZE = 2000
-SEQUENCE_SIZE = 50
 PLOT_SIZE = 4 * SEQUENCE_SIZE
 
 
@@ -46,7 +41,7 @@ def predict(model, dataset, seq_size):
         # 予測値を保存する。
         output_seq = np.append(output_seq, y)
 
-        if i == 200:
+        if i == 4 * SEQUENCE_SIZE:
             break
     return output_seq
 
@@ -55,8 +50,8 @@ if __name__ == '__main__':
 
     # _/_/_/ モデルの読み込み
 
-    mynet = MyNet(N_IN, N_HIDDEN, N_OUT)
-    serializers.load_npz('chainer_mynet.npz', mynet)
+    mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT)
+    serializers.load_npz('chainer_mynet_dropout={}.npz'.format(DROPOUT), mynet)
 
     # _/_/_/ データの作成
 
@@ -73,14 +68,18 @@ if __name__ == '__main__':
     plt.xlim([0, PLOT_SIZE])
     plt.plot(dataset, linestyle='dotted', color='red')
     plt.plot(output_seq, color='black')
+    plt.savefig('/Users/kumada/Documents/cct_blog/nstep_lstm/pred_{}_layers={}_dropout={}.png'.format(
+        SEQUENCE_SIZE, N_LAYERS, DROPOUT))
     plt.show()
 
     # 誤差とエポックの間の関係
-    losses = _pickle.load(open('./chainer_losses.pkl', 'rb'))
-    val_losses = _pickle.load(open('./chainer_val_losses.pkl', 'rb'))
+    losses = _pickle.load(open('./chainer_losses_dropout={}.pkl'.format(DROPOUT), 'rb'))
+    val_losses = _pickle.load(open('./chainer_val_losses_dropout={}.pkl'.format(DROPOUT), 'rb'))
     plt.plot(losses, label='loss')
     plt.plot(val_losses, label='val_loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend()
+    plt.savefig('/Users/kumada/Documents/cct_blog/nstep_lstm/loss_{}_layers={}_dropout={}.png'.format(
+        SEQUENCE_SIZE, N_LAYERS, DROPOUT))
     plt.show()

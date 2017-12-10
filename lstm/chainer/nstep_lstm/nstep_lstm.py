@@ -9,8 +9,7 @@ import numpy as np
 
 class LSTM(L.NStepLSTM):
 
-    def __init__(self, in_size, out_size, dropout=0.5, initialW=None, initial_bias=None, **kwargs):
-        n_layers = 1
+    def __init__(self, n_layers, in_size, out_size, dropout=0.5, initialW=None, initial_bias=None, **kwargs):
         super(LSTM, self).__init__(n_layers, in_size, out_size, dropout, initialW, initial_bias, **kwargs)
         with self.init_scope():
             self.reset_state()
@@ -32,11 +31,12 @@ class LSTM(L.NStepLSTM):
 
 
 if __name__ == '__main__':
+    n_layers = 1
     in_size = 10
     seq_size = 7
     out_size = 5
     batch_size = 3
-    lstm = LSTM(in_size, out_size)
+    lstm = LSTM(n_layers, in_size, out_size)
     x = np.arange(seq_size * in_size).reshape(seq_size, in_size).astype(np.float32)
     v = chainer.Variable(x)
     vs = [v] * batch_size
