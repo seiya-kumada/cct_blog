@@ -33,7 +33,7 @@ class MyNet(chainer.Chain):
             h = self.l1(x)  # [(seq_size, n_hidden)] * batch_size
             assert len(h) == BATCH_SIZE
             assert h[0].shape == (SEQUENCE_SIZE, N_HIDDEN)
-            h = [v[-1, :] for v in h]
+            h = [v[-1, :].reshape(1, -1) for v in h]
             assert len(h) == BATCH_SIZE
             assert h[0].shape == (1, N_HIDDEN)
             h = F.concat(h, axis=0)
@@ -59,7 +59,7 @@ class LossCalculator(chainer.Chain):
     def __call__(self, x, t):
         y = self.model(x)
         assert y.shape == (BATCH_SIZE, N_OUT)
-        t = F.concat(t, axis=0)
+        t = F.concat([a.reshape(1, -1) for a in t], axis=0)
         assert t.shape == (BATCH_SIZE, N_OUT)
         loss = F.mean_squared_error(y, t)
         return loss
@@ -104,17 +104,20 @@ def update_model(model, xs, ys):
 
 
 # テストデータに対する誤差を計算する。
-def evaluate(loss_calculator, seqs):
-    batches = seqs.shape[0] // BATCH_SIZE
+def evaluate(loss_calculator, all_xs, all_ys):
+    # all_xs.shape == (val_size, seq_size, n_in)
+    # all_ys.shape == (val_size, n_out)
+    batches = all_xs.shape[0] // BATCH_SIZE
     clone = loss_calculator.copy()
     clone.train = False
     clone.model.reset_state()
     start = 0
     for i in range(batches):
-        seq = seqs[start: start + BATCH_SIZE]
+        xs = all_xs[start: start + BATCH_SIZE]
+        ys = all_ys[start: start + BATCH_SIZE]
         start += BATCH_SIZE
 
-        loss = calculate_loss(clone, seq)
+        loss = calculate_loss(clone, xs, ys)
     return loss
 
 
@@ -153,19 +156,22 @@ if __name__ == '__main__':
     val_losses = []
     for epoch in range(EPOCHS):
         # エポックの最初でシャッフルする。
-        np.random.shuffle(train_seqs)
+        indices = np.random.permutation(n_train)
+        train_x = train_x[indices]
+        train_y = train_y[indices]
 
         start = 0
         for i in range(batches):
-            xs = x_train[start: start + BATCH_SIZE]
-            ys = y_train[start: start + BATCH_SIZE]
+            print('{}/{}'.format(i, batches))
+            xs = train_x[start: start + BATCH_SIZE]
+            ys = train_y[start: start + BATCH_SIZE]
             start += BATCH_SIZE
 
             # バッチ単位でモデルを更新する。
             loss = update_model(loss_calculator, xs, ys)
 
         # 検証する。
-        val_loss = evaluate(loss_calculator, val_seqs)
+        val_loss = evaluate(loss_calculator, val_x, val_y)
 
         # エポック単位の表示
         average_loss = loss.data
