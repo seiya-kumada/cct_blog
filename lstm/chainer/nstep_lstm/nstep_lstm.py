@@ -6,6 +6,8 @@ import chainer.functions as F
 import chainer
 import numpy as np
 
+# https://qiita.com/chantera/items/d8104012c80e3ea96df7
+
 
 class LSTM(L.NStepLSTM):
 
@@ -17,9 +19,11 @@ class LSTM(L.NStepLSTM):
     def __call__(self, xs):
         batch = len(xs)
         if self.hx is None:
-            self.hx = chainer.Variable(np.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+            xp = self.xp
+            self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
         if self.cx is None:
-            self.cx = chainer.Variable(np.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+            xp = self.xp
+            self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
         hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
         self.hx = hy
         self.cx = cy
@@ -29,6 +33,20 @@ class LSTM(L.NStepLSTM):
         self.hx = None
         self.cx = None
 
+    def to_cpu(self):
+        super(LSTM, self).to_cpu()
+        if self.cx is not None:
+            self.cx.to_cpu()
+        if self.hx is not None:
+            self.hx.to_cpu()
+
+    def to_gpu(self, device=None):
+        super(LSTM, self).to_gpu(device)
+        if self.cx is not None:
+            self.cx.to_gpu(device)
+        if self.hx is not None:
+            self.hx.to_gpu(device)
+
 
 if __name__ == '__main__':
     n_layers = 1
@@ -36,8 +54,18 @@ if __name__ == '__main__':
     seq_size = 7
     out_size = 5
     batch_size = 3
+    gpu = -1
+
     lstm = LSTM(n_layers, in_size, out_size)
-    x = np.arange(seq_size * in_size).reshape(seq_size, in_size).astype(np.float32)
+    if gpu >= 0:
+        chainer.cuda.get_device(gpu).use()
+        lstm.to_gpu(gpu)
+
+    xp = np
+    if gpu >= 0:
+        xp = chainer.cuda.cupy
+
+    x = xp.arange(seq_size * in_size).reshape(seq_size, in_size).astype(np.float32)
     v = chainer.Variable(x)
     vs = [v] * batch_size
     assert batch_size == len(vs)
@@ -50,5 +78,7 @@ if __name__ == '__main__':
     assert (batch_size * seq_size, out_size) == z.shape
     target_size = 4
     linear = L.Linear(out_size, target_size)
+    if gpu >= 0:
+        linear.to_gpu()
     s = linear(z)
     assert (batch_size * seq_size, target_size) == s.shape

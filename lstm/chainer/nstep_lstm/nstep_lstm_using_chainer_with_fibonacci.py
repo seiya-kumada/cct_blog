@@ -11,6 +11,17 @@ import _pickle
 import nstep_lstm
 
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
+# https://qiita.com/TokyoMickey/items/cc8cd43545f2656b1cbd
+
+xp = np
+if GPU >= 0:
+    xp = chainer.cuda.cupy
+    print('use gpu')
+else:
+    print('use cpu')
+
+# always run the same calcuation
+xp.random.seed(0)
 
 
 # LSTM
@@ -66,8 +77,8 @@ def calculate_loss(model, seq):
         t = row[1:].reshape(cols - 1, N_OUT)
         assert x.shape == (SEQUENCE_SIZE, N_IN)
         assert t.shape == (SEQUENCE_SIZE, N_OUT)
-        xs.append(chainer.Variable(x.astype(dtype=np.float32)))
-        ts.append(chainer.Variable(t.astype(dtype=np.float32)))
+        xs.append(chainer.Variable(x.astype(dtype=xp.float32)))
+        ts.append(chainer.Variable(t.astype(dtype=xp.float32)))
     loss = model(xs, ts)
     return loss
 
@@ -100,7 +111,7 @@ class DatasetMaker(object):
     def make_sequences(data, seq_size):
         data_size = len(data)
         row = data_size - seq_size
-        seqs = np.ndarray((row, seq_size)).astype(np.float32)
+        seqs = xp.ndarray((row, seq_size)).astype(xp.float32)
         for i in range(row):
             seqs[i, :] = data[i: i + seq_size]
         return seqs
@@ -133,6 +144,8 @@ if __name__ == '__main__':
     # _/_/_/ データの作成
 
     dataset = DatasetMaker.make(TOTAL_SIZE, VALUE)
+    if GPU >= 0:
+        dataset = chainer.cuda.to_gpu(dataset)
 
     # 訓練データと検証データに分ける。
     n_train = int(TOTAL_SIZE * SPRIT_RATE)
@@ -148,6 +161,9 @@ if __name__ == '__main__':
     # _/_/_/ モデルの設定
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT, DROPOUT)
+    if GPU >= 0:
+        mynet.to_gpu()
+
     loss_calculator = LossCalculator(mynet)
 
     # _/_/_/ 最適化器の作成
@@ -163,7 +179,7 @@ if __name__ == '__main__':
     val_losses = []
     for epoch in range(EPOCHS):
         # エポックの最初でシャッフルする。
-        np.random.shuffle(train_seqs)
+        xp.random.shuffle(train_seqs)
 
         start = 0
         for i in range(batches):
