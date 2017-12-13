@@ -1,12 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from params import *  # noqa
 import chainer.links as L
 import chainer.functions as F
 import chainer
 import numpy as np
-
+import random
 # https://qiita.com/chantera/items/d8104012c80e3ea96df7
+
+xp = np
+if GPU >= 0:
+    xp = chainer.cuda.cupy
+    print('use gpu')
+else:
+    print('use cpu')
+
+# always run the same calcuation
+xp.random.seed(0)
+random.seed(0)
+chainer.config.use_cudnn = 'never'
+chainer.config.cudnn_deterministic = True
 
 
 class LSTM(L.NStepLSTM):
@@ -17,17 +31,18 @@ class LSTM(L.NStepLSTM):
             self.reset_state()
 
     def __call__(self, xs):
-        batch = len(xs)
-        if self.hx is None:
-            xp = self.xp
-            self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
-        if self.cx is None:
-            xp = self.xp
-            self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
-        hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
-        self.hx = hy
-        self.cx = cy
-        return ys
+        with chainer.using_config('cudnn_deterministic', True), chainer.using_config('use_cudnn', 'never'):
+            batch = len(xs)
+            if self.hx is None:
+                xp = self.xp
+                self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+            if self.cx is None:
+                xp = self.xp
+                self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+            hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
+            self.hx = hy
+            self.cx = cy
+            return ys
 
     def reset_state(self):
         self.hx = None
@@ -57,12 +72,12 @@ if __name__ == '__main__':
     gpu = -1
 
     lstm = LSTM(n_layers, in_size, out_size)
-    if gpu >= 0:
-        chainer.cuda.get_device(gpu).use()
-        lstm.to_gpu(gpu)
+    if GPU >= 0:
+        chainer.cuda.get_device(GPU).use()
+        lstm.to_gpu(GPU)
 
     xp = np
-    if gpu >= 0:
+    if GPU >= 0:
         xp = chainer.cuda.cupy
 
     x = xp.arange(seq_size * in_size).reshape(seq_size, in_size).astype(np.float32)
@@ -78,7 +93,7 @@ if __name__ == '__main__':
     assert (batch_size * seq_size, out_size) == z.shape
     target_size = 4
     linear = L.Linear(out_size, target_size)
-    if gpu >= 0:
-        linear.to_gpu()
+    if GPU >= 0:
+        linear.to_gpu(GPU)
     s = linear(z)
     assert (batch_size * seq_size, target_size) == s.shape

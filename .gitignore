@@ -19,3 +19,5 @@ lstm/chainer/nstep_lstm/*.pkl
 lstm/chainer/__pycache__/
 lstm/chainer/.python-version
 lstm/chainer/nstep_lstm/run
+lstm/chainer/nstep_lstm/*.pkl
+lstm/chainer/nstep_lstm/.ipynb_checkpoints/*
