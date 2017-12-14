@@ -12,15 +12,17 @@ import random
 xp = np
 if GPU >= 0:
     xp = chainer.cuda.cupy
+    # always run the same calcuation
+    np.random.seed(1)
     print('use gpu')
 else:
     print('use cpu')
 
 # always run the same calcuation
-xp.random.seed(0)
-random.seed(0)
-chainer.config.use_cudnn = 'never'
-chainer.config.cudnn_deterministic = True
+xp.random.seed(1)
+random.seed(1)
+# chainer.global_config.cudnn_deterministic = True
+# chainer.global_config.use_cudnn = 'never'
 
 
 class LSTM(L.NStepLSTM):
@@ -31,18 +33,17 @@ class LSTM(L.NStepLSTM):
             self.reset_state()
 
     def __call__(self, xs):
-        with chainer.using_config('cudnn_deterministic', True), chainer.using_config('use_cudnn', 'never'):
-            batch = len(xs)
-            if self.hx is None:
-                xp = self.xp
-                self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
-            if self.cx is None:
-                xp = self.xp
-                self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
-            hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
-            self.hx = hy
-            self.cx = cy
-            return ys
+        batch = len(xs)
+        if self.hx is None:
+            xp = self.xp
+            self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+        if self.cx is None:
+            xp = self.xp
+            self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
+        hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
+        self.hx = hy
+        self.cx = cy
+        return ys
 
     def reset_state(self):
         self.hx = None

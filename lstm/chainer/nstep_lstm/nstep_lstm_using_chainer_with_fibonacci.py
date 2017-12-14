@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from params import *  # noqa
 import chainer
 from chainer import optimizers
@@ -9,7 +10,6 @@ import numpy as np
 from chainer import serializers
 import _pickle
 import nstep_lstm
-import random
 
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
 # https://qiita.com/TokyoMickey/items/cc8cd43545f2656b1cbd
@@ -17,15 +17,6 @@ import random
 xp = np
 if GPU >= 0:
     xp = chainer.cuda.cupy
-    print('use gpu')
-else:
-    print('use cpu')
-
-# always run the same calcuation
-xp.random.seed(0)
-random.seed(0)
-chainer.config.use_cudnn = 'never'
-chainer.config.cudnn_deterministic = True
 
 
 # LSTM
@@ -39,12 +30,10 @@ class MyNet(chainer.Chain):
             self.train = train
 
     def __call__(self, x):
-        with chainer.using_config('train', self.train):
-
-            # x.shape: [(seq_size, n_in)] * batch_size
-            h = self.l1(x)  # [(seq_size, n_hidden)] * batch_size
-            h = F.concat(h, axis=0)  # [seq_size * batch_size, n_hidden]
-            y = self.l2(h)  # [seq_size * batch_size, n_out]
+        # x.shape: [(seq_size, n_in)] * batch_size
+        h = self.l1(x)  # [(seq_size, n_hidden)] * batch_size
+        h = F.concat(h, axis=0)  # [seq_size * batch_size, n_hidden]
+        y = self.l2(h)  # [seq_size * batch_size, n_out]
         return y
 
     def reset_state(self):
@@ -62,13 +51,12 @@ class LossCalculator(chainer.Chain):
     # x.shape: [(seq_size, n_in)] * batch_size
     # t.shape: [(seq_size, n_out)] * batch_size
     def __call__(self, x, t):
-        with chainer.using_config('cudnn_deterministic', True), chainer.using_config('use_cudnn', 'never'):
-            y = self.model(x)  # [seq_size * batch_size, n_out]
-            assert y.shape == (SEQUENCE_SIZE * BATCH_SIZE, N_OUT)
-            t = F.concat(t, axis=0)  # [seq_size * batch_size, n_out]
-            assert t.shape == (SEQUENCE_SIZE * BATCH_SIZE, N_OUT)
-            loss = F.mean_squared_error(y, t)
-            return loss
+        y = self.model(x)  # [seq_size * batch_size, n_out]
+        assert y.shape == (SEQUENCE_SIZE * BATCH_SIZE, N_OUT)
+        t = F.concat(t, axis=0)  # [seq_size * batch_size, n_out]
+        assert t.shape == (SEQUENCE_SIZE * BATCH_SIZE, N_OUT)
+        loss = F.mean_squared_error(y, t)
+        return loss
 
 
 # バッチ単位で1つのシーケンスを学習する。
