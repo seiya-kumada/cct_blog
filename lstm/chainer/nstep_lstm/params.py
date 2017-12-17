@@ -31,3 +31,5 @@ N_HIDDEN = 200
 N_OUT = 1
 
 GPU = 0
+
+SEED = 0

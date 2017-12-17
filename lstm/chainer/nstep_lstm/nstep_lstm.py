@@ -13,14 +13,14 @@ xp = np
 if GPU >= 0:
     xp = chainer.cuda.cupy
     # always run the same calcuation
-    np.random.seed(1)
+    np.random.seed(SEED)
     print('use gpu')
 else:
     print('use cpu')
 
 # always run the same calcuation
-xp.random.seed(1)
-random.seed(1)
+xp.random.seed(SEED)
+random.seed(SEED)
 # chainer.global_config.cudnn_deterministic = True
 # chainer.global_config.use_cudnn = 'never'
 
