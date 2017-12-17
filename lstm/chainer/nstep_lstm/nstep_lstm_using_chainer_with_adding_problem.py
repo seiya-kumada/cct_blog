@@ -7,13 +7,16 @@ from sklearn.model_selection import train_test_split
 from chainer import optimizers
 import chainer.links as L
 import chainer.functions as F
-import numpy as np
 from chainer import serializers
 import _pickle
 import nstep_lstm
 from make_adding_problem import *  # noqa
 
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
+
+xp = np
+if GPU >= 0:
+    xp = chainer.cuda.cupy
 
 
 # LSTM
@@ -79,8 +82,8 @@ def calculate_loss(model, x_data, t_data):
     for x, t in zip(x_data, t_data):
         assert x.shape == (SEQUENCE_SIZE, N_IN)
         assert t.shape == (N_OUT,)
-        xs.append(chainer.Variable(x.astype(dtype=np.float32)))
-        ts.append(chainer.Variable(t.astype(dtype=np.float32)))
+        xs.append(chainer.Variable(x.astype(dtype=xp.float32)))
+        ts.append(chainer.Variable(t.astype(dtype=xp.float32)))
     loss = model(xs, ts)
     return loss
 

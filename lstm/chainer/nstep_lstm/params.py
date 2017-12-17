@@ -18,7 +18,7 @@ SPRIT_RATE = 0.9
 # 入力時の時系列データ長
 SEQUENCE_SIZE = 30
 
-EPOCHS = 30
+EPOCHS = 60
 BATCH_SIZE = 100
 
 # 入力層の次元
