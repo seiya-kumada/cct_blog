@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from params import *  # noqa
+from params_for_adding_problem import *  # noqa
 import chainer.links as L
 import chainer.functions as F
 import chainer
