@@ -31,7 +31,6 @@ class MyNet(chainer.Chain):
 
     def __call__(self, x):
         with chainer.using_config('train', self.train):
-
             # x.shape: [(seq_size, n_in)] * batch_size
             h = self.l1(x)  # [(seq_size, n_hidden)] * batch_size
             assert len(h) == BATCH_SIZE
@@ -80,8 +79,8 @@ def calculate_loss(model, x_data, t_data):
     xs = []
     ts = []
     for x, t in zip(x_data, t_data):
-        assert x.shape == (SEQUENCE_SIZE, N_IN)
-        assert t.shape == (N_OUT,)
+        # assert x.shape == (SEQUENCE_SIZE, N_IN)
+        # assert t.shape == (N_OUT,)
         xs.append(chainer.Variable(x.astype(dtype=xp.float32)))
         ts.append(chainer.Variable(t.astype(dtype=xp.float32)))
     loss = model(xs, ts)
@@ -129,6 +128,10 @@ if __name__ == '__main__':
     # _/_/_/ データの作成
 
     data, target = make_adding_problem(TOTAL_SIZE, SEQUENCE_SIZE)
+    if GPU >= 0:
+        data = chainer.cuda.to_gpu(data)
+        target = chainer.cuda.to_gpu(target)
+
     assert data.shape == (TOTAL_SIZE, SEQUENCE_SIZE, N_IN)
     assert target.shape == (TOTAL_SIZE, N_OUT)
 
@@ -144,6 +147,9 @@ if __name__ == '__main__':
     # _/_/_/ モデルの設定
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT, DROPOUT)
+    if GPU >= 0:
+        mynet.to_gpu()
+
     loss_calculator = LossCalculator(mynet)
 
     # _/_/_/ 最適化器の作成
@@ -165,7 +171,6 @@ if __name__ == '__main__':
 
         start = 0
         for i in range(batches):
-            print('{}/{}'.format(i, batches))
             xs = train_x[start: start + BATCH_SIZE]
             ys = train_y[start: start + BATCH_SIZE]
             start += BATCH_SIZE
