@@ -10,6 +10,8 @@ k_means_clustering/k_means_clustering.xcodeproj/project.xcworkspace/xcuserdata/
 k_means_clustering/k_means_clustering/*_result.jpg
 k_means_clustering/k_means_clustering/k_means_clustering
 k_means_clustering/k_means_clustering/k_means_clustering_dbg
+k_means_clustering/DerivedData/*
+k_means_clustering/DerivedData/
 lstm/chainer/lstm/__pycache__/*
 lstm/chainer/lstm/*.npz
 lstm/chainer/lstm/*.pkl 
@@ -21,3 +23,16 @@ lstm/chainer/.python-version
 lstm/chainer/nstep_lstm/run
 lstm/chainer/nstep_lstm/*.pkl
 lstm/chainer/nstep_lstm/.ipynb_checkpoints/*
+lstm/chainer/lstm/*.pkl
+lstm/chainer/lstm/chainer_losses.pkl
+em_algorithm/.ipynb_checkpoints/* 
+em_algorithm/EmAlgorithm/DerivedData/*
+em_algorithm/EmAlgorithm/EmAlgorithm.xcodeproj/xcuserdata/*
+em_algorithm/*.png  
+em_algorithm/*.jpg
+em_algorithm/*.jpeg
+em_algorithm/*.txt
+em_algorithm/EmAlgorithm/EmAlgorithm.xcodeproj/project.xcworkspace/xcuserdata/*
+em_algorithm/exe
+em_algorithm/memo-1.pptx
+em_algorithm/memo.pptx
