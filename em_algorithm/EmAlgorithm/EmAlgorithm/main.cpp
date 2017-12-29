@@ -16,7 +16,7 @@
 #include <fstream>
 
 constexpr int DIMENSION     {3};
-constexpr int CLUSTER_NUM   {8};
+constexpr int CLUSTER_NUM   {10};
 constexpr double EPSILON    {1.0e-08};
 
 // 各画素にCLUSTER_NUM個の値が割り振られている。
