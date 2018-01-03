@@ -121,7 +121,9 @@ int main(int argc, const char * argv[]) {
 
     // EMアルゴリズムを初期化する。
     auto model = cv::ml::EM::create();
+    // ガウス関数の個数(Kに相当する)
     model->setClustersNumber(CLUSTER_NUM);
+    // 共分散行列として正の値を持つ対角行列を仮定する。
     model->setCovarianceMatrixType(cv::ml::EM::Types::COV_MAT_DIAGONAL);
     
     // 出力を用意する。
@@ -130,6 +132,7 @@ int main(int argc, const char * argv[]) {
     cv::Mat log_likelihoods {};
     
     // 実行する。
+    // 初期値はK-meansクラスタリングにより決まる。
     model->trainEM(samples, log_likelihoods, labels, probs);
     
     // 出力を確認する。各画素の対数尤度の値
