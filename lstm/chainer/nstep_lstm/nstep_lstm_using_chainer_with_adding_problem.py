@@ -33,15 +33,15 @@ class MyNet(chainer.Chain):
         with chainer.using_config('train', self.train):
             # x.shape: [(seq_size, n_in)] * batch_size
             h = self.l1(x)  # [(seq_size, n_hidden)] * batch_size
-            assert len(h) == BATCH_SIZE
+            # assert len(h) == BATCH_SIZE
             assert h[0].shape == (SEQUENCE_SIZE, N_HIDDEN)
             h = [v[-1, :].reshape(1, -1) for v in h]
-            assert len(h) == BATCH_SIZE
+            # assert len(h) == BATCH_SIZE
             assert h[0].shape == (1, N_HIDDEN)
             h = F.concat(h, axis=0)
-            assert h.shape == (BATCH_SIZE, N_HIDDEN)
+            # assert h.shape == (BATCH_SIZE, N_HIDDEN)
             y = self.l2(h)
-            assert y.shape == (BATCH_SIZE, N_OUT)
+            # assert y.shape == (BATCH_SIZE, N_OUT)
         return y
 
     def reset_state(self):
