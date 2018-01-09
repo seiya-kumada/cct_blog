@@ -11,6 +11,10 @@ from params import *  # noqa
 
 PLOT_SIZE = 4 * SEQUENCE_SIZE
 
+xp = np
+if GPU >= 0:
+    xp = chainer.cuda.cupy
+
 
 def predict_seq(model, input_seq):
     seq_size = len(input_seq)
@@ -52,10 +56,14 @@ if __name__ == '__main__':
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT)
     serializers.load_npz('chainer_mynet_dropout={}.npz'.format(DROPOUT), mynet)
+    if GPU >= 0:
+        mynet.to_gpu()
 
     # _/_/_/ データの作成
 
     dataset = DatasetMaker.make(TOTAL_SIZE, VALUE)
+    if GPU >= 0:
+        dataset = chainer.cuda.to_gpu(dataset)
 
     # _/_/_/ 予測
 
