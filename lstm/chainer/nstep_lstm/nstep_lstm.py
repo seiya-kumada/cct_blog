@@ -33,13 +33,6 @@ class LSTM(L.NStepLSTM):
             self.reset_state()
 
     def __call__(self, xs):
-        batch = len(xs)
-        if self.hx is None:
-            xp = self.xp
-            self.hx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
-        if self.cx is None:
-            xp = self.xp
-            self.cx = chainer.Variable(xp.zeros((self.n_layers, batch, self.out_size), dtype=xs[0].dtype))
         hy, cy, ys = super(LSTM, self).__call__(self.hx, self.cx, xs)
         self.hx = hy
         self.cx = cy
