@@ -26,8 +26,7 @@ void observe_probs(const cv::Mat& probs)
     const auto range = boost::irange(0, probs.rows);
     boost::for_each(range, [&probs](const auto& n){
         const auto gamma_n = probs.ptr<double>(n);
-        const auto total = std::accumulate(gamma_n, gamma_n + CLUSTER_NUM, 0.0);
-        if (std::abs(total - 1.0) >= EPSILON) {
+        if (auto total = std::accumulate(gamma_n, gamma_n + CLUSTER_NUM, 0.0); std::abs(total - 1.0) >= EPSILON) {
             std::cout << "ERROR\n";
         }
     });
@@ -36,8 +35,7 @@ void observe_probs(const cv::Mat& probs)
 // 重みの和は1である。
 void observe_weights(const cv::Mat& weights)
 {
-    const auto total = std::accumulate(weights.begin<double>(), weights.end<double>(), 0.0);
-    if (std::abs(total - 1.0) >= EPSILON) {
+    if (auto total = std::accumulate(weights.begin<double>(), weights.end<double>(), 0.0); std::abs(total - 1.0) >= EPSILON) {
         std::cout << "ERROR\n";
     }
 }
@@ -112,7 +110,7 @@ int main(int argc, const char * argv[]) {
     assert(reshaped_image.cols == DIMENSION);
     
     // EMアルゴリズムの入力を作る。
-    cv::Mat samples;
+    cv::Mat samples {};
     reshaped_image.convertTo(samples, CV_64FC1, 1.0 / 255.0);
     assert(samples.type() == CV_64FC1);
     assert(samples.rows == image_rows * image_cols);
