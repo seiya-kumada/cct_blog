@@ -36,3 +36,7 @@ em_algorithm/EmAlgorithm/EmAlgorithm.xcodeproj/project.xcworkspace/xcuserdata/*
 em_algorithm/exe
 em_algorithm/memo-1.pptx
 em_algorithm/memo.pptx
+halide/DerivedData/*
+halide/images/*
+halide/tutorials/tutorials.xcodeproj/xcuserdata/*
+halide/halide.xcworkspace/xcuserdata/*
