@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from params_for_adding_problem import *  # noqa
+from params import *  # noqa
 import chainer.links as L
 import chainer.functions as F
 import chainer
@@ -21,8 +21,6 @@ else:
 # always run the same calcuation
 xp.random.seed(SEED)
 random.seed(SEED)
-# chainer.global_config.cudnn_deterministic = True
-# chainer.global_config.use_cudnn = 'never'
 
 
 class LSTM(L.NStepLSTM):
