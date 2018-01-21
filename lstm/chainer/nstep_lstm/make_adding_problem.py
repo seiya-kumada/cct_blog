@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from params_for_adding_problem import *  # noqa
+
+np.random.seed(SEED)
 
 
 def mask(seq_size=200):
