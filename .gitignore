@@ -23,6 +23,7 @@ lstm/chainer/.python-version
 lstm/chainer/nstep_lstm/run
 lstm/chainer/nstep_lstm/*.pkl
 lstm/chainer/nstep_lstm/.ipynb_checkpoints/*
+lstm/chainer/lstm/.ipynb_checkpoints/*
 lstm/chainer/lstm/*.pkl
 lstm/chainer/lstm/chainer_losses.pkl
 em_algorithm/.ipynb_checkpoints/* 
