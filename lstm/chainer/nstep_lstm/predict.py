@@ -58,14 +58,10 @@ if __name__ == '__main__':
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT)
     serializers.load_npz('chainer_mynet_dropout={}.npz'.format(DROPOUT), mynet)
-    # if GPU >= 0:
-    #     mynet.to_gpu()
 
     # _/_/_/ データの作成
 
     dataset = DatasetMaker.make(TOTAL_SIZE, VALUE)
-    # if GPU >= 0:
-    #     dataset = chainer.cuda.to_gpu(dataset)
 
     # _/_/_/ 予測
 
@@ -80,7 +76,7 @@ if __name__ == '__main__':
     plt.plot(output_seq, color='black')
     plt.savefig('./pred_{}_layers={}_dropout={}.png'.format(
         SEQUENCE_SIZE, N_LAYERS, DROPOUT))
-    # plt.show()
+    plt.show()
 
     # 誤差とエポックの間の関係
     losses = _pickle.load(open('./chainer_losses_dropout={}.pkl'.format(DROPOUT), 'rb'))
@@ -92,4 +88,4 @@ if __name__ == '__main__':
     plt.legend()
     plt.savefig('./loss_{}_layers={}_dropout={}.png'.format(
         SEQUENCE_SIZE, N_LAYERS, DROPOUT))
-    # plt.show()
+    plt.show()

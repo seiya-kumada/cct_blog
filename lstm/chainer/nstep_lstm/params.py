@@ -30,6 +30,6 @@ N_HIDDEN = 200
 # 出力層の次元
 N_OUT = 1
 
-GPU = 0
+GPU = -1
 
 SEED = 0
