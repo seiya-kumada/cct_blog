@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # LSTM層の数
-N_LAYERS = 2
+N_LAYERS = 1
 
 DROPOUT = 0.3
 

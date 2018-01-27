@@ -13,7 +13,7 @@ SPRIT_RATE = 0.9
 # 入力時の時系列データ長
 SEQUENCE_SIZE = 30
 
-EPOCHS = 1
+EPOCHS = 60
 BATCH_SIZE = 100
 
 # 入力層の次元
@@ -25,6 +25,6 @@ N_HIDDEN = 200
 # 出力層の次元
 N_OUT = 1
 
-GPU = 0 
+GPU = -1
 
 SEED = 0

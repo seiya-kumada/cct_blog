@@ -41,3 +41,4 @@ halide/DerivedData/*
 halide/images/*
 halide/tutorials/tutorials.xcodeproj/xcuserdata/*
 halide/halide.xcworkspace/xcuserdata/*
+lstm/chainer/nstep_lstm/*.png
