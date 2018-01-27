@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# LSTM層の数
-N_LAYERS = 2
-
-DROPOUT = 0.3
-
 # fibonacci数列を割る値
 VALUE = 5
 
@@ -30,6 +25,6 @@ N_HIDDEN = 200
 # 出力層の次元
 N_OUT = 1
 
-GPU = 0
+GPU = -1
 
 SEED = 0

@@ -8,11 +8,13 @@ import chainer.functions as F
 import numpy as np
 from chainer import serializers
 import _pickle
-import random
 
 
 # fibonacci数列を割る値
 VALUE = 5
+
+# 常に同じ計算をする。
+np.random.seed(0)
 
 # 時系列データの全長
 TOTAL_SIZE = 2000
@@ -21,10 +23,11 @@ TOTAL_SIZE = 2000
 SPRIT_RATE = 0.9
 
 # 入力時の時系列データ長
-SEQUENCE_SIZE = 30
+SEQUENCE_SIZE = 20
 
-EPOCHS = 60
+EPOCHS = 30
 BATCH_SIZE = 100
+
 
 # 入力層の次元
 N_IN = 1
@@ -34,21 +37,6 @@ N_HIDDEN = 200
 
 # 出力層の次元
 N_OUT = 1
-
-GPU = 0
-
-SEED = 0
-
-xp = np
-if GPU >= 0:
-    xp = chainer.cuda.cupy
-    np.random.seed(SEED)
-    print('use gpu')
-else:
-    print('use cpu')
-
-xp.random.seed(SEED)
-random.seed(SEED)
 
 
 # LSTM
@@ -95,16 +83,16 @@ def calculate_loss(model, seq):
 
         # batch単位で計算する。
         x = chainer.Variable(
-            xp.asarray(
+            np.asarray(
                 [seq[j, i + 0] for j in range(rows)],
-                dtype=xp.float32
-            )[:, xp.newaxis]
+                dtype=np.float32
+            )[:, np.newaxis]
         )
         t = chainer.Variable(
-            xp.asarray(
+            np.asarray(
                 [seq[j, i + 1] for j in range(rows)],
-                dtype=xp.float32
-            )[:, xp.newaxis]
+                dtype=np.float32
+            )[:, np.newaxis]
         )
         # 誤差を蓄積する。
         loss += model(x, t)
@@ -140,7 +128,7 @@ class DatasetMaker(object):
     def make_sequences(data, seq_size):
         data_size = len(data)
         row = data_size - seq_size
-        seqs = xp.ndarray((row, seq_size)).astype(xp.float32)
+        seqs = np.ndarray((row, seq_size)).astype(np.float32)
         for i in range(row):
             seqs[i, :] = data[i: i + seq_size]
         return seqs
@@ -173,8 +161,6 @@ if __name__ == '__main__':
     # _/_/_/ データの作成
 
     dataset = DatasetMaker.make(TOTAL_SIZE, VALUE)
-    if GPU >= 0:
-        dataset = chainer.cuda.to_gpu(dataset)
 
     # 訓練データと検証データに分ける。
     n_train = int(TOTAL_SIZE * SPRIT_RATE)
@@ -190,9 +176,6 @@ if __name__ == '__main__':
     # _/_/_/ モデルの設定
 
     mynet = MyNet(N_IN, N_HIDDEN, N_OUT)
-    if GPU >= 0:
-        mynet.to_gpu()
-
     loss_calculator = LossCalculator(mynet)
 
     # _/_/_/ 最適化器の作成
@@ -208,7 +191,7 @@ if __name__ == '__main__':
     val_losses = []
     for epoch in range(EPOCHS):
         # エポックの最初でシャッフルする。
-        xp.random.shuffle(train_seqs)
+        np.random.shuffle(train_seqs)
 
         start = 0
         for i in range(batches):

@@ -50,20 +50,22 @@ def predict(model, dataset, seq_size):
     return output_seq
 
 
+# 以下はローカルマシーン（CPU）で実行する。
+# EC2（GPU）上ではjupyterを使う。
 if __name__ == '__main__':
 
     # _/_/_/ モデルの読み込み
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT)
     serializers.load_npz('chainer_mynet_dropout={}.npz'.format(DROPOUT), mynet)
-    if GPU >= 0:
-        mynet.to_gpu()
+    # if GPU >= 0:
+    #     mynet.to_gpu()
 
     # _/_/_/ データの作成
 
     dataset = DatasetMaker.make(TOTAL_SIZE, VALUE)
-    if GPU >= 0:
-        dataset = chainer.cuda.to_gpu(dataset)
+    # if GPU >= 0:
+    #     dataset = chainer.cuda.to_gpu(dataset)
 
     # _/_/_/ 予測
 
@@ -76,9 +78,9 @@ if __name__ == '__main__':
     plt.xlim([0, PLOT_SIZE])
     plt.plot(dataset, linestyle='dotted', color='red')
     plt.plot(output_seq, color='black')
-    plt.savefig('/Users/kumada/Documents/cct_blog/nstep_lstm/pred_{}_layers={}_dropout={}.png'.format(
+    plt.savefig('./pred_{}_layers={}_dropout={}.png'.format(
         SEQUENCE_SIZE, N_LAYERS, DROPOUT))
-    plt.show()
+    # plt.show()
 
     # 誤差とエポックの間の関係
     losses = _pickle.load(open('./chainer_losses_dropout={}.pkl'.format(DROPOUT), 'rb'))
@@ -88,6 +90,6 @@ if __name__ == '__main__':
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend()
-    plt.savefig('/Users/kumada/Documents/cct_blog/nstep_lstm/loss_{}_layers={}_dropout={}.png'.format(
+    plt.savefig('./loss_{}_layers={}_dropout={}.png'.format(
         SEQUENCE_SIZE, N_LAYERS, DROPOUT))
-    plt.show()
+    # plt.show()
