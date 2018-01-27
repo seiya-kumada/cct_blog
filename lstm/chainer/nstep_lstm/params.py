@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # LSTM層の数
-N_LAYERS = 2
+N_LAYERS = 1
 
 DROPOUT = 0.3
 
@@ -30,6 +30,6 @@ N_HIDDEN = 200
 # 出力層の次元
 N_OUT = 1
 
-GPU = -1
+GPU = 0
 
 SEED = 0
