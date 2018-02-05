@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		885A5608201C6304004732CA /* tutorial_05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 885A5606201C6304004732CA /* tutorial_05.cpp */; };
+		888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 888A7B89202734C70099D36A /* tutorial_09.cpp */; };
 		889249F5200CDFA700346BFF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889249F4200CDFA700346BFF /* main.cpp */; };
 		889249FD200CE09500346BFF /* tutorial_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889249FB200CE09500346BFF /* tutorial_01.cpp */; };
 		88924A00201461F900346BFF /* tutorial_02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889249FE201461F900346BFF /* tutorial_02.cpp */; };
@@ -15,6 +16,7 @@
 		88924A062014745400346BFF /* tutorial_04.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88924A042014745400346BFF /* tutorial_04.cpp */; };
 		889DE24B20233D2500B1A372 /* tutorial_06.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889DE24920233D2500B1A372 /* tutorial_06.cpp */; };
 		889DE24E2023445000B1A372 /* tutorial_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889DE24C2023445000B1A372 /* tutorial_07.cpp */; };
+		889DE2512025CE9A00B1A372 /* tutorial_08.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889DE24F2025CE9A00B1A372 /* tutorial_08.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +34,8 @@
 /* Begin PBXFileReference section */
 		885A5606201C6304004732CA /* tutorial_05.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_05.cpp; sourceTree = "<group>"; };
 		885A5607201C6304004732CA /* tutorial_05.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_05.hpp; sourceTree = "<group>"; };
+		888A7B89202734C70099D36A /* tutorial_09.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_09.cpp; sourceTree = "<group>"; };
+		888A7B8A202734C70099D36A /* tutorial_09.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_09.hpp; sourceTree = "<group>"; };
 		889249F1200CDFA700346BFF /* tutorials */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tutorials; sourceTree = BUILT_PRODUCTS_DIR; };
 		889249F4200CDFA700346BFF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		889249FB200CE09500346BFF /* tutorial_01.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_01.cpp; sourceTree = "<group>"; };
@@ -46,6 +50,8 @@
 		889DE24A20233D2500B1A372 /* tutorial_06.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_06.hpp; sourceTree = "<group>"; };
 		889DE24C2023445000B1A372 /* tutorial_07.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_07.cpp; sourceTree = "<group>"; };
 		889DE24D2023445000B1A372 /* tutorial_07.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_07.hpp; sourceTree = "<group>"; };
+		889DE24F2025CE9A00B1A372 /* tutorial_08.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_08.cpp; sourceTree = "<group>"; };
+		889DE2502025CE9A00B1A372 /* tutorial_08.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_08.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +99,10 @@
 				889DE24A20233D2500B1A372 /* tutorial_06.hpp */,
 				889DE24C2023445000B1A372 /* tutorial_07.cpp */,
 				889DE24D2023445000B1A372 /* tutorial_07.hpp */,
+				889DE24F2025CE9A00B1A372 /* tutorial_08.cpp */,
+				889DE2502025CE9A00B1A372 /* tutorial_08.hpp */,
+				888A7B89202734C70099D36A /* tutorial_09.cpp */,
+				888A7B8A202734C70099D36A /* tutorial_09.hpp */,
 			);
 			path = tutorials;
 			sourceTree = "<group>";
@@ -157,8 +167,10 @@
 				885A5608201C6304004732CA /* tutorial_05.cpp in Sources */,
 				889DE24B20233D2500B1A372 /* tutorial_06.cpp in Sources */,
 				889DE24E2023445000B1A372 /* tutorial_07.cpp in Sources */,
+				889DE2512025CE9A00B1A372 /* tutorial_08.cpp in Sources */,
 				88924A00201461F900346BFF /* tutorial_02.cpp in Sources */,
 				88924A062014745400346BFF /* tutorial_04.cpp in Sources */,
+				888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */,
 				889249FD200CE09500346BFF /* tutorial_01.cpp in Sources */,
 				88924A0320146CC600346BFF /* tutorial_03.cpp in Sources */,
 				889249F5200CDFA700346BFF /* main.cpp in Sources */,
