@@ -43,3 +43,7 @@ halide/tutorials/tutorials.xcodeproj/xcuserdata/*
 halide/halide.xcworkspace/xcuserdata/*
 lstm/chainer/nstep_lstm/*.png
 halide/tutorials/exe
+halide/sample/exe
+halide/sample/hoge
+halide/sample/run
+halide/sample/sample.xcodeproj/xcuserdata/*
