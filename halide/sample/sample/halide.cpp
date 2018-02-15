@@ -21,7 +21,7 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
     
     const int src_cols = src_image.width();
     const int src_rows = src_image.height();
-    
+
     const float sc = static_cast<float>(src_cols) / dst_cols;
     const float sr = static_cast<float>(src_rows) / dst_rows;
     
@@ -50,26 +50,10 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
     const auto& src_pixel3 = src_image(ci1, cj1, c);
 
     Halide::Func dst_image {};
-    dst_image(i, j, c) = Halide::cast<uint8_t>(c0 * src_pixel0 + c1 * src_pixel1 + c2 * src_pixel2 + c3 * src_pixel3);
-    
+    dst_image(i, j, c) = Halide::saturating_cast<uint8_t>(c0 * src_pixel0 + c1 * src_pixel1 + c2 * src_pixel2 + c3 * src_pixel3);
+
     //_/_/_/ describe scheduling
     
-//    dst_image.parallel(j);
-//    Halide::Var inner_i {};
-//    Halide::Var outer_i {};
-//    dst_image.split(i, outer_i, inner_i, 4);
-//    dst_image.vectorize(inner_i);
-
-//    Halide::Var i_inner {};
-//    Halide::Var i_outer {};
-//    Halide::Var j_inner {};
-//    Halide::Var j_outer {};
-//    Halide::Var tile_index {};
-//    dst_image
-//        .tile(i, j, i_outer, j_outer, i_inner, j_inner, 32, 32)
-//        .fuse(i_outer, j_outer, tile_index)
-//        .parallel(tile_index);
-
     dst_image.vectorize(i, 4).parallel(j);
     
     //_/_/_/ run

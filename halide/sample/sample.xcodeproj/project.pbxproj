@@ -244,6 +244,7 @@
 		886323912030158E0073D6FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
 					/opt/local/include,
@@ -271,6 +272,7 @@
 		886323922030158E0073D6FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				HEADER_SEARCH_PATHS = (

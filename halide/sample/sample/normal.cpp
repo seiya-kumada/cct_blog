@@ -47,7 +47,7 @@ void resize_with_cv_access(const cv::Mat& src_image, cv::Mat& dst_image)
 
         // check whether the position is outside the image or not
         const int cj1 = cj0 + 1 >= src_rows ? cj0 : cj0 + 1;
- 
+
         cv::Vec3b* dst_p = dst_image.ptr<cv::Vec3b>(j);
         
         for (auto i = 0; i < dst_cols; ++i)
