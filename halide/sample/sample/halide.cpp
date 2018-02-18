@@ -15,12 +15,14 @@
 int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, const std::string& dst_path)
 {
     //load a source image
-    Halide::Buffer<uint8_t> src_image = Halide::Tools::load_image(src_path);
+    Halide::Buffer<uint8_t> input = Halide::Tools::load_image(src_path);
+    Halide::Func src_image {};
+    src_image = Halide::BoundaryConditions::repeat_edge(input);
     
     //_/_/_/ describe algorithm
     
-    const int src_cols = src_image.width();
-    const int src_rows = src_image.height();
+    const int src_cols = input.width();
+    const int src_rows = input.height();
 
     const float sc = static_cast<float>(src_cols) / dst_cols;
     const float sr = static_cast<float>(src_rows) / dst_rows;
@@ -31,12 +33,12 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
     
     auto fj = j * sr;
     auto cj0 = Halide::cast<int>(fj);
-    auto cj1 = Halide::clamp(cj0 + 1, 0, src_rows - 1);
+    auto cj1 = cj0 + 1;
     auto dj = fj - cj0;
     
     auto fi = i * sc;
     auto ci0 = Halide::cast<int>(fi);
-    auto ci1 = Halide::clamp(ci0 + 1, 0, src_cols - 1);
+    auto ci1 = ci0 + 1;
     auto di = fi - ci0;
     
     const auto c0 = (1.0f - dj) * (1.0f - di);
@@ -56,10 +58,13 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
     
     dst_image.vectorize(i, 4).parallel(j);
     
+//    Halide::Var i_inner, j_inner;
+//    dst_image.tile(i, j, i_inner, j_inner, 256, 32).vectorize(i_inner, 8).parallel(j);
+    
     //_/_/_/ run
     
     auto start = std::chrono::system_clock::now();
-    Halide::Buffer<uint8_t> output = dst_image.realize(dst_cols, dst_rows, src_image.channels());
+    Halide::Buffer<uint8_t> output = dst_image.realize(dst_cols, dst_rows, input.channels());
     auto end = std::chrono::system_clock::now();
     std::cout << boost::format("halide access: %1% msec\n") % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     

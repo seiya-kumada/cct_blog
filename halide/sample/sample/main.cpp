@@ -81,7 +81,7 @@ int halide_process(const char* argv[])
 
 int main(int argc, const char * argv[])
 {
-    normal_process(argv);
+//    normal_process(argv);
     halide_process(argv);
     return 0;
 }
