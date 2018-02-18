@@ -47,3 +47,7 @@ halide/sample/exe
 halide/sample/hoge
 halide/sample/run
 halide/sample/sample.xcodeproj/xcuserdata/*
+dropout/.python-version
+dropout/dataset/*
+dropout/results/*
+dropout/src/__pycache__/*
