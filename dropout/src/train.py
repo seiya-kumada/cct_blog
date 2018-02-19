@@ -11,6 +11,7 @@ import chainer.iterators as Iter
 from chainer import training
 from chainer.training import extensions
 from params import *  # noqa
+import sys
 
 
 # set a specified seed to random value generator in order to reproduce the same results
@@ -67,10 +68,6 @@ def train():
     train_dataset = D.TupleDataset(xs[: n_train], ys[: n_train])
     train_iter = Iter.SerialIterator(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-    # for test
-    test_dataset = D.TupleDataset(xs[n_train:], ys[n_train:])
-    test_iter = Iter.SerialIterator(test_dataset, batch_size=BATCH_SIZE, repeat=False, shuffle=False)
-
     # _/_/_/ create a network
 
     model = MyNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
@@ -104,15 +101,14 @@ def train():
     trainer.extend(extensions.snapshot_object(model, MODEL_NAME), trigger=model_interval)
 
     trainer.extend(extensions.LogReport(trigger=epoch_interval))
-    trainer.extend(extensions.Evaluator(test_iter, loss_calculator), trigger=epoch_interval)
     trainer.extend(
         extensions.PrintReport(
-            ['epoch', 'iteration', 'main/loss', 'validation/main/loss']
+            ['epoch', 'iteration', 'main/loss']
         ),
         trigger=epoch_interval)
     trainer.extend(
         extensions.PlotReport(
-            ['main/loss', 'validation/main/loss'],
+            ['main/loss'],
             'epoch',
             file_name='loss.png'
         )
