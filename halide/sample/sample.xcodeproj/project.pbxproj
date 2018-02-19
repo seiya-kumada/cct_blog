@@ -247,14 +247,13 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include,
+					/usr/local/include,
 					/usr/local/halide/include,
 					/usr/local/halide/tools,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/opt/local/lib,
+					/usr/local/lib,
 					/usr/local/halide/lib,
-					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lopencv_core",
@@ -276,14 +275,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include,
+					/usr/local/include,
 					/usr/local/halide/include,
 					/usr/local/halide/tools,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/opt/local/lib,
+					/usr/local/lib,
 					/usr/local/halide/lib,
-					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lopencv_core",

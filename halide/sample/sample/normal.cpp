@@ -29,6 +29,44 @@ inline uint8_t interpolate_(float c0, float c1, float c2, float c3, const uint8_
     return c0 * p0[i] + c1 * p1[i] + c2 * p2[i] + c3 * p3[i];
 }
 
+inline auto blur_pixel(const cv::Vec3b& p0, const cv::Vec3b& p1, const cv::Vec3b& p2, const cv::Vec3b& p3, const cv::Vec3b& p4, int i)
+{
+    return (4.0 * p0[i] + p1[i] + p2[i] + p3[i] + p4[i]) / 8.0;
+}
+                                   
+inline auto blur(const cv::Mat& src_image, int w, int h, int i, int j, cv::Vec3b& dst_pixel)
+{
+    const auto im = i - 1 < 0 ? 0: i - 1;
+    const auto ip = i + 1 >= w ? w - 1: i + 1;
+    const auto jm = j - 1 < 0 ? 0: j - 1;
+    const auto jp = j + 1 >= h ? h - 1: j + 1;
+
+    const auto& p0 = src_image.at<cv::Vec3b>(j, i);
+    const auto& p1 = src_image.at<cv::Vec3b>(j, im);
+    const auto& p2 = src_image.at<cv::Vec3b>(j, ip);
+    const auto& p3 = src_image.at<cv::Vec3b>(jm, i);
+    const auto& p4 = src_image.at<cv::Vec3b>(jp, i);
+    
+    dst_pixel[0] = blur_pixel(p0, p1, p2, p3, p4, 0);
+    dst_pixel[1] = blur_pixel(p0, p1, p2, p3, p4, 1);
+    dst_pixel[2] = blur_pixel(p0, p1, p2, p3, p4, 2);
+}
+
+void blur_with_cv_access(const cv::Mat& src_image, cv::Mat& dst_image)
+{
+    const int src_cols = src_image.cols;
+    const int src_rows = src_image.rows;
+    
+    for (auto j = 0; j < src_rows; ++j)
+    {
+        cv::Vec3b* dst_p = dst_image.ptr<cv::Vec3b>(j);
+        for (auto i = 0; i < src_cols; ++i)
+        {
+            blur(src_image, src_cols, src_rows, i, j, dst_p[i]);
+        }
+    }
+}
+
 void resize_with_cv_access(const cv::Mat& src_image, cv::Mat& dst_image)
 {
     const int src_cols = src_image.cols;

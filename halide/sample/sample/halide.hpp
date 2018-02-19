@@ -10,5 +10,6 @@
 #define halide_hpp
 #include <string>
 int resize_with_halide(const std::string& path, int dst_width, int dst_height, const std::string& dst_path);
+int blur_with_halide(const std::string& path, int dst_width, int dst_height, const std::string& dst_path);
 
 #endif /* halide_hpp */

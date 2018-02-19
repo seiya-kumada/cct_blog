@@ -67,6 +67,42 @@ int normal_process(const char* argv[])
     return 0;
 }
 
+int normal_blur_process(const char* argv[])
+{
+    const std::string src_path {argv[1]};
+    const std::string dst_path {argv[2]};
+    
+    // load a source image
+    const cv::Mat src_image {cv::imread(src_path)};
+    
+    if (src_image.empty())
+    {
+        std::cout << "file not found\n";
+        return 1;
+    }
+    
+    std::cout << boost::format("(src_width, src_height) = (%1%, %2%)") % src_image.cols % src_image.rows << std::endl;
+    
+    // make buffer for output image
+    cv::Mat dst_image(src_image.rows, src_image.cols, CV_8UC3);
+    
+    // use cv access
+    {
+        auto start = std::chrono::system_clock::now();
+        constexpr int NUM = 10;
+        for (auto i = 0; i < NUM; ++i)
+        {
+            blur_with_cv_access(src_image, dst_image);
+        }
+        auto end = std::chrono::system_clock::now();
+        std::cout << boost::format("cv access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
+    }
+    
+    // save the dst image
+    cv::imwrite(dst_path, dst_image);
+    return 0;
+}
+
 int halide_process(const char* argv[])
 {
     const std::string src_path {argv[1]};
@@ -75,13 +111,18 @@ int halide_process(const char* argv[])
     const int dst_width {atoi(argv[3])};
     const int dst_height {atoi(argv[4])};
 
-    resize_with_halide(src_path, dst_width, dst_height, dst_path);
+    blur_with_halide(src_path, dst_width, dst_height, dst_path);
     return 0;
 }
 
 int main(int argc, const char * argv[])
 {
-//    normal_process(argv);
+    if (argc != 5)
+    {
+        std::cout << "unvalid sequence of arguments\n";
+        return 1;
+    }
+    normal_blur_process(argv);
     halide_process(argv);
     return 0;
 }
