@@ -12,9 +12,59 @@
 #include <boost/format.hpp>
 #include <chrono>
 
+//https://www.slideshare.net/fixstars/halide-82788728
+
+int blur_with_halide(const std::string& src_path, int dst_cols, int dst_rows, const std::string& dst_path)
+{
+    //_/_/_/ load a source image and repeat its edges
+    
+    Halide::Buffer<uint8_t> input = Halide::Tools::load_image(src_path);
+    Halide::Func src_image_8 {"src_image_8"};
+    src_image_8 = Halide::BoundaryConditions::repeat_edge(input);
+    
+    Halide::Func src_image_16 {"src_image_16"};
+    Halide::Var x {"x"};
+    Halide::Var y {"y"};
+    Halide::Var c {"c"};
+    src_image_16(x, y, c) = Halide::cast<uint16_t>(src_image_8(x, y, c));
+    
+    //_/_/_/ describe algorithm
+
+    Halide::Func blur {"blur"};
+    blur(x, y, c) = (src_image_16(x - 1, y, c) + 4 * src_image_16(x, y, c) + src_image_16(x + 1, y, c) + src_image_16(x, y - 1, c) + src_image_16(x, y + 1, c)) / 8;
+    
+    // convert back to 8-bit
+    Halide::Func dst_image {"dst_image"};
+    dst_image(x, y, c) = Halide::cast<uint8_t>(blur(x, y, c));
+    
+    //_/_/_/ describe scheduling
+    
+    
+    dst_image.vectorize(x, 4).parallel(y);
+    
+    //    Halide::Var i_inner, j_inner;
+    //    dst_image.tile(i, j, i_inner, j_inner, 256, 32).vectorize(i_inner, 8).parallel(j);
+
+    
+    //_/_/_/ run
+    
+    auto start = std::chrono::system_clock::now();
+    Halide::Buffer<uint8_t> output = dst_image.realize(input.width(), input.height(), input.channels());
+    auto end = std::chrono::system_clock::now();
+    std::cout << boost::format("halide access: %1% msec\n") % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    
+    //_/_/_/ save it
+    
+    Halide::Tools::save(output, dst_path);
+
+    
+    return 1;
+}
+
 int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, const std::string& dst_path)
 {
-    //load a source image
+    //_/_/_/ load a source image and repeat its edges
+    
     Halide::Buffer<uint8_t> input = Halide::Tools::load_image(src_path);
     Halide::Func src_image {};
     src_image = Halide::BoundaryConditions::repeat_edge(input);
