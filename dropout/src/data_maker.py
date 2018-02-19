@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from params import *  # noqa
 
-np.random.seed(1)
+# np.random.seed(1)
 
 
 # two gaussians

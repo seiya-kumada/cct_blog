@@ -78,7 +78,8 @@ def train():
 
     # _/_/_/ create an optimizer
 
-    optimizer = P.SGD(lr=LEARNING_RATE)
+    # optimizer = P.SGD(lr=LEARNING_RATE)
+    optimizer = P.Adam()
 
     # _/_/_/ connect the optimizer with the network
 
@@ -92,15 +93,30 @@ def train():
     # _/_/_/ make a trainer
 
     epoch_interval = (1, 'epoch')
-    # iteration_interval = (BATCH_SIZE, 'iteration')
-    trainer = training.Trainer(updater, (EPOCHS, 'epoch'), out='../results')
+    model_interval = (EPOCHS, 'epoch')
+
+    trainer = training.Trainer(updater, (EPOCHS, 'epoch'), out=OUTPUT_DIR_PATH)
+
+    # save a trainer
+    trainer.extend(extensions.snapshot(), trigger=model_interval)
+
+    # save a model
+    trainer.extend(extensions.snapshot_object(model, MODEL_NAME), trigger=model_interval)
+
     trainer.extend(extensions.LogReport(trigger=epoch_interval))
     trainer.extend(extensions.Evaluator(test_iter, loss_calculator), trigger=epoch_interval)
     trainer.extend(
-        extensions.PrintReport([
-            'epoch', 'iteration', 'main/loss', 'validation/main/loss']),
+        extensions.PrintReport(
+            ['epoch', 'iteration', 'main/loss', 'validation/main/loss']
+        ),
         trigger=epoch_interval)
-
+    trainer.extend(
+        extensions.PlotReport(
+            ['main/loss', 'validation/main/loss'],
+            'epoch',
+            file_name='loss.png'
+        )
+    )
     # _/_/_/ run
 
     trainer.run()
