@@ -20,12 +20,14 @@ if __name__ == '__main__':
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
     noise = np.random.normal(0, NOISE_STDDEV, SAMPLE_SIZE)
     ys = ys + noise
+    xs = xs.reshape(-1, 1).astype(np.float32)
+    ys = ys.reshape(-1, 1).astype(np.float32)
 
     # save them
     np.save(XS_PATH, xs)
     np.save(YS_PATH, ys)
 
-    # draw dataset
+    # # draw dataset
     xs = np.load(XS_PATH)
     ys = np.load(YS_PATH)
     plt.scatter(xs, ys)

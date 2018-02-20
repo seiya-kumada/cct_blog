@@ -11,7 +11,6 @@ import chainer.iterators as Iter
 from chainer import training
 from chainer.training import extensions
 from params import *  # noqa
-import sys
 
 
 # set a specified seed to random value generator in order to reproduce the same results
@@ -33,7 +32,7 @@ class MyNet(chainer.Chain):
             self.dropout_ratio = dropout_ratio
 
     def __call__(self, x):
-        h = F.dropout(x, ratio=self.dropout_ratio)
+        # h = F.dropout(x, ratio=self.dropout_ratio)
         h = self.linear1(x)
         h = F.relu(h)
         h = F.dropout(h, ratio=self.dropout_ratio)
@@ -75,8 +74,8 @@ def train():
 
     # _/_/_/ create an optimizer
 
-    # optimizer = P.SGD(lr=LEARNING_RATE)
-    optimizer = P.Adam()
+    optimizer = P.SGD(lr=LEARNING_RATE)
+    # optimizer = P.Adam()
 
     # _/_/_/ connect the optimizer with the network
 
