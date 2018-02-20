@@ -11,18 +11,15 @@ import matplotlib.pyplot as plt
 
 def sample_0(model):
     # generate random values within [X_MIN, X_MAX]
-    unknown_size = 10
-    unknown_xs = np.random.uniform(X_MIN, X_MAX, size=unknown_size).astype(np.float32).reshape(-1, 1)
-
+    unknown_size = 100
+    # unknown_xs = np.random.uniform(X_MIN, X_MAX, size=unknown_size).astype(np.float32).reshape(-1, 1)
+    unknown_xs = np.linspace(X_MIN, X_MAX, unknown_size)[:, np.newaxis].astype(np.float32)
+    print(unknown_xs.shape)
     # predict ys
     with chainer.using_config('train', False):
         predictive_ys = model(unknown_xs)
 
-    plt.scatter(unknown_xs, predictive_ys.data)
-    xs = np.linspace(X_MIN, X_MAX, 300)
-    ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
-    plt.plot(xs, ys)
-    plt.show()
+    plt.scatter(unknown_xs, predictive_ys.data, label='predictive for test data')
 
 
 def sample_1(model):
@@ -32,11 +29,15 @@ def sample_1(model):
     with chainer.using_config('train', False):
         pred_ys = model(xs)
 
-    plt.scatter(xs, ys)
-    plt.scatter(xs, pred_ys.data)
+    plt.figure(figsize=(10, 5))
+    plt.scatter(xs, ys, label='training data')
+    plt.scatter(xs, pred_ys.data, label='predictive for training data')
     xs = np.linspace(X_MIN, X_MAX, 300)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
-    plt.plot(xs, ys)
+    plt.plot(xs, ys, label='original')
+
+    sample_0(model)
+    plt.legend(loc='best')
     plt.show()
 
 
