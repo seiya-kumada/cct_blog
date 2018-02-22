@@ -16,10 +16,11 @@ def calculate_y(x, mean, stddev, shift):
 
 if __name__ == '__main__':
     # generate dataset
-    xs = np.linspace(X_MIN, X_MAX, SAMPLE_SIZE)
+    xs = np.random.uniform(X_MIN + 4, X_MAX - 4, size=SAMPLE_SIZE).astype(np.float32)  # .reshape(-1, 1)
+    # xs = np.linspace(X_MIN, X_MAX, SAMPLE_SIZE)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
-    noise = np.random.normal(0, NOISE_STDDEV, SAMPLE_SIZE)
-    ys = ys + noise
+    # noise = np.random.normal(0, NOISE_STDDEV, SAMPLE_SIZE)
+    # ys = ys + noise
     xs = xs.reshape(-1, 1).astype(np.float32)
     ys = ys.reshape(-1, 1).astype(np.float32)
 
