@@ -35,9 +35,10 @@ if __name__ == '__main__':
     # print(vars.shape)
     upper_bounds = [mean + np.sqrt(var) / 2 for (mean, var) in zip(means, vars)]
     lower_bounds = [mean - np.sqrt(var) / 2 for (mean, var) in zip(means, vars)]
+    # print(type(upper_bounds))
     plt.plot(xs, upper_bounds, label='upper bound')
     plt.plot(xs, lower_bounds, label='lower bound')
-
+    # plt.fill_between(xs, np.array(upper_bounds), np.array(lower_bounds),  alpha=0.5)
     # draw original distribution
     xs = np.linspace(X_MIN, X_MAX, SAMPLING_SIZE)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
