@@ -10,6 +10,7 @@
 #define normal_hpp
 #include <opencv2/imgcodecs.hpp>
 
+void resize_with_opencv(const cv::Mat& src_image, cv::Mat& dst_image);
 void resize_with_cv_access(const cv::Mat& src_image, cv::Mat& dst_image);
 void blur_with_cv_access(const cv::Mat& src_image, cv::Mat& dst_image);
 void resize_with_raw_access(const cv::Mat& src_image, cv::Mat& dst_image);

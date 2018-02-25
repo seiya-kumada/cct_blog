@@ -61,7 +61,19 @@ int normal_process(const char* argv[])
         auto end = std::chrono::system_clock::now();
         std::cout << boost::format("raw access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
     }
-    
+
+    // use opencv
+    {
+        auto start = std::chrono::system_clock::now();
+        constexpr int NUM = 10;
+        for (auto i = 0; i < NUM; ++i)
+        {
+            resize_with_opencv(src_image, dst_image);
+        }
+        auto end = std::chrono::system_clock::now();
+        std::cout << boost::format("opencv: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
+    }
+
     // save the dst image
     cv::imwrite(dst_path, dst_image);
     return 0;
@@ -111,7 +123,7 @@ int halide_process(const char* argv[])
     const int dst_width {atoi(argv[3])};
     const int dst_height {atoi(argv[4])};
 
-    blur_with_halide(src_path, dst_width, dst_height, dst_path);
+    resize_with_halide(src_path, dst_width, dst_height, dst_path);
     return 0;
 }
 
@@ -122,7 +134,7 @@ int main(int argc, const char * argv[])
         std::cout << "unvalid sequence of arguments\n";
         return 1;
     }
-    normal_blur_process(argv);
+    normal_process(argv);
     halide_process(argv);
     return 0;
 }

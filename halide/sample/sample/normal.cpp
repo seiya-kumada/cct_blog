@@ -8,6 +8,7 @@
 
 #include "normal.hpp"
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 inline const cv::Vec3b& get_pixel(const cv::Mat& img, int row, int col)
 {
@@ -168,4 +169,9 @@ void resize_with_raw_access(const cv::Mat& src_image, cv::Mat& dst_image)
             dst_pixel[2] = interpolate_(c0, c1, c2, c3, src_pixel0, src_pixel1, src_pixel2, src_pixel3, 2);
         }
     }
+}
+
+void resize_with_opencv(const cv::Mat& src_image, cv::Mat& dst_image)
+{
+    cv::resize(src_image, dst_image, dst_image.size());
 }

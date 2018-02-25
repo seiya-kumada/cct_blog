@@ -51,3 +51,4 @@ dropout/.python-version
 dropout/dataset/*
 dropout/results/*
 dropout/src/__pycache__/*
+halide/sample_2/sample_2.xcodeproj/xcuserdata/*
