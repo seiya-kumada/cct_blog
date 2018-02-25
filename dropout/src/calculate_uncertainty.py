@@ -25,21 +25,24 @@ if __name__ == '__main__':
     # predict values as if we were in training time
     predictions = np.empty((ITERATIONS, SAMPLING_SIZE), dtype=np.float32)
     xs = np.linspace(X_MIN, X_MAX, SAMPLING_SIZE)[:, np.newaxis].astype(np.float32)
-    with chainer.using_config('train', True):
+    with chainer.using_config('train', True):  # you should be noticed that this is True!!
         for i in range(ITERATIONS):
             predictions[i] = model(xs).data.T
 
+    plt.figure(figsize=(8, 5))
+
     # calculate means and variances
     means, vars = calculate_statistics(predictions)
-    # print(means.shape)
-    # print(vars.shape)
-    upper_bounds = [mean + np.sqrt(var) / 2 for (mean, var) in zip(means, vars)]
-    lower_bounds = [mean - np.sqrt(var) / 2 for (mean, var) in zip(means, vars)]
-    # print(type(upper_bounds))
-    plt.plot(xs, upper_bounds, label='upper bound')
-    plt.plot(xs, lower_bounds, label='lower bound')
-    # plt.fill_between(xs, np.array(upper_bounds), np.array(lower_bounds),  alpha=0.5)
-    # draw original distribution
+
+    # draw uncertainty
+    upper_bounds = [mean + np.sqrt(var) for (mean, var) in zip(means, vars)]
+    lower_bounds = [mean - np.sqrt(var) for (mean, var) in zip(means, vars)]
+    plt.fill_between(xs.reshape(-1, ), lower_bounds, upper_bounds,  alpha=0.5, label='[-σ,+σ]')
+
+    # draw means
+    plt.plot(xs, means, label='means')
+
+    # draw original curve
     xs = np.linspace(X_MIN, X_MAX, SAMPLING_SIZE)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
     plt.plot(xs, ys, label='original')
@@ -49,5 +52,5 @@ if __name__ == '__main__':
     ys = np.load(YS_PATH)
     plt.scatter(xs, ys, label='training data')
 
-    plt.legend(loc='best')
+    plt.legend(loc='lower center')
     plt.show()

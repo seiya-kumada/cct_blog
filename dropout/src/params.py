@@ -9,7 +9,7 @@ SHIFT = 1.5
 X_MIN = -7
 X_MAX = 7
 NOISE_STDDEV = 0.01
-SAMPLE_SIZE = 20
+SAMPLE_SIZE = 50
 XS_PATH = '../dataset/xs.npy'
 YS_PATH = '../dataset/ys.npy'
 
@@ -28,7 +28,7 @@ MODEL_NAME = 'model'
 
 # _/_/_/ for calculate_uncertainty.py
 
-LENGTH_SCALE = 1000
+LENGTH_SCALE = 10
 SQUARED_LENGTH_SCALE = LENGTH_SCALE * LENGTH_SCALE
 TAU = SQUARED_LENGTH_SCALE * (1 - DROPOUT_RATIO) / (2 * SAMPLE_SIZE * WEIGHT_DECAY)
 SAMPLING_SIZE = 200
