@@ -11,6 +11,8 @@
 #include <halide_image_io.h>
 #include <boost/format.hpp>
 #include <chrono>
+#include <boost/range/irange.hpp>
+#include <boost/range/algorithm/for_each.hpp>
 
 //https://www.slideshare.net/fixstars/halide-82788728
 
@@ -140,17 +142,30 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
 
     //_/_/_/ describe scheduling
     
-//    dst_image.vectorize(i, 4).parallel(j);
-    
     Halide::Var i_inner, j_inner;
-    dst_image.tile(i, j, i_inner, j_inner, 256, 32).vectorize(i_inner, 8).parallel(j);
-    
+    auto x_vector_size = 64;
+    dst_image.compute_root();
+    dst_image.tile(i, j, i_inner, j_inner, x_vector_size, 4).vectorize(i_inner, 16).parallel(j);
+
+//    Halide::Var i_inner, j_inner, i_outer, j_outer, tile_index;
+//    auto x_vector_size = 64;
+//    dst_image.compute_root();
+//    dst_image.tile(i, j, i_outer, j_outer, i_inner, j_inner, x_vector_size, 4);
+//    dst_image.fuse(i_outer, j_outer, tile_index);
+//    dst_image.parallel(tile_index);
+
     //_/_/_/ run
     
-    auto start = std::chrono::system_clock::now();
-    Halide::Buffer<uint8_t> output = dst_image.realize(dst_cols, dst_rows, input.channels());
-    auto end = std::chrono::system_clock::now();
-    std::cout << boost::format("halide access: %1% msec\n") % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    Halide::Buffer<uint8_t> output {dst_cols, dst_rows, input.channels()};
+    constexpr auto ITERATIONS = 10;
+    boost::for_each(boost::irange(0, ITERATIONS), [&dst_image, &output](auto i) {
+        auto start = std::chrono::system_clock::now();
+        dst_image.realize(output);
+        auto end = std::chrono::system_clock::now();
+        std::cout << boost::format("halide access[%1%]: %2% msec\n")
+            % i
+            % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    });
     
     //_/_/_/ save it
     

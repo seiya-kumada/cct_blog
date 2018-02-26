@@ -40,38 +40,44 @@ int normal_process(const char* argv[])
     
     // use cv access
     {
-        auto start = std::chrono::system_clock::now();
         constexpr int NUM = 10;
         for (auto i = 0; i < NUM; ++i)
         {
+            auto start = std::chrono::system_clock::now();
             resize_with_cv_access(src_image, dst_image);
+            auto end = std::chrono::system_clock::now();
+            std::cout << boost::format("cv access[%1%]: %2% msec\n")
+                % i
+                % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         }
-        auto end = std::chrono::system_clock::now();
-        std::cout << boost::format("cv access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
     }
     
     // use raw access
     {
-        auto start = std::chrono::system_clock::now();
         constexpr int NUM = 10;
         for (auto i = 0; i < NUM; ++i)
         {
+            auto start = std::chrono::system_clock::now();
             resize_with_raw_access(src_image, dst_image);
+            auto end = std::chrono::system_clock::now();
+            std::cout << boost::format("raw access[%1%]: %2% msec\n")
+                % i
+                % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         }
-        auto end = std::chrono::system_clock::now();
-        std::cout << boost::format("raw access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
     }
 
     // use opencv
     {
-        auto start = std::chrono::system_clock::now();
         constexpr int NUM = 10;
         for (auto i = 0; i < NUM; ++i)
         {
+            auto start = std::chrono::system_clock::now();
             resize_with_opencv(src_image, dst_image);
+            auto end = std::chrono::system_clock::now();
+            std::cout << boost::format("opencv[%1%]: %2% msec\n")
+            % i
+            % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         }
-        auto end = std::chrono::system_clock::now();
-        std::cout << boost::format("opencv: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
     }
 
     // save the dst image
@@ -100,14 +106,15 @@ int normal_blur_process(const char* argv[])
     
     // use cv access
     {
-        auto start = std::chrono::system_clock::now();
         constexpr int NUM = 10;
         for (auto i = 0; i < NUM; ++i)
         {
+            auto start = std::chrono::system_clock::now();
             blur_with_cv_access(src_image, dst_image);
+            auto end = std::chrono::system_clock::now();
+            std::cout << boost::format("cv access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
+
         }
-        auto end = std::chrono::system_clock::now();
-        std::cout << boost::format("cv access: %1% msec\n") % (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / NUM);
     }
     
     // save the dst image

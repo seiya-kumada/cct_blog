@@ -18,6 +18,8 @@ using namespace Halide;
 // Include OpenCV for timing comparison
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <numeric>
+
 
 int main(int argc, char **argv) {
     Buffer<uint8_t> in_8 = Tools::load_image("/Users/kumada/Projects/cct_blog/halide/images/inputs/src_image.jpg");
@@ -64,12 +66,20 @@ int main(int argc, char **argv) {
     Buffer<float> output(in_8.width(),
                         in_8.height(),
                         in_8.channels());
-    for (int i = 0; i < 10; i++) {
+    
+    const auto ITERATIONS = 10;
+    std::vector<double> times {};
+    times.reserve(ITERATIONS);
+    for (int i = 0; i < ITERATIONS; i++) {
         double t1 = current_time();
         blur_x.realize(output);
         double t2 = current_time();
+        times.emplace_back(t2 - t1);
         std::cout << "Time: " << (t2 - t1) << '\n';
     }
+    
+    auto average = std::accumulate(std::begin(times), std::end(times), 0.0) / times.size();
+    std::cout << average << "[sec]\n";
     
 //    Tools::save_image(output, "output.png");
     
