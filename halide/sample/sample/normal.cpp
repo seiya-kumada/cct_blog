@@ -173,5 +173,5 @@ void resize_with_raw_access(const cv::Mat& src_image, cv::Mat& dst_image)
 
 void resize_with_opencv(const cv::Mat& src_image, cv::Mat& dst_image)
 {
-    cv::resize(src_image, dst_image, dst_image.size());
+    cv::resize(src_image, dst_image, dst_image.size(), CV_INTER_LINEAR);
 }

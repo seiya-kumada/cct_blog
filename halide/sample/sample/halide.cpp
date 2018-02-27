@@ -83,12 +83,15 @@ int blur_with_halide(const std::string& src_path, int dst_cols, int dst_rows, co
 
     
     //_/_/_/ run
-    
-    auto start = std::chrono::system_clock::now();
-    Halide::Buffer<uint8_t> output = dst_image.realize(input.width(), input.height(), input.channels());
-    auto end = std::chrono::system_clock::now();
-    std::cout << boost::format("halide access: %1% msec\n") % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    
+
+    Halide::Buffer<uint8_t> output {input.width(), input.height(), input.channels()};
+    for (auto i = 0; i < 10; ++i)
+    {
+        auto start = std::chrono::system_clock::now();
+        dst_image.realize(output);
+        auto end = std::chrono::system_clock::now();
+        std::cout << boost::format("halide access[%1%]: %2% msec\n") % i % std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    }
     //_/_/_/ save it
     
     Halide::Tools::save(output, dst_path);
@@ -146,13 +149,6 @@ int resize_with_halide(const std::string& src_path, int dst_cols, int dst_rows, 
     auto x_vector_size = 64;
     dst_image.compute_root();
     dst_image.tile(i, j, i_inner, j_inner, x_vector_size, 4).vectorize(i_inner, 16).parallel(j);
-
-//    Halide::Var i_inner, j_inner, i_outer, j_outer, tile_index;
-//    auto x_vector_size = 64;
-//    dst_image.compute_root();
-//    dst_image.tile(i, j, i_outer, j_outer, i_inner, j_inner, x_vector_size, 4);
-//    dst_image.fuse(i_outer, j_outer, tile_index);
-//    dst_image.parallel(tile_index);
 
     //_/_/_/ run
     
