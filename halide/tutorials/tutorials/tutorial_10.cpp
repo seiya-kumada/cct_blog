@@ -9,7 +9,6 @@
 #include "tutorial_10.hpp"
 #include <Halide.h>
 
-// これはライブラリを作成する必要あるので後回し。
 int tutorial_10()
 {
     Halide::Func brigher {};
@@ -24,7 +23,8 @@ int tutorial_10()
     
     brigher.vectorize(x, 16).parallel(y);
     
-    brigher.compile_to_static_library("lesson_10_halide", {input, offset}, "brigher");
+    const auto lib_path = "/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide";
+    brigher.compile_to_static_library(lib_path, {input, offset}, "brighter");
     
     return 1;
 }

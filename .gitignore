@@ -52,3 +52,6 @@ dropout/dataset/*
 dropout/results/*
 dropout/src/__pycache__/*
 halide/sample_2/sample_2.xcodeproj/xcuserdata/*
+halide/sample_3/exe
+halide/sample_3/run
+halide/sample_3/sample_3.xcodeproj/xcuserdata/
