@@ -26,14 +26,16 @@ int resize_with_halide()
     src_image = Halide::BoundaryConditions::repeat_edge(input);
     
     //_/_/_/ describe algorithm
-    Halide::Param<int> src_rows {};
-    Halide::Param<int> src_cols {};
-    Halide::Param<int> dst_rows {};
-    Halide::Param<int> dst_cols {};
+    Halide::Param<float> src_rows {};
+    Halide::Param<float> src_cols {};
+    Halide::Param<float> dst_rows {};
+    Halide::Param<float> dst_cols {};
     
-    const float sc = 500.0f/4999;//static_cast<float>(src_cols.get()) / dst_cols.get();
-    const float sr = 350.0f/3499;//static_cast<float>(src_rows.get()) / dst_rows.get();
-    
+//    const float sc = 500.0f/4999;//static_cast<float>(src_cols.get()) / dst_cols.get();
+//    const float sr = 350.0f/3499;//static_cast<float>(src_rows.get()) / dst_rows.get();
+    const auto sc = src_cols / dst_cols;
+    const auto sr = src_rows / dst_rows;
+
     Halide::Var i {};
     Halide::Var j {};
     Halide::Var c {};
