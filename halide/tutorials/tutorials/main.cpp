@@ -5,7 +5,7 @@
 //  Created by 熊田聖也 on 2018/01/15.
 //  Copyright © 2018年 熊田聖也. All rights reserved.
 //
-
+//  halideのtutorial
 
 #include "tutorial_10_2.hpp"
 #include <iostream>

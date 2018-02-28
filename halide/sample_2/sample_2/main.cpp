@@ -5,6 +5,7 @@
 //  Created by 熊田聖也 on 2018/02/25.
 //  Copyright © 2018年 熊田聖也. All rights reserved.
 //
+//  ダウンロードしたコードで検証
 
 #include <Halide.h>
 using namespace Halide;

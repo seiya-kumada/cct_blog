@@ -5,6 +5,7 @@
 //  Created by 熊田聖也 on 2018/02/11.
 //  Copyright © 2018年 熊田聖也. All rights reserved.
 //
+// 自作フィルタで検証
 
 #include <iostream>
 #include <string>

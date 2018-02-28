@@ -31,8 +31,8 @@ int resize_with_halide()
     Halide::Param<int> dst_rows {};
     Halide::Param<int> dst_cols {};
     
-    const float sc = static_cast<float>(src_cols.get()) / dst_cols.get();
-    const float sr = static_cast<float>(src_rows.get()) / dst_rows.get();
+    const float sc = 500.0f/4999;//static_cast<float>(src_cols.get()) / dst_cols.get();
+    const float sr = 350.0f/3499;//static_cast<float>(src_rows.get()) / dst_rows.get();
     
     Halide::Var i {};
     Halide::Var j {};
@@ -58,19 +58,19 @@ int resize_with_halide()
     const auto& src_pixel2 = src_image(ci0, cj1, c);
     const auto& src_pixel3 = src_image(ci1, cj1, c);
 
-    Halide::Func dst_image {};
-    dst_image(i, j, c) = Halide::saturating_cast<uint8_t>(c0 * src_pixel0 + c1 * src_pixel1 + c2 * src_pixel2 + c3 * src_pixel3);
+    Halide::Func resize {};
+    resize(i, j, c) = Halide::saturating_cast<uint8_t>(c0 * src_pixel0 + c1 * src_pixel1 + c2 * src_pixel2 + c3 * src_pixel3);
 
     //_/_/_/ describe scheduling
     
     Halide::Var i_inner, j_inner;
     auto x_vector_size = 64;
-    dst_image.compute_root();
-    dst_image.tile(i, j, i_inner, j_inner, x_vector_size, 4).vectorize(i_inner, 16).parallel(j);
+    resize.compute_root();
+    resize.tile(i, j, i_inner, j_inner, x_vector_size, 4).vectorize(i_inner, 16).parallel(j);
 
     //_/_/_/ save a static library
-    const auto path = "/Users/uu103907/Projects/cct_blog/halide/sample_3/sample_3/resize";
-    dst_image.compile_to_static_library(
+    const auto path = "/Users/kumada/Projects/cct_blog/halide/sample_4/sample_4/resize";
+    resize.compile_to_static_library(
         path,
         {input, src_rows, src_cols, dst_rows, dst_cols},
         "resize");

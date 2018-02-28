@@ -315,13 +315,14 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/halide/lib,
 					/usr/local/lib,
+					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
-					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					/Users/kumada/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -342,13 +343,14 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/halide/lib,
 					/usr/local/lib,
+					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
-					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					/Users/kumada/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
