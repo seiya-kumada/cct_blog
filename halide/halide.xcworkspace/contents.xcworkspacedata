@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:resize_using_halide_static_library/resize_using_halide_static_library.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:make_halide_static_library_for_resize/make_halide_static_library_for_resize.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:resize/resize.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:sample_4/sample_4.xcodeproj">
    </FileRef>
    <FileRef

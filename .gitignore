@@ -62,3 +62,12 @@ halide/sample_4/sample_4/resize.a
 halide/sample_4/sample_4/resize.h
 halide/sample_4/exe
 halide/sample_4/run
+halide/resize_using_halide_static_library/resize_using_halide_static_library/resize.a
+halide/resize_using_halide_static_library/resize_using_halide_static_library/resize.h
+halide/resize_using_halide_static_library/run
+halide/resize/run 
+halide/resize_using_halide_static_library/exe 
+halide/resize_using_halide_static_library/resize_using_halide_static_library.xcodeproj/xcuserdata/
+halide/resize/exe 
+halide/resize/resize.xcodeproj/xcuserdata/
+halide/make_halide_static_library_for_resize/make_halide_static_library_for_resize.xcodeproj/xcuserdata/
