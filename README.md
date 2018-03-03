@@ -1,5 +1,4 @@
 # cct_blog
-sources for Orizuru Blog 
 CCT Orizuru ブログのために実装したソースコードである。
  
 ## chainer
@@ -25,6 +24,15 @@ CCT Orizuru ブログのために実装したソースコードである。
 
 ### sample_4
   上で作成した静的ライブラリを使用する。
+
+### resize
+  ブログ用コード（速度比較用）
+
+### make_halide_static_library_for_resize
+  ブログ用コード（静的ライブラリ作成用）
+
+### resize_using_halide_static_library
+  ブログ用コード（静的ライブラリを用いたもの）
 
 ## dropout
   
