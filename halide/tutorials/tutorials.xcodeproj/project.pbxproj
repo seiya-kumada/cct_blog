@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		885A5608201C6304004732CA /* tutorial_05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 885A5606201C6304004732CA /* tutorial_05.cpp */; };
+		8870A337205D347600F4F76F /* tutorial_13.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8870A335205D347600F4F76F /* tutorial_13.cpp */; };
 		888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 888A7B89202734C70099D36A /* tutorial_09.cpp */; };
 		889249F5200CDFA700346BFF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889249F4200CDFA700346BFF /* main.cpp */; };
 		889249FD200CE09500346BFF /* tutorial_01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889249FB200CE09500346BFF /* tutorial_01.cpp */; };
@@ -37,6 +38,8 @@
 /* Begin PBXFileReference section */
 		885A5606201C6304004732CA /* tutorial_05.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_05.cpp; sourceTree = "<group>"; };
 		885A5607201C6304004732CA /* tutorial_05.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_05.hpp; sourceTree = "<group>"; };
+		8870A335205D347600F4F76F /* tutorial_13.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_13.cpp; sourceTree = "<group>"; };
+		8870A336205D347600F4F76F /* tutorial_13.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_13.hpp; sourceTree = "<group>"; };
 		888A7B89202734C70099D36A /* tutorial_09.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_09.cpp; sourceTree = "<group>"; };
 		888A7B8A202734C70099D36A /* tutorial_09.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_09.hpp; sourceTree = "<group>"; };
 		889249F1200CDFA700346BFF /* tutorials */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tutorials; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +121,8 @@
 				889874E7202F21BD006CE3BD /* tutorial_10_2.hpp */,
 				889874E9202F2516006CE3BD /* tutorial_12.cpp */,
 				889874EA202F2516006CE3BD /* tutorial_12.hpp */,
+				8870A335205D347600F4F76F /* tutorial_13.cpp */,
+				8870A336205D347600F4F76F /* tutorial_13.hpp */,
 			);
 			path = tutorials;
 			sourceTree = "<group>";
@@ -188,6 +193,7 @@
 				88924A00201461F900346BFF /* tutorial_02.cpp in Sources */,
 				88924A062014745400346BFF /* tutorial_04.cpp in Sources */,
 				889874E8202F21BD006CE3BD /* tutorial_10_2.cpp in Sources */,
+				8870A337205D347600F4F76F /* tutorial_13.cpp in Sources */,
 				888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */,
 				889249FD200CE09500346BFF /* tutorial_01.cpp in Sources */,
 				88924A0320146CC600346BFF /* tutorial_03.cpp in Sources */,

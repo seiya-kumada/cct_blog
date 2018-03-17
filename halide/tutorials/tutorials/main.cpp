@@ -7,9 +7,9 @@
 //
 //  halideのtutorial
 
-#include "tutorial_10_2.hpp"
+#include "tutorial_13.hpp"
 #include <iostream>
 
 int main(int argc, const char * argv[]) {
-    return tutorial_10_2();
+    return tutorial_13();
 }
