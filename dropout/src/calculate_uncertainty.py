@@ -51,6 +51,6 @@ if __name__ == '__main__':
     xs = np.load(XS_PATH)
     ys = np.load(YS_PATH)
     plt.scatter(xs, ys, label='training data')
-
+    plt.ylim(0, 0.45)
     plt.legend(loc='lower center')
     plt.show()

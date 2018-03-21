@@ -22,12 +22,15 @@ class MyNet(chainer.Chain):
 
     def __init__(self, d_in, h, d_out, dropout_ratio=0.5, train=True):
 
-        W = initializers.HeNormal(1 / np.sqrt(2))
+        # W = initializers.HeNormal(1 / np.sqrt(2))
+        W = initializers.HeNormal(1 / 10)
         bias = initializers.Zero()
         super(MyNet, self).__init__()
         with self.init_scope():
             self.linear1 = L.Linear(d_in, h,  initialW=W, initial_bias=bias)
-            self.linear2 = L.Linear(h, d_out, initialW=W, initial_bias=bias)
+            self.linear2 = L.Linear(h, h, initialW=W, initial_bias=bias)
+            self.linear3 = L.Linear(h, h, initialW=W, initial_bias=bias)
+            self.linear4 = L.Linear(h, d_out, initialW=W, initial_bias=bias)
             self.train = train
             self.dropout_ratio = dropout_ratio
 
@@ -35,9 +38,18 @@ class MyNet(chainer.Chain):
         h = F.dropout(x, ratio=self.dropout_ratio)
         h = self.linear1(x)
         h = F.relu(h)
+
         h = F.dropout(h, ratio=self.dropout_ratio)
         h = self.linear2(h)
-        h = F.sigmoid(h)
+        h = F.relu(h)
+
+        h = F.dropout(h, ratio=self.dropout_ratio)
+        h = self.linear3(h)
+        h = F.relu(h)
+
+        h = F.dropout(h, ratio=self.dropout_ratio)
+        h = self.linear4(h)
+
         return h
 
 
@@ -65,7 +77,7 @@ def train():
 
     # for training
     train_dataset = D.TupleDataset(xs, ys)
-    train_iter = Iter.SerialIterator(train_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    train_iter = Iter.SerialIterator(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     # _/_/_/ create a network
 
@@ -75,8 +87,8 @@ def train():
     # _/_/_/ create an optimizer
 
     # optimizer = P.SGD(lr=LEARNING_RATE)
-    # optimizer = P.Adam()
-    optimizer = P.RMSprop(lr=LEARNING_RATE)
+    optimizer = P.Adam()
+    # ptimizer = P.RMSprop(lr=LEARNING_RATE)
 
     # _/_/_/ connect the optimizer with the network
 
