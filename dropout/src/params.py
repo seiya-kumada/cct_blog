@@ -9,7 +9,7 @@ SHIFT = 1.7
 X_MIN = -7
 X_MAX = 7
 NOISE_STDDEV = 0.01
-SAMPLE_SIZE = 60
+SAMPLE_SIZE = 20
 XS_PATH = '../dataset/xs.npy'
 YS_PATH = '../dataset/ys.npy'
 

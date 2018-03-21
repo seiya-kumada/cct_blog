@@ -19,7 +19,7 @@ def calculate_statistics(predictions):
 if __name__ == '__main__':
     # load the trained model
     model_path = os.path.join(OUTPUT_DIR_PATH, MODEL_NAME)
-    model = MyNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
+    model = MyNet(LENGTH_SCALE, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
     chainer.serializers.load_npz(model_path, model)
 
     # predict values as if we were in training time
@@ -35,6 +35,16 @@ if __name__ == '__main__':
     means, vars = calculate_statistics(predictions)
 
     # draw uncertainty
+    upper_bounds_3 = [mean + 3 * np.sqrt(var) for (mean, var) in zip(means, vars)]
+    lower_bounds_3 = [mean - 3 * np.sqrt(var) for (mean, var) in zip(means, vars)]
+    plt.fill_between(xs.reshape(-1, ), lower_bounds_3, upper_bounds_3,  alpha=0.5, label='[-3σ,+3σ]')
+
+    # draw uncertainty
+    upper_bounds_2 = [mean + 2 * np.sqrt(var) for (mean, var) in zip(means, vars)]
+    lower_bounds_2 = [mean - 2 * np.sqrt(var) for (mean, var) in zip(means, vars)]
+    plt.fill_between(xs.reshape(-1, ), lower_bounds_2, upper_bounds_2,  alpha=0.5, label='[-2σ,+2σ]')
+
+    # draw uncertainty
     upper_bounds = [mean + np.sqrt(var) for (mean, var) in zip(means, vars)]
     lower_bounds = [mean - np.sqrt(var) for (mean, var) in zip(means, vars)]
     plt.fill_between(xs.reshape(-1, ), lower_bounds, upper_bounds,  alpha=0.5, label='[-σ,+σ]')
@@ -45,7 +55,7 @@ if __name__ == '__main__':
     # draw original curve
     xs = np.linspace(X_MIN, X_MAX, SAMPLING_SIZE)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
-    plt.plot(xs, ys, label='original')
+    plt.plot(xs, ys, '--', label='original')
 
     # draw training dataset
     xs = np.load(XS_PATH)

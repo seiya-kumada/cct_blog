@@ -20,10 +20,9 @@ np.random.seed(1)
 
 class MyNet(chainer.Chain):
 
-    def __init__(self, d_in, h, d_out, dropout_ratio=0.5, train=True):
+    def __init__(self, length_scale, d_in, h, d_out, dropout_ratio=0.5, train=True):
 
-        # W = initializers.HeNormal(1 / np.sqrt(2))
-        W = initializers.HeNormal(1 / 10)
+        W = initializers.HeNormal(1 / length_scale)
         bias = initializers.Zero()
         super(MyNet, self).__init__()
         with self.init_scope():
@@ -77,11 +76,11 @@ def train():
 
     # for training
     train_dataset = D.TupleDataset(xs, ys)
-    train_iter = Iter.SerialIterator(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    train_iter = Iter.SerialIterator(train_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # _/_/_/ create a network
 
-    model = MyNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
+    model = MyNet(LENGTH_SCALE, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
     loss_calculator = LossCalculator(model)
 
     # _/_/_/ create an optimizer

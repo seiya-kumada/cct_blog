@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     # load the trained model
     model_path = os.path.join(OUTPUT_DIR_PATH, MODEL_NAME)
-    model = MyNet(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
+    model = MyNet(LENGTH_SCALE, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, DROPOUT_RATIO)
     chainer.serializers.load_npz(model_path, model)
 
     sample_1(model)
