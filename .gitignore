@@ -71,3 +71,5 @@ halide/resize_using_halide_static_library/resize_using_halide_static_library.xco
 halide/resize/exe 
 halide/resize/resize.xcodeproj/xcuserdata/
 halide/make_halide_static_library_for_resize/make_halide_static_library_for_resize.xcodeproj/xcuserdata/
+lstm/.python-version
+lstm/chainer/nstep_lstm/params.pyc 
