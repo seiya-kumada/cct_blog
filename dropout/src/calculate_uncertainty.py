@@ -37,17 +37,17 @@ if __name__ == '__main__':
     # draw uncertainty
     upper_bounds_3 = [mean + 3 * np.sqrt(var) for (mean, var) in zip(means, vars)]
     lower_bounds_3 = [mean - 3 * np.sqrt(var) for (mean, var) in zip(means, vars)]
-    plt.fill_between(xs.reshape(-1, ), lower_bounds_3, upper_bounds_3,  alpha=0.5, label='[-3σ,+3σ]')
+    plt.fill_between(xs.reshape(-1, ), lower_bounds_3, upper_bounds_3, alpha=0.3, label='[-3σ,+3σ]', facecolor='red')
 
     # draw uncertainty
     upper_bounds_2 = [mean + 2 * np.sqrt(var) for (mean, var) in zip(means, vars)]
     lower_bounds_2 = [mean - 2 * np.sqrt(var) for (mean, var) in zip(means, vars)]
-    plt.fill_between(xs.reshape(-1, ), lower_bounds_2, upper_bounds_2,  alpha=0.5, label='[-2σ,+2σ]')
+    plt.fill_between(xs.reshape(-1, ), lower_bounds_2, upper_bounds_2, alpha=0.3, label='[-2σ,+2σ]', facecolor='yellow')
 
     # draw uncertainty
     upper_bounds = [mean + np.sqrt(var) for (mean, var) in zip(means, vars)]
     lower_bounds = [mean - np.sqrt(var) for (mean, var) in zip(means, vars)]
-    plt.fill_between(xs.reshape(-1, ), lower_bounds, upper_bounds,  alpha=0.5, label='[-σ,+σ]')
+    plt.fill_between(xs.reshape(-1, ), lower_bounds, upper_bounds, alpha=0.3, label='[-σ,+σ]', facecolor='green')
 
     # draw means
     plt.plot(xs, means, label='means')
