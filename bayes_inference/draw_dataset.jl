@@ -2,18 +2,18 @@
 
 import PyPlot
 include("DatasetMaker.jl")
+include("Params.jl")
 import DatasetMaker
 
-N_SAMPLES = 20
-RANGE = 4
 
-xs, ys = DatasetMaker.make_observed_dataset(RANGE, N_SAMPLES)
+xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
 PyPlot.scatter(xs, ys, label="observed dataset")
 
 # also draw the original curve
-oxs = linspace(0, RANGE, 100)
+oxs = linspace(0, Params.RANGE, Params.N_STEPS)
 oys = DatasetMaker.original_curve.(oxs)
 PyPlot.plot(oxs, oys, label="original curve")
+PyPlot.legend(loc="best")
 PyPlot.show()
 
