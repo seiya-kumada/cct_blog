@@ -40,13 +40,13 @@ end
 
 
 function main()
-    # observed dataset
+    # generate observed dataset
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
     # extend xs(vector) to matrix 
     xs_matrix = Utils.make_input_matrix(xs)
 
-    # solution by bayesian inference 
+    # solve a problem by bayesian inference 
     s, w = Utils.make_solution(xs_matrix, ys)
 
     # predict curve for oxs

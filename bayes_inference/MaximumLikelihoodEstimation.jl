@@ -17,10 +17,10 @@ function main()
     # extend xs(vector) to matrix
     xs_matrix = Utils.make_input_matrix(xs)
 
-    # solution of maximum likelihood estimation
+    # solve a problem by maximum likelihood estimation
     w = inv(xs_matrix' * xs_matrix) * xs_matrix' * ys
 
-    # calculate inverse of lambda
+    # calculate sigma
     sigma = sqrt(Utils.calculate_inv_lambda(w, xs, ys))
     println("σ: $sigma")
 

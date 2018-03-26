@@ -10,13 +10,13 @@ import Params
 
 
 function main()
-    # observed dataset
+    # generate observed dataset
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
     # extend xs(vector) to matrix
     xs_matrix = Utils.make_input_matrix(xs)
 
-    # solution by map estimation
+    # solve a problem by map estimation
     s, w = Utils.make_solution(xs_matrix, ys)
 
     # predict curve for oxs
