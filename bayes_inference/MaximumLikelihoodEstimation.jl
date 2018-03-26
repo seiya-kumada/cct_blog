@@ -8,39 +8,33 @@ import DatasetMaker
 import Utils
 import Params
 
-xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
-input_matrix = Utils.make_input_matrix(xs)
+function main()
 
-# solution of maximum likelihood estimation
-w = inv(input_matrix' * input_matrix) * input_matrix' * ys
+    # observed dataset
+    xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
-# calculate inverse of lambda
-sigma = sqrt(Utils.calculate_inv_lambda(w, xs, ys))
-println("σ: $sigma")
+    # extend xs(vector) to matrix
+    xs_matrix = Utils.make_input_matrix(xs)
 
-# plot predictive curve
-oxs = linspace(0, Params.RANGE, Params.N_STEPS)
-oxs_matrix = Utils.make_input_matrix(oxs)
-#@show size(oxs_matrix)
+    # solution of maximum likelihood estimation
+    w = inv(xs_matrix' * xs_matrix) * xs_matrix' * ys
 
-oys = oxs_matrix * w
-#@show size(oys)
+    # calculate inverse of lambda
+    sigma = sqrt(Utils.calculate_inv_lambda(w, xs, ys))
+    println("σ: $sigma")
 
-PyPlot.title("Maximum Likelihood Estimation")
-PyPlot.scatter(xs, ys, label="observed dataset")
-oys_ground_truth = DatasetMaker.original_curve.(oxs)
+    # predict curve for oxs
+    oxs = linspace(0, Params.RANGE, Params.N_STEPS)
+    oxs_matrix = Utils.make_input_matrix(oxs)
+    oys = oxs_matrix * w
 
-
-upper_bounds = [v + sigma for v in oys]
-lower_bounds = [v - sigma for v in oys]
-
-PyPlot.plot(oxs, oys, label="predictive curve")
-PyPlot.fill_between(oxs, lower_bounds, upper_bounds, alpha=0.3, label="[-σ,+σ]", facecolor="green")
+    # make original curve
+    oys_ground_truth = DatasetMaker.original_curve.(oxs)
+   
+    # draw curves
+    Utils.draw_curves("Maximum Likelihood Estimation", oxs, oys, oys_ground_truth, xs, ys, sigma)
+end
 
 
-
-PyPlot.plot(oxs, oys_ground_truth, label="original curve")
-PyPlot.legend(loc="best")
-PyPlot.show()
-
+main()
