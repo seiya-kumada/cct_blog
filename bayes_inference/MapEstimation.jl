@@ -32,7 +32,7 @@ function main()
     println("σ: $sigma")
 
     # draw curves
-    Utils.draw_curves("MAP Estimation", oxs, oys, oys_ground_truth, xs, ys, sigma)
+    Utils.draw_curves("MAP Estimation", oxs, oys, oys_ground_truth, xs, ys, sigma, "./map.png")
 end
 
 

@@ -33,7 +33,7 @@ function main()
     oys_ground_truth = DatasetMaker.original_curve.(oxs)
    
     # draw curves
-    Utils.draw_curves("Maximum Likelihood Estimation", oxs, oys, oys_ground_truth, xs, ys, sigma)
+    Utils.draw_curves("Maximum Likelihood Estimation", oxs, oys, oys_ground_truth, xs, ys, sigma, "./mle.png")
 end
 
 

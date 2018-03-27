@@ -49,7 +49,7 @@ function draw_uncertainty(oxs, oys, sigma)
 end
 
 
-function draw_curves(title, oxs, oys, oys_ground_truth, xs, ys, sigma)
+function draw_curves(title, oxs, oys, oys_ground_truth, xs, ys, sigma, path)
     PyPlot.title(title)
 
     # draw observed dataset
@@ -63,8 +63,17 @@ function draw_curves(title, oxs, oys, oys_ground_truth, xs, ys, sigma)
     
     PyPlot.plot(oxs, oys_ground_truth, label="original curve")
     PyPlot.legend(loc="best")
-    PyPlot.savefig("./mle.png")
+    PyPlot.savefig(path)
     PyPlot.show()
 end
+
+
+function calculate_model_evidence(xs, ys, w, s)
+    a = Params.LAMBDA * dot(ys, ys)
+    b = -Params.N_SAMPLES * log(Params.LAMBDA / 2pi) - Params.M * log(Params.ALPHA)
+    c = -w' * inv(s) * w -logdet(s)
+    -0.5 * (a + b + c)
+end
+
 
 end
