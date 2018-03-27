@@ -7,9 +7,9 @@
 //
 //  halideのtutorial
 
-#include "tutorial_13.hpp"
-#include <iostream>
+#include <Halide.h>
 
-int main(int argc, const char * argv[]) {
-    return tutorial_13();
+
+int main(int argc, char * argv[]) {
+    return  Halide::Internal::generate_filter_main(argc, argv, std::cerr);
 }

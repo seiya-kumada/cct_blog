@@ -23,7 +23,7 @@ int tutorial_10()
     
     brigher.vectorize(x, 16).parallel(y);
     
-    const auto lib_path = "/Users/kumada/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide";
+    const auto lib_path = "/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide";
     brigher.compile_to_static_library(lib_path, {input, offset}, "brighter");
     
     return 1;

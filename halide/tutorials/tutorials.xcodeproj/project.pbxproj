@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7CA62D25206A2D5200D43A54 /* tutorial_14.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA62D23206A2D5200D43A54 /* tutorial_14.cpp */; };
+		7CA62D28206A2F4A00D43A54 /* tutorial_10_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA62D26206A2F4900D43A54 /* tutorial_10_2.cpp */; };
+		7CA62D2B206A38F400D43A54 /* tutorial_15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CA62D29206A38F400D43A54 /* tutorial_15.cpp */; };
 		885A5608201C6304004732CA /* tutorial_05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 885A5606201C6304004732CA /* tutorial_05.cpp */; };
 		8870A337205D347600F4F76F /* tutorial_13.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8870A335205D347600F4F76F /* tutorial_13.cpp */; };
 		888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 888A7B89202734C70099D36A /* tutorial_09.cpp */; };
@@ -16,7 +19,6 @@
 		88924A0320146CC600346BFF /* tutorial_03.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88924A0120146CC600346BFF /* tutorial_03.cpp */; };
 		88924A062014745400346BFF /* tutorial_04.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88924A042014745400346BFF /* tutorial_04.cpp */; };
 		889874E5202F1C19006CE3BD /* tutorial_10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889874E3202F1C19006CE3BD /* tutorial_10.cpp */; };
-		889874E8202F21BD006CE3BD /* tutorial_10_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889874E6202F21BD006CE3BD /* tutorial_10_2.cpp */; };
 		889874EB202F2516006CE3BD /* tutorial_12.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889874E9202F2516006CE3BD /* tutorial_12.cpp */; };
 		889DE24B20233D2500B1A372 /* tutorial_06.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889DE24920233D2500B1A372 /* tutorial_06.cpp */; };
 		889DE24E2023445000B1A372 /* tutorial_07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 889DE24C2023445000B1A372 /* tutorial_07.cpp */; };
@@ -36,6 +38,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7CA62D23206A2D5200D43A54 /* tutorial_14.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_14.cpp; sourceTree = "<group>"; };
+		7CA62D24206A2D5200D43A54 /* tutorial_14.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_14.hpp; sourceTree = "<group>"; };
+		7CA62D26206A2F4900D43A54 /* tutorial_10_2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_10_2.cpp; sourceTree = "<group>"; };
+		7CA62D27206A2F4900D43A54 /* tutorial_10_2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tutorial_10_2.hpp; sourceTree = "<group>"; };
+		7CA62D29206A38F400D43A54 /* tutorial_15.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_15.cpp; sourceTree = "<group>"; };
+		7CA62D2A206A38F400D43A54 /* tutorial_15.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_15.hpp; sourceTree = "<group>"; };
 		885A5606201C6304004732CA /* tutorial_05.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_05.cpp; sourceTree = "<group>"; };
 		885A5607201C6304004732CA /* tutorial_05.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_05.hpp; sourceTree = "<group>"; };
 		8870A335205D347600F4F76F /* tutorial_13.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_13.cpp; sourceTree = "<group>"; };
@@ -54,8 +62,6 @@
 		88924A052014745400346BFF /* tutorial_04.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_04.hpp; sourceTree = "<group>"; };
 		889874E3202F1C19006CE3BD /* tutorial_10.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_10.cpp; sourceTree = "<group>"; };
 		889874E4202F1C19006CE3BD /* tutorial_10.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_10.hpp; sourceTree = "<group>"; };
-		889874E6202F21BD006CE3BD /* tutorial_10_2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_10_2.cpp; sourceTree = "<group>"; };
-		889874E7202F21BD006CE3BD /* tutorial_10_2.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_10_2.hpp; sourceTree = "<group>"; };
 		889874E9202F2516006CE3BD /* tutorial_12.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_12.cpp; sourceTree = "<group>"; };
 		889874EA202F2516006CE3BD /* tutorial_12.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tutorial_12.hpp; sourceTree = "<group>"; };
 		889DE24920233D2500B1A372 /* tutorial_06.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tutorial_06.cpp; sourceTree = "<group>"; };
@@ -96,6 +102,8 @@
 		889249F3200CDFA700346BFF /* tutorials */ = {
 			isa = PBXGroup;
 			children = (
+				7CA62D26206A2F4900D43A54 /* tutorial_10_2.cpp */,
+				7CA62D27206A2F4900D43A54 /* tutorial_10_2.hpp */,
 				889249F4200CDFA700346BFF /* main.cpp */,
 				889249FB200CE09500346BFF /* tutorial_01.cpp */,
 				889249FC200CE09500346BFF /* tutorial_01.hpp */,
@@ -117,12 +125,14 @@
 				888A7B8A202734C70099D36A /* tutorial_09.hpp */,
 				889874E3202F1C19006CE3BD /* tutorial_10.cpp */,
 				889874E4202F1C19006CE3BD /* tutorial_10.hpp */,
-				889874E6202F21BD006CE3BD /* tutorial_10_2.cpp */,
-				889874E7202F21BD006CE3BD /* tutorial_10_2.hpp */,
 				889874E9202F2516006CE3BD /* tutorial_12.cpp */,
 				889874EA202F2516006CE3BD /* tutorial_12.hpp */,
 				8870A335205D347600F4F76F /* tutorial_13.cpp */,
 				8870A336205D347600F4F76F /* tutorial_13.hpp */,
+				7CA62D23206A2D5200D43A54 /* tutorial_14.cpp */,
+				7CA62D24206A2D5200D43A54 /* tutorial_14.hpp */,
+				7CA62D29206A38F400D43A54 /* tutorial_15.cpp */,
+				7CA62D2A206A38F400D43A54 /* tutorial_15.hpp */,
 			);
 			path = tutorials;
 			sourceTree = "<group>";
@@ -185,6 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				885A5608201C6304004732CA /* tutorial_05.cpp in Sources */,
+				7CA62D28206A2F4A00D43A54 /* tutorial_10_2.cpp in Sources */,
 				889DE24B20233D2500B1A372 /* tutorial_06.cpp in Sources */,
 				889874EB202F2516006CE3BD /* tutorial_12.cpp in Sources */,
 				889DE24E2023445000B1A372 /* tutorial_07.cpp in Sources */,
@@ -192,7 +203,8 @@
 				889DE2512025CE9A00B1A372 /* tutorial_08.cpp in Sources */,
 				88924A00201461F900346BFF /* tutorial_02.cpp in Sources */,
 				88924A062014745400346BFF /* tutorial_04.cpp in Sources */,
-				889874E8202F21BD006CE3BD /* tutorial_10_2.cpp in Sources */,
+				7CA62D2B206A38F400D43A54 /* tutorial_15.cpp in Sources */,
+				7CA62D25206A2D5200D43A54 /* tutorial_14.cpp in Sources */,
 				8870A337205D347600F4F76F /* tutorial_13.cpp in Sources */,
 				888A7B8B202734C70099D36A /* tutorial_09.cpp in Sources */,
 				889249FD200CE09500346BFF /* tutorial_01.cpp in Sources */,
@@ -321,14 +333,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/halide/lib,
 					/usr/local/lib,
-					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
-					/Users/kumada/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -349,14 +360,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/halide/lib,
 					/usr/local/lib,
-					/opt/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
-					/Users/kumada/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
