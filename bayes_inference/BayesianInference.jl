@@ -44,21 +44,21 @@ function main()
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
     # extend xs(vector) to matrix 
-    xs_matrix = Utils.make_input_matrix(xs)
+    xs_matrix = Utils.make_input_matrix(xs, Params.M)
 
     # solve a problem by bayesian inference 
-    s, w = Utils.make_solution(xs_matrix, ys)
+    s, w = Utils.make_solution(xs_matrix, ys, Params.M)
 
     # predict curve for oxs
     oxs = linspace(0, Params.RANGE, Params.N_STEPS)
-    oxs_matrix = Utils.make_input_matrix(oxs)
+    oxs_matrix = Utils.make_input_matrix(oxs, Params.M)
     oys = oxs_matrix * w
 
     # make original curve for oxs
     oys_ground_truth = DatasetMaker.original_curve.(oxs)
 
     # calculate sigma by bayesian inference
-    sigmas = sqrt.(Utils.calculate_inv_lambda_in_bayesian(s, oxs))
+    sigmas = sqrt.(Utils.calculate_inv_lambda_in_bayesian(s, oxs, Params.M))
 
     # draw curves
     draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
