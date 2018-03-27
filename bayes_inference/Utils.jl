@@ -71,6 +71,7 @@ end
 function calculate_model_evidence(xs, ys, w, s, m)
     a = Params.LAMBDA * dot(ys, ys)
     b = -Params.N_SAMPLES * log(Params.LAMBDA / 2pi) - m * log(Params.ALPHA)
+    println("det(s): $(det(s))")
     c = -w' * inv(s) * w -logdet(s)
     -0.5 * (a + b + c)
 end
