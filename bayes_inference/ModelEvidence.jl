@@ -8,13 +8,14 @@ import DatasetMaker
 import Utils
 import Params
 
+MAX_DIM = 11
 
 function main()
     # generate observed dataset
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
 
     vs = []
-    for i in 1:13
+    for i in 1:MAX_DIM
         # M-dependence: extend xs(vector) to matrix 
         xs_matrix = Utils.make_input_matrix(xs, i)
 
@@ -27,10 +28,13 @@ function main()
     end
     
     PyPlot.title("Model Evidence")
-    xs = [i for i in 1:13] 
+    xs = [i for i in 1:MAX_DIM] 
     PyPlot.plot(xs, vs)
-    PyPlot.ylim(-100, 0)
+    PyPlot.xlim(3, 11)
+    PyPlot.ylim(-300, 0)
     PyPlot.savefig("model_evidence.png")
+    PyPlot.xlabel("dimension")
+    PyPlot.ylabel("model evidence")
     PyPlot.show()
 end
 

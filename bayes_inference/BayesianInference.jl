@@ -18,15 +18,15 @@ end
 
 function draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
     PyPlot.title("Bayesian Inference")
-    
+ 
+    # draw predictive curve
+    PyPlot.plot(oxs, oys, label="predictive curve", linestyle="dashed")
+   
     # draw original curve
     PyPlot.plot(oxs, oys_ground_truth, label="original curve")
     
     # draw observed dataset
     PyPlot.scatter(xs, ys, label="observed dataset")
-
-    # draw predictive curve
-    PyPlot.plot(oxs, oys, label="predictive curve")
 
     # draw uncertainties
     draw_uncertainty(oxs, oys, sigmas, 3, "red")

@@ -42,24 +42,26 @@ function make_solution(matrix, ys, m)
 end
 
 
-function draw_uncertainty(oxs, oys, sigma)
-    upper_bounds = [v + sigma for v in oys]
-    lower_bounds = [v - sigma for v in oys]
-    PyPlot.fill_between(oxs, lower_bounds, upper_bounds, alpha=0.3, label="[-σ,+σ]", facecolor="green")
+function draw_uncertainty(oxs, oys, sigma, n, color)
+    upper_bounds = [v + n * sigma for v in oys]
+    lower_bounds = [v - n * sigma for v in oys]
+    PyPlot.fill_between(oxs, lower_bounds, upper_bounds, alpha=0.3, label="[-$(n)σ,+$(n)σ]", facecolor=color)
 end
 
 
 function draw_curves(title, oxs, oys, oys_ground_truth, xs, ys, sigma, path)
-    PyPlot.title(title)
+    PyPlot.title(title * "(σ=$sigma)")
 
     # draw observed dataset
     PyPlot.scatter(xs, ys, label="observed dataset")
 
     # draw predictive curve
-    PyPlot.plot(oxs, oys, label="predictive curve")
+    PyPlot.plot(oxs, oys, label="predictive curve", linestyle="dashed")
     
     # draw uncertainty
-    draw_uncertainty(oxs, oys, sigma)
+    draw_uncertainty(oxs, oys, sigma, 3, "red")
+    draw_uncertainty(oxs, oys, sigma, 2, "yellow")
+    draw_uncertainty(oxs, oys, sigma, 1, "green")
     
     PyPlot.plot(oxs, oys_ground_truth, label="original curve")
     PyPlot.legend(loc="best")
@@ -71,7 +73,6 @@ end
 function calculate_model_evidence(xs, ys, w, s, m)
     a = Params.LAMBDA * dot(ys, ys)
     b = -Params.N_SAMPLES * log(Params.LAMBDA / 2pi) - m * log(Params.ALPHA)
-    println("det(s): $(det(s))")
     c = -w' * inv(s) * w -logdet(s)
     -0.5 * (a + b + c)
 end
