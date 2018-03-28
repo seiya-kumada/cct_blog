@@ -8,7 +8,7 @@
 
 #include "tutorial_15.hpp"
 #include <Halide.h>
-using namespace Halide;
+
 class MyFirstGenerator : public Halide::Generator<MyFirstGenerator>
 {
 public:
@@ -28,8 +28,4 @@ public:
 };
 
 HALIDE_REGISTER_GENERATOR(MyFirstGenerator, my_first_generator)
-//int tutorial_15(int argc, char * argv[])
-//{
-//    return Halide::Internal::generate_filter_main(argc, argv, std::cerr);
-//}
 

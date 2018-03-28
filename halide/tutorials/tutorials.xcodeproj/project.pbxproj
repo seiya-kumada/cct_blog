@@ -335,11 +335,13 @@
 					/usr/local/lib,
 				);
 				OTHER_LDFLAGS = (
+					"-fno-rtti",
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
 					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					"-ldl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -362,11 +364,13 @@
 					/usr/local/lib,
 				);
 				OTHER_LDFLAGS = (
+					"-fno-rtti",
 					"-lHalide",
 					"-lz",
 					"-ljpeg",
 					"-lpng",
 					/Users/uu103907/Projects/cct_blog/halide/tutorials/tutorials/lesson_10_halide.a,
+					"-ldl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

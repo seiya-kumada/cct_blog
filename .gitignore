@@ -74,3 +74,7 @@ halide/make_halide_static_library_for_resize/make_halide_static_library_for_resi
 lstm/.python-version
 lstm/chainer/nstep_lstm/params.pyc 
 *.png
+halide/tutorials/tutorials/my_first_generator.a
+halide/tutorials/tutorials/my_first_generator.h
+halide/tutorials/tutorials/lesson_15_generate
+halide/tutorials/tutorials/lesson_15_generate.dSYM/

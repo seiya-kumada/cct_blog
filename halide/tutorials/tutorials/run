@@ -1,0 +1,3 @@
+#!/bin/bash
+
+g++ tutorial_15.cpp main.cpp -g -std=c++11 -fno-rtti -I /usr/local/halide/include -I /usr/local/halide/tools/ -I /usr/local/include  -L /usr/local/halide/lib -L /usr/local/lib -lHalide -lz -ljpeg -lpng -o lesson_15_generate
