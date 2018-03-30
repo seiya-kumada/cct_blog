@@ -12,13 +12,13 @@ import random
 xp = np
 if GPU >= 0:
     xp = chainer.cuda.cupy
-    # always run the same calcuation
+    # always run the same calculation
     np.random.seed(SEED)
     print('use gpu')
 else:
     print('use cpu')
 
-# always run the same calcuation
+# always run the same calculation
 xp.random.seed(SEED)
 random.seed(SEED)
 

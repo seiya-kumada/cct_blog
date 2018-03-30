@@ -5,10 +5,11 @@
 //  Created by 熊田聖也 on 2018/01/15.
 //  Copyright © 2018年 熊田聖也. All rights reserved.
 //
+//  halideのtutorial
+
+#include <Halide.h>
 
 
-#include "tutorial_04.hpp"
-
-int main(int argc, const char * argv[]) {
-    return tutorial_04();
+int main(int argc, char * argv[]) {
+    return  Halide::Internal::generate_filter_main(argc, argv, std::cerr);
 }

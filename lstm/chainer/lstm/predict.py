@@ -7,13 +7,8 @@ import chainer
 import numpy as np
 import matplotlib.pyplot as plt
 import _pickle
+from params import *  # noqa
 
-VALUE = 5
-N_IN = 1
-N_HIDDEN = 200
-N_OUT = 1
-TOTAL_SIZE = 2000
-SEQUENCE_SIZE = 30
 PLOT_SIZE = 4 * SEQUENCE_SIZE
 
 
