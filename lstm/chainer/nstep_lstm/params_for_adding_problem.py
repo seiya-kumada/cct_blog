@@ -6,9 +6,6 @@ N_LAYERS = 1
 
 DROPOUT = 0.5
 
-# fibonacci数列を割る値
-VALUE = 5
-
 # 時系列データの全長
 TOTAL_SIZE = 10000
 
