@@ -63,4 +63,5 @@ if __name__ == '__main__':
     plt.scatter(xs, ys, label='training data')
     plt.ylim(0, 0.45)
     plt.legend(loc='lower center')
+    plt.savefig('../results/result.png')
     plt.show()
