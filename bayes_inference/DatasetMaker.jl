@@ -27,5 +27,12 @@ function make_observed_dataset(range, n_samples)
     return xs, ys
 end
 
+function save_dataset(xs, ys, path)
+    open(path, "w") do out
+        for (x, y) in zip(xs, ys)
+                println(out, x, " ", y)
+        end
+    end
+end
 
 end

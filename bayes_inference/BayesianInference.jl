@@ -42,6 +42,7 @@ end
 function main()
     # generate observed dataset
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
+    # DatasetMaker.save_dataset(xs, ys, "./dataset.txt")
 
     # extend xs(vector) to matrix 
     xs_matrix = Utils.make_input_matrix(xs, Params.M)
