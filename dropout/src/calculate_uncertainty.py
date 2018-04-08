@@ -50,12 +50,12 @@ if __name__ == '__main__':
     plt.fill_between(xs.reshape(-1, ), lower_bounds, upper_bounds, alpha=0.3, label='[-σ,+σ]', facecolor='green')
 
     # draw means
-    plt.plot(xs, means, label='means')
+    plt.plot(xs, means, '--', label='means')
 
     # draw original curve
     xs = np.linspace(X_MIN, X_MAX, SAMPLING_SIZE)
     ys = calculate_y(xs, MEAN, STDDEV, SHIFT)
-    plt.plot(xs, ys, '--', label='original')
+    plt.plot(xs, ys, label='original')
 
     # draw training dataset
     xs = np.load(XS_PATH)

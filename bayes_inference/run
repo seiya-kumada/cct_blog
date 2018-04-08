@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./MaximumLikelihoodEstimation.jl
+./MapEstimation.jl
+./BayesianInference.jl

@@ -7,7 +7,7 @@ import Distributions
 import Params
 
 # the same results are always obtained
-srand(1)
+srand(Params.SEED)
 
 # original curve
 function original_curve(x)

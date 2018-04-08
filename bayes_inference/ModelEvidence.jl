@@ -8,7 +8,7 @@ import DatasetMaker
 import Utils
 import Params
 
-MAX_DIM = 11
+MAX_DIM = 15 
 
 function main()
     # generate observed dataset
@@ -22,21 +22,25 @@ function main()
         # solve a problem by bayesian inference 
         s, w = Utils.make_solution(xs_matrix, ys, i)
 
+        if det(s) < 0
+            println("$(i): determinant of S is negative!")
+            break
+        end
         v = Utils.calculate_model_evidence(xs, ys, w, s, i)
         push!(vs, v)
-        println("$i: $v")
+        # println("$i: $v")
     end
     
     PyPlot.title("Model Evidence")
-    xs = [i for i in 1:MAX_DIM] 
+    xs = [i for i in 1:length(vs)] 
     PyPlot.plot(xs, vs)
-    PyPlot.xlim(3, 11)
-    PyPlot.ylim(-300, 0)
+    # PyPlot.xlim(6, 11)
+    PyPlot.ylim(-60, 0)
     PyPlot.savefig("model_evidence.png")
     PyPlot.xlabel("dimension")
     PyPlot.ylabel("model evidence")
-    PyPlot.savefig("./me.png")
-    PyPlot.show()
+    PyPlot.savefig(joinpath(Params.OUTPUT_DIR, joinpath(Params.OUTPUT_DIR, "me.png")))
+    # PyPlot.show()
 end
 
 
