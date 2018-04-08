@@ -35,6 +35,7 @@ function main()
     PyPlot.savefig("model_evidence.png")
     PyPlot.xlabel("dimension")
     PyPlot.ylabel("model evidence")
+    PyPlot.savefig("./me.png")
     PyPlot.show()
 end
 

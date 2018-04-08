@@ -62,7 +62,8 @@ function draw_curves(title, oxs, oys, oys_ground_truth, xs, ys, sigma, path)
     draw_uncertainty(oxs, oys, sigma, 3, "red")
     draw_uncertainty(oxs, oys, sigma, 2, "yellow")
     draw_uncertainty(oxs, oys, sigma, 1, "green")
-    
+   
+    PyPlot.ylim(-0.1, 5.5)
     PyPlot.plot(oxs, oys_ground_truth, label="original curve")
     PyPlot.legend(loc="best")
     PyPlot.savefig(path)

@@ -32,9 +32,10 @@ function draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
     draw_uncertainty(oxs, oys, sigmas, 3, "red")
     draw_uncertainty(oxs, oys, sigmas, 2, "yellow")
     draw_uncertainty(oxs, oys, sigmas, 1, "green")
-
+    
+    PyPlot.ylim(-0.1, 5.5)
     PyPlot.legend(loc="best")
-    PyPlot.savefig("bayes.png")
+    PyPlot.savefig("bayes_$(Params.M).png")
     PyPlot.show()
 end
 
