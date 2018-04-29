@@ -16,7 +16,7 @@ function draw_uncertainty(oxs, oys, sigmas, n, color)
 end
 
 
-function draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
+function draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas, i)
     PyPlot.title("Bayesian Inference")
  
     # draw predictive curve
@@ -32,10 +32,12 @@ function draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
     draw_uncertainty(oxs, oys, sigmas, 3, "red")
     draw_uncertainty(oxs, oys, sigmas, 2, "yellow")
     draw_uncertainty(oxs, oys, sigmas, 1, "green")
-
+    
+    PyPlot.ylim(-0.1, 5.5)
     PyPlot.legend(loc="best")
-    PyPlot.savefig("bayes.png")
-    PyPlot.show()
+    PyPlot.savefig(joinpath(Params.OUTPUT_DIR, "bayes_$(i).png"))
+    # PyPlot.show()
+    PyPlot.clf()
 end
 
 
@@ -44,26 +46,27 @@ function main()
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
     # DatasetMaker.save_dataset(xs, ys, "./dataset.txt")
 
-    # extend xs(vector) to matrix 
-    xs_matrix = Utils.make_input_matrix(xs, Params.M)
+    for i in Params.MIN_DIM:Params.MAX_DIM
+        # extend xs(vector) to matrix 
+        xs_matrix = Utils.make_input_matrix(xs, i)
 
-    # solve a problem by bayesian inference 
-    s, w = Utils.make_solution(xs_matrix, ys, Params.M)
+        # solve a problem by bayesian inference 
+        s, w = Utils.make_solution(xs_matrix, ys, i)
 
-    # predict curve for oxs
-    oxs = linspace(0, Params.RANGE, Params.N_STEPS)
-    oxs_matrix = Utils.make_input_matrix(oxs, Params.M)
-    oys = oxs_matrix * w
+        # predict curve for oxs
+        oxs = linspace(0, Params.RANGE, Params.N_STEPS)
+        oxs_matrix = Utils.make_input_matrix(oxs, i)
+        oys = oxs_matrix * w
 
-    # make original curve for oxs
-    oys_ground_truth = DatasetMaker.original_curve.(oxs)
+        # make original curve for oxs
+        oys_ground_truth = DatasetMaker.original_curve.(oxs)
 
-    # calculate sigma by bayesian inference
-    sigmas = sqrt.(Utils.calculate_inv_lambda_in_bayesian(s, oxs, Params.M))
+        # calculate sigma by bayesian inference
+        sigmas = sqrt.(Utils.calculate_inv_lambda_in_bayesian(s, oxs, i))
 
-    # draw curves
-    draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas)
+        # draw curves
+        draw_curves(oxs, oys, oys_ground_truth, xs, ys, sigmas, i)
+    end
 end
-
 
 main()
