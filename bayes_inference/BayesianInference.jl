@@ -44,7 +44,7 @@ end
 function main()
     # generate observed dataset
     xs, ys = DatasetMaker.make_observed_dataset(Params.RANGE, Params.N_SAMPLES)
-    # DatasetMaker.save_dataset(xs, ys, "./dataset.txt")
+    DatasetMaker.save_dataset(xs, ys, "./dataset.txt")
 
     for i in Params.MIN_DIM:Params.MAX_DIM
         # extend xs(vector) to matrix 
