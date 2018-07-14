@@ -81,3 +81,8 @@ halide/tutorials/tutorials/lesson_15_generate.dSYM/
 stan/.python-version
 stan/.ipynb_checkpoints/
 pymc/.python-version
+pymc/__pycache__/
+pymc/log
+pymc/*.npy
+pymc/*.pkl
+pymc/*.csv

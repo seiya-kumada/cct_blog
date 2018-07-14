@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pymc
-
-DATASET_PATH = './dataset.txt'
-M = 3
-ALPHA = 0.1
-SIGMA = 0.015
-TAU = 1 / SIGMA**2
+from params import *  # noqa
 
 
 def load_dataset(path):
@@ -19,26 +14,8 @@ def load_dataset(path):
     return np.array(dataset)
 
 
-def calculate_ground_truth(x):
-    return x + np.sin(3 * x)
-
-
-def plot_ground_truth():
-    xs = np.linspace(-1, 4.5)[:, None]
-    ys = calculate_ground_truth(xs)
-    plt.figure(figsize=(8, 8))
-    plt.plot(xs, ys)
-    plt.axis('equal')
-    plt.scatter(observed_xs, observed_ys)
-    plt.ylim(-0.5, 4.5)
-    plt.xlim(-0.5, 4.5)
-    plt.grid(True)
-    plt.show()
-
-
-# @pymc.deterministic
-# def linear_regression(xs=xs, ws=ws):
-#     return ws.dot(xs)
+def make_w_list(m):
+    return ['w{}'.format(i) for i in range(m)]
 
 
 if __name__ == '__main__':
@@ -68,4 +45,15 @@ if __name__ == '__main__':
     linear_regression = pymc.Lambda('linear_regression', lambda xs=xs, ws=ws: ws.dot(xs))
 
     # define a model likelihood
-    # y = pymc.Normal('y', mu=linear_regression, tau=TAU, value=observed_ys, observed=True)
+    y = pymc.Normal('y', mu=linear_regression, tau=TAU, value=observed_ys, observed=True)
+
+    # make a model
+    model = pymc.Model([y, pymc.Container(ws)])
+    mcmc = pymc.MCMC(model, db='pickle', dbname=PICKLE_NAME)
+
+    # sampling
+    mcmc.sample(iter=ITER, burn=BURN, thin=THIN)
+
+    # save it
+    mcmc.db.close()
+    mcmc.write_csv('linear_regression.csv', variables=make_w_list(M))
