@@ -8,15 +8,14 @@ import os
 
 
 def plot_posterior(mcmc, index):
-    name = 'w{}'.format(index)
-    samples = mcmc.trace(name)[:]
+    samples = mcmc.trace('ws')[:]
     plt.figure(figsize=(12, 6))
     label = r'$p(w_{}|D)$'.format(index)
-    plt.hist(samples, histtype='stepfilled', bins=50, normed=True, label=label)
+    plt.hist(samples[:, index], histtype='stepfilled', bins=50, normed=True, label=label)
     plt.ylabel(label, fontsize=20)
     plt.xlabel(r'$w_{}$'.format(index), fontsize=20)
     plt.legend(loc='best')
-    plt.savefig(os.path.join('./results', '{}.png'.format(name)))
+    plt.savefig(os.path.join('./results', 'w{}.png'.format(index)))
 
 
 if __name__ == '__main__':

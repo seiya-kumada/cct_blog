@@ -20,17 +20,14 @@ if __name__ == '__main__':
     # plot_ground_truth()
 
     # define a prior for w, which is a multivariable gaussian
-    ws = np.empty((M, 1), dtype=object)
-    for i in range(M):
-        ws[i] = pymc.Normal('w{}'.format(i), mu=0, tau=ALPHA, value=0)
-    ws = ws.T
+    ws = pymc.MvNormal('ws', mu=np.zeros(M), tau=ALPHA * np.eye(M), value=np.zeros(M))
 
     # calculate x^0, x^1, ..., x^{M-1}
     xs = np.empty((M, len(observed_xs)), dtype=np.float32)
     for i in range(M):
         xs[i] = np.power(observed_xs, i)
 
-    assert(ws.shape == (1, M))
+    # assert(ws.shape == (1, M))
     assert(xs.shape == (M, len(observed_xs)))
 
     # define a deterministic function
@@ -40,7 +37,7 @@ if __name__ == '__main__':
     y = pymc.Normal('y', mu=linear_regression, tau=TAU, value=observed_ys, observed=True)
 
     # make a model
-    model = pymc.Model([y, pymc.Container(ws)])
+    model = pymc.Model([y, ws])
     map_ = pymc.MAP(model)
     map_.fit()
     mcmc = pymc.MCMC(model, db='pickle', dbname=PICKLE_PATH)
@@ -50,4 +47,4 @@ if __name__ == '__main__':
 
     # save it
     mcmc.db.close()
-    mcmc.write_csv('linear_regression.csv', variables=make_w_list(M))
+    mcmc.write_csv(CSV_PATH, variables=['ws'])

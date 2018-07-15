@@ -2,8 +2,8 @@
 
 module Params
 
-MAX_DIM = 8 
-MIN_DIM = 8 
+MAX_DIM = 3
+MIN_DIM = 3
 OUTPUT_DIR = "./results"
 SEED = 1
 ALPHA = 0.1
