@@ -86,3 +86,4 @@ pymc/log
 pymc/*.npy
 pymc/*.pkl
 pymc/*.csv
+pymc/results/*

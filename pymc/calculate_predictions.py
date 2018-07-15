@@ -33,5 +33,7 @@ if __name__ == '__main__':
     ystds = ys.std(axis=1)
 
     # save them
-    np.save('ymeans.npy', ymeans)
-    np.save('ystds.npy', ystds)
+    np.save(YMEANS_PATH, ymeans)
+    np.save(YPREDICTIONS_PATH, ys)
+    np.save(YSTDS_PATH, ystds)
+    np.save(IXS_PATH, ixs)

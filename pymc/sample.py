@@ -1,17 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import numpy as np
-# import matplotlib.pyplot as plt
+import utils
 import pymc
 from params import *  # noqa
-
-
-def load_dataset(path):
-    dataset = []
-    for line in open(path):
-        x, y = line.strip().split()
-        dataset.append([float(x), float(y)])
-    return np.array(dataset)
 
 
 def make_w_list(m):
@@ -21,7 +13,7 @@ def make_w_list(m):
 if __name__ == '__main__':
 
     # load a dataset
-    dataset = load_dataset(DATASET_PATH)
+    dataset = utils.load_dataset(DATASET_PATH)
     observed_xs = dataset[:, 0]
     observed_ys = dataset[:, 1]
 
@@ -49,6 +41,8 @@ if __name__ == '__main__':
 
     # make a model
     model = pymc.Model([y, pymc.Container(ws)])
+    # map_ = pymc.MAP(model)
+    # map_.fit()
     mcmc = pymc.MCMC(model, db='pickle', dbname=PICKLE_NAME)
 
     # sampling
