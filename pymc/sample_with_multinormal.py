@@ -6,10 +6,6 @@ import pymc
 from params import *  # noqa
 
 
-def make_w_list(m):
-    return ['w{}'.format(i) for i in range(m)]
-
-
 if __name__ == '__main__':
 
     # load a dataset
@@ -26,8 +22,6 @@ if __name__ == '__main__':
     xs = np.empty((M, len(observed_xs)), dtype=np.float32)
     for i in range(M):
         xs[i] = np.power(observed_xs, i)
-
-    # assert(ws.shape == (1, M))
     assert(xs.shape == (M, len(observed_xs)))
 
     # define a deterministic function
@@ -44,7 +38,7 @@ if __name__ == '__main__':
 
     # sampling
     mcmc.sample(iter=ITER, burn=BURN, thin=THIN)
-
-    # save it
     mcmc.db.close()
+
+    # save it as csv
     mcmc.write_csv(CSV_PATH, variables=['ws'])

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     ixs = np.load(IXS_PATH)
     ypredictions = np.load(YPREDICTIONS_PATH)
 
-    plt.title('Bayesian Inference')
+    plt.title('Bayesian Inference by MCMC')
 
     # draw a predictive curve
     plt.plot(ixs, ystds, label='predictive std', linestyle='dashed')

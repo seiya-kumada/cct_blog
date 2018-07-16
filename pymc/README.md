@@ -180,3 +180,27 @@ M=8のとき
 - RESULT\_PNG\_PATH = os.path.join(OUT\_DIR\_PATH, 'bayes.png')
 - YPREDICTIONS\_PATH = os.path.join(OUT\_DIR\_PATH, 'ypredictions.npy')
 - ANSWER\_PATH = os.path.join(OUT\_DIR\_PATH, 'answer\_curve.txt')
+
+### trial-6
+- DATASET\_PATH = './dataset.txt'
+- M = 8
+- ALPHA = 0.1
+- SIGMA = 0.015
+- TAU = 1 / SIGMA\*\*2
+- ITER = 70000000
+- THIN = 3500
+- BURN = ITER // 2
+- OUT\_DIR\_PATH = 'results'
+- PICKLE\_PATH = os.path.join(OUT\_DIR\_PATH, 'linear\_regression\_trial-6.pkl')
+- CSV\_PATH = os.path.join(OUT\_DIR\_PATH, 'linear\_regression\_trial-6.csv')
+- XCOUNT = 50
+- XMIN = 0
+- XMAX = 4
+- YMEANS\_PATH = os.path.join(OUT\_DIR\_PATH, 'ymeans.npy')
+- YSTDS\_PATH = os.path.join(OUT\_DIR\_PATH, 'ystds.npy')
+- IXS\_PATH = os.path.join(OUT\_DIR\_PATH, 'ixs.npy')
+- RESULT\_PNG\_PATH = os.path.join(OUT\_DIR\_PATH, 'bayes.png')
+- YPREDICTIONS\_PATH = os.path.join(OUT\_DIR\_PATH, 'ypredictions.npy')
+- ANSWER\_PATH = os.path.join(OUT\_DIR\_PATH, 'answer\_curve.txt')
+
+44m0.329s。これが一番厳密解に近い。
