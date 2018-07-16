@@ -52,13 +52,19 @@ function main()
 
         # solve a problem by bayesian inference 
         s, w = Utils.make_solution(xs_matrix, ys, i)
-        println(w)  
-        println(s)
+        println("w", w)  
+        println("s", s)
 
         # predict curve for oxs
         oxs = linspace(0, Params.RANGE, Params.N_STEPS)
         oxs_matrix = Utils.make_input_matrix(oxs, i)
         oys = oxs_matrix * w
+
+        # 
+        # println("length(oys)", length(oys))
+        # for i in 1:100
+        #     println(oys[i])
+        # end
 
         # make original curve for oxs
         oys_ground_truth = DatasetMaker.original_curve.(oxs)

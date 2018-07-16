@@ -16,6 +16,10 @@ def draw_uncertainty(oxs, oys, sigmas, n, color):
     plt.fill_between(oxs, lower_bounds, upper_bounds, alpha=0.3, label='[-{n}σ,+{n}σ]'.format(n=n), facecolor=color)
 
 
+def load_answer_curve(path):
+    return [float(line.strip()) for line in open(path)]
+
+
 if __name__ == '__main__':
     ymeans = np.load(YMEANS_PATH)
     ystds = np.load(YSTDS_PATH)
@@ -37,9 +41,13 @@ if __name__ == '__main__':
     plt.scatter(observed_xs, observed_ys, label='observed dataset')
 
     # draw uncertainties
-    draw_uncertainty(ixs, ymeans, ystds, 3, 'red')
-    draw_uncertainty(ixs, ymeans, ystds, 2, 'yellow')
-    draw_uncertainty(ixs, ymeans, ystds, 1, 'green')
+    # draw_uncertainty(ixs, ymeans, ystds, 3, 'red')
+    # draw_uncertainty(ixs, ymeans, ystds, 2, 'yellow')
+    # draw_uncertainty(ixs, ymeans, ystds, 1, 'green')
+
+    axs = np.linspace(XMIN, XMAX, 100)
+    ays = load_answer_curve(ANSWER_PATH)
+    plt.plot(axs, ays, label='exact curve')
 
     plt.ylim(-0.1, 5.5)
     plt.legend(loc='best')

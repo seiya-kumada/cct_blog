@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./sample_with_multinormal.py
+./visualize_posteriors_with_multinormal.py
+./calculate_predictions_with_multinormal.py
+./visualize_predictions.py
+./visualize_std.py
