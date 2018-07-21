@@ -87,3 +87,4 @@ pymc/*.npy
 pymc/*.pkl
 pymc/*.csv
 pymc/results/*
+pymc/.ipynb_checkpoints/
