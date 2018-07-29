@@ -88,3 +88,5 @@ pymc/*.pkl
 pymc/*.csv
 pymc/results/*
 pymc/.ipynb_checkpoints/
+pymc3/.python-version
+pymc3/__pycache__/
