@@ -4,6 +4,7 @@ import numpy as np
 import utils
 import pymc3 as pymc
 from params import *  # noqa
+# import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -23,18 +24,16 @@ if __name__ == '__main__':
     with pymc.Model() as model:
         # define a prior for w, which is a multivariable gaussian
         ws = pymc.MvNormal('ws', mu=np.zeros(M), tau=ALPHA * np.eye(M), testval=np.zeros(M), shape=(data_size, M))
+
+        # define likelihood
         linear_regression = pymc.Deterministic('linear_regression', ws.dot(xs))
         y = pymc.Normal('y', mu=linear_regression, tau=TAU, observed=observed_ys)
 
-    # with model:
-        # # make a model
-        # map_ = pymc.MAP(model)
-    # map_.fit()
-    # mcmc = pymc.MCMC(model, db='pickle', dbname=PICKLE_PATH)
+        start = pymc.find_MAP()
+        step = pymc.NUTS(max_treedepth=20)
+        db = pymc.backends.Text('test')
+        trace = pymc.sample(10000, step, start, tune=1000, trace=db)
 
-    # # sampling
-    # mcmc.sample(iter=ITER, burn=BURN, thin=THIN)
-    # mcmc.db.close()
-
-    # # save it as csv
-    # mcmc.write_csv(CSV_PATH, variables=['ws'])
+    # hoge = pymc.backends.text.load('test')
+    # pymc.traceplot(trace)
+    # plt.savefig('./plot.png')
