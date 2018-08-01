@@ -4,7 +4,8 @@ import numpy as np
 import utils
 import pymc3 as pymc
 from params import *  # noqa
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import pickle
 
 
 if __name__ == '__main__':
@@ -30,10 +31,12 @@ if __name__ == '__main__':
         y = pymc.Normal('y', mu=linear_regression, tau=TAU, observed=observed_ys)
 
         start = pymc.find_MAP()
-        step = pymc.NUTS(max_treedepth=20)
-        db = pymc.backends.Text('test')
-        trace = pymc.sample(10000, step, start, tune=1000, trace=db)
+        step = pymc.NUTS()  # max_treedepth=20)
+        trace = pymc.sample(10000, step, start, tune=1000)
 
-    # hoge = pymc.backends.text.load('test')
-    # pymc.traceplot(trace)
-    # plt.savefig('./plot.png')
+    # save model and trace
+    with open('my_model.pkl', 'wb') as buff:
+        pickle.dump({'model': model, 'trace': trace}, buff)
+
+    pymc.traceplot(trace)
+    plt.savefig('./plot.png')
