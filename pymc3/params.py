@@ -3,7 +3,7 @@
 import os
 
 DATASET_PATH = './dataset.txt'
-M = 1
+M = 6
 ALPHA = 0.1
 SIGMA = 0.015
 TAU = 1 / SIGMA**2
