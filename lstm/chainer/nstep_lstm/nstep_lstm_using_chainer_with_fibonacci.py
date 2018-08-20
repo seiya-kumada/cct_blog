@@ -10,7 +10,7 @@ import numpy as np
 from chainer import serializers
 import _pickle
 import nstep_lstm
-
+import sys
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
 # https://qiita.com/TokyoMickey/items/cc8cd43545f2656b1cbd
 
@@ -142,9 +142,14 @@ if __name__ == '__main__':
 
     # 訓練データと検証データに分ける。
     n_train = int(TOTAL_SIZE * SPRIT_RATE)
+    print('n_train', n_train)
     n_val = TOTAL_SIZE - n_train
+    print('n_val', n_val)
     train_dataset = dataset[: n_train].copy()
+    print('train_dataset.shape', train_dataset.shape)
     val_dataset = dataset[n_train:].copy()
+    print('val_dataset.shape', val_dataset.shape)
+    print('SEQUENCE_SIZE', SEQUENCE_SIZE)
 
     # 長さSEQUENCE_SIZE + 1の時系列データを始点を1つずつずらして作る。
     # +1は教師データ作成のため。

@@ -25,8 +25,8 @@ random.seed(SEED)
 
 class LSTM(L.NStepLSTM):
 
-    def __init__(self, n_layers, in_size, out_size, dropout=0.5, initialW=None, initial_bias=None, **kwargs):
-        super(LSTM, self).__init__(n_layers, in_size, out_size, dropout, initialW, initial_bias, **kwargs)
+    def __init__(self, n_layers, in_size, out_size, dropout=0.5):  # , initialW=None, initial_bias=None, **kwargs):
+        super(LSTM, self).__init__(n_layers, in_size, out_size, dropout)  # , initialW, initial_bias, **kwargs)
         with self.init_scope():
             self.reset_state()
 

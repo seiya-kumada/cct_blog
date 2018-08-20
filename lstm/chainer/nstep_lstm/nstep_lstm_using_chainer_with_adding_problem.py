@@ -11,7 +11,7 @@ from chainer import serializers
 import _pickle
 import nstep_lstm
 from make_adding_problem import *  # noqa
-
+import sys
 # https://qiita.com/aonotas/items/8e38693fb517e4e90535
 
 xp = np
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     assert train_y.shape == (n_train, N_OUT)
     assert val_x.shape == (n_val, SEQUENCE_SIZE, N_IN)
     assert val_y.shape == (n_val, N_OUT)
-
+    sys.exit()
     # _/_/_/ モデルの設定
 
     mynet = MyNet(N_LAYERS, N_IN, N_HIDDEN, N_OUT, DROPOUT)
