@@ -93,3 +93,5 @@ pymc3/__pycache__/
 pymc3/test/
 pymc3/my_model.pkl
 pymc3/.ipynb_checkpoints/
+mcmc/.ipynb_checkpoints/
+mcmc/.python-version
