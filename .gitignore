@@ -95,3 +95,5 @@ pymc3/my_model.pkl
 pymc3/.ipynb_checkpoints/
 mcmc/.ipynb_checkpoints/
 mcmc/.python-version
+classification/.ipynb_checkpoints/
+classification/.python-version
