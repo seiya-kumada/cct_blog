@@ -98,3 +98,7 @@ gaussian_process/10/
 gaussian_process/8/ 
 gaussian_process/9/ 
 */__pycache__/
+mcmc/.ipynb_checkpoints/
+mcmc/.python-version
+classification/.ipynb_checkpoints/
+classification/.python-version
