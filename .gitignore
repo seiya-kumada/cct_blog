@@ -93,3 +93,8 @@ pymc3/__pycache__/
 pymc3/test/
 pymc3/my_model.pkl
 pymc3/.ipynb_checkpoints/
+*/.python-version
+gaussian_process/10/ 
+gaussian_process/8/ 
+gaussian_process/9/ 
+*/__pycache__/
