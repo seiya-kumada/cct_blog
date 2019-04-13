@@ -39,6 +39,9 @@ def display_weights(x, y, model):
     plt.legend(loc="best")
     plt.savefig("./weights.jpg")
 
+    for (i, w) in enumerate(model.coef_):
+        print("{:0>2}: {}".format(i, w))
+
 
 def display_weight_histogram(x, y, n_features, model):
     plt.figure(figsize=(6, 5))
@@ -70,8 +73,6 @@ def display_prediction(y, py, std):
     size, = y.shape
     plt.figure(figsize=(6, 5))
     plt.title("Prediction")
-    # x = list(range(size))
-    # plt.errorbar(x, py, std, color="navy", label="Polynomial ARD", linewidth=2)
     plt.plot(y, marker='o', color='blue', label="Ground Truth")
     plt.plot(py, marker='o', color='red', label="Prediction")
     plt.ylabel("$y$")
@@ -91,7 +92,7 @@ def display_error(y, py):
     plt.savefig("./error.jpg")
 
 
-if __name__ == "__main__":
+def sample_0():
     hasaki_names, hasaki = load_data(HASAKI_NAMES, HASAKI)
     mamouryo_names, mamouryo = load_data(MAMOURYO_NAMES, MAMOURYO)
 
@@ -100,8 +101,6 @@ if __name__ == "__main__":
     print("(X.shape,y.shape)=({},{})".format(X.shape, y.shape))
     model = train(X, y)
     display_weights(X, y, model)
-    # for i, (name, score) in enumerate(zip(hasaki_names, model.coef_)):
-    #     print("[{:0>2}] {}: {}".format(i, name, score))
 
     n_features = X.shape[1]
     display_weight_histogram(X, y, n_features, model)
@@ -111,3 +110,7 @@ if __name__ == "__main__":
     display_prediction(y, py, std)
     display_error(y, py)
     print(std)
+
+
+if __name__ == "__main__":
+    sample_0()
