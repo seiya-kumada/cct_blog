@@ -2,19 +2,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 from sklearn.linear_model import ARDRegression
 np.random.seed(0)
-
-
-DIR_PATH = "/Users/kumada/Data/小松/追加解析/task2_1"
-# DIR_PATH = "/Users/kumada/Data/小松/2019_03_15"
-HASAKI_NAMES = "hasaki_names.npy"
-HASAKI = "hasaki.npy"
-MAMOURYO_NAMES = "mamouryo_names.npy"
-MAMOURYO = "mamouryo.npy"
-SESSAKU_NAMES = "sessaku_names.npy"
-SESSAKU = "sessaku.npy"
 
 
 def train(x, y):
@@ -25,13 +14,21 @@ def train(x, y):
     return clf
 
 
-def load_data(names_path, data_path):
-    names = np.load(os.path.join(DIR_PATH, names_path))
-    data = np.load(os.path.join(DIR_PATH, data_path))
-    return names, data
+def data_generator(x0, x1):
+    return np.cos(0.5 * x0 * x1) + 0.1 * x0 * x1
 
 
-def display_weights(x, y, hasaki_names, model):
+def make_dataset(size):
+    xs_0 = np.random.random(size)[:, np.newaxis]
+    xs_1 = 100 * np.random.random(size)[:, np.newaxis]
+    xs_2 = 0.1 * np.random.random(size)[:, np.newaxis]
+
+    ys = np.array([data_generator(x0, x2) for (x0, x2) in zip(xs_0, xs_2)]).squeeze()
+    xs = np.concatenate([xs_0, xs_1, xs_2], axis=1)
+    return xs, ys
+
+
+def display_weights(x, y, model):
     plt.figure(figsize=(6, 5))
     plt.title("Weights of the model")
     plt.plot(model.coef_, color="darkblue", alpha=0.5, marker="o", label="ARD estimate")
@@ -41,7 +38,7 @@ def display_weights(x, y, hasaki_names, model):
     plt.savefig("./weights.jpg")
 
     for (i, w) in enumerate(model.coef_):
-        print("[{:0>2}]{}: {}".format(i, hasaki_names[i], w))
+        print("[{:0>2}]: {}".format(i, w))
 
 
 def display_weight_histogram(x, y, n_features, model):
@@ -72,10 +69,11 @@ def predict(model, x, y):
 
 def display_prediction(y, py, std):
     size, = y.shape
-    plt.figure(figsize=(6, 5))
+    xx = list(range(size))
+    plt.figure(figsize=(13, 5))
     plt.title("Prediction")
-    plt.plot(y, marker='o', color='blue', label="Ground Truth")
-    plt.plot(py, marker='o', color='red', label="Prediction")
+    plt.errorbar(xx, py, std, fmt="ro", label="Prediction", marker="o")
+    plt.scatter(xx, y, marker='o', color='blue', label="Ground Truth")
     plt.ylabel("$y$")
     plt.xlabel("$x$")
     plt.legend(loc="best")
@@ -92,6 +90,10 @@ def display_error(y, py):
     plt.legend(loc="best")
     plt.savefig("./error.jpg")
 
+    mean = np.mean(error)
+    std = np.std(error)
+    print("mean: {}, std: {}".format(mean, std))
+
 
 def normalize(x, y):
     x_mean = np.mean(x, axis=0)
@@ -105,23 +107,19 @@ def normalize(x, y):
 
 
 def sample_0():
-    hasaki_names, hasaki = load_data(HASAKI_NAMES, HASAKI)
-    mamouryo_names, mamouryo = load_data(MAMOURYO_NAMES, MAMOURYO)
+    observed_xs, observed_ys = make_dataset(40)
+    observed_xs, observed_ys = normalize(observed_xs, observed_ys)
 
-    y = mamouryo[0]
-    X = np.transpose(hasaki, (1, 0))
-    X, y = normalize(X, y)
-    print(X.shape, y.shape)
-    model = train(X, y)
-    display_weights(X, y, hasaki_names, model)
+    model = train(observed_xs, observed_ys)
+    display_weights(observed_xs, observed_ys, model)
 
-    n_features = X.shape[1]
-    display_weight_histogram(X, y, n_features, model)
+    n_features = observed_xs.shape[1]
+    display_weight_histogram(observed_xs, observed_ys, n_features, model)
     display_marginal_log_likelihood(model)
 
-    py, std = predict(model, X, y)
-    display_prediction(y, py, std)
-    display_error(y, py)
+    py, std = predict(model, observed_xs, observed_ys)
+    display_prediction(observed_ys, py, std)
+    display_error(observed_ys, py)
 
 
 if __name__ == "__main__":
