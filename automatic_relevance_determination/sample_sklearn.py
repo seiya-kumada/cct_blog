@@ -2,20 +2,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 import sklearn_ardregression
 from sklearn.linear_model import ARDRegression
 np.random.seed(0)
-
-
-DIR_PATH = "/Users/kumada/Data/小松/追加解析/task2_1"
-# DIR_PATH = "/Users/kumada/Data/小松/2019_03_15"
-HASAKI_NAMES = "hasaki_names.npy"
-HASAKI = "hasaki.npy"
-MAMOURYO_NAMES = "mamouryo_names.npy"
-MAMOURYO = "mamouryo.npy"
-SESSAKU_NAMES = "sessaku_names.npy"
-SESSAKU = "sessaku.npy"
 
 
 def train(x, y):
@@ -26,12 +15,6 @@ def train(x, y):
     return clf
 
 
-def load_data(names_path, data_path):
-    names = np.load(os.path.join(DIR_PATH, names_path))
-    data = np.load(os.path.join(DIR_PATH, data_path))
-    return names, data
-
-
 def display_weights(x, y, model):
     plt.figure(figsize=(6, 5))
     plt.title("Weights of the model")
@@ -39,7 +22,7 @@ def display_weights(x, y, model):
     plt.xlabel("Features")
     plt.ylabel("Values of the weights")
     plt.legend(loc="best")
-    plt.savefig("./weights.jpg")
+    plt.savefig("./images/weights.jpg")
 
 
 def display_weight_histogram(x, y, n_features, model):
@@ -49,7 +32,7 @@ def display_weight_histogram(x, y, n_features, model):
     plt.ylabel("Features")
     plt.xlabel("Values of the weights")
     plt.legend(loc="best")
-    plt.savefig("./histogram.jpg")
+    plt.savefig("./images/histogram.jpg")
 
 
 def display_marginal_log_likelihood(model):
@@ -59,7 +42,7 @@ def display_marginal_log_likelihood(model):
     plt.ylabel("Score")
     plt.xlabel("Iterations")
     plt.legend(loc="best")
-    plt.savefig("./mll.jpg")
+    plt.savefig("./images/mll.jpg")
 
 
 def predict(model, x):
@@ -123,8 +106,8 @@ def sample_0():
 
     # 訓練時の精度を見る。
     py, std = predict(model, train_xs)
-    display_prediction(train_ys, py, std, "train_accuracy.jpg")
-    display_error(train_ys, py, "train_error.jpg")
+    display_prediction(train_ys, py, std, "./images/train_accuracy.jpg")
+    display_error(train_ys, py, "./images/train_error.jpg")
 
     # テストデータ
     TEST_DATA_SIZE = 30
@@ -133,8 +116,8 @@ def sample_0():
 
     # テスト時の精度を見る。
     py, std = predict(model, test_xs)
-    display_prediction(test_ys, py, std, "test_accuracy.jpg", hlines=True)
-    display_error(test_ys, py, "test_error.jpg")
+    display_prediction(test_ys, py, std, "./images/test_accuracy.jpg", hlines=True)
+    display_error(test_ys, py, "./images/test_error.jpg")
 
 
 if __name__ == "__main__":
