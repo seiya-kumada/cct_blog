@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import sklearn_ardregression
 from sklearn.linear_model import ARDRegression
 np.random.seed(0)
+plt.rcParams["font.size"] = 18
 
 
 def train(x, y):
@@ -15,13 +16,14 @@ def train(x, y):
     return clf
 
 
-def display_weights(x, y, model):
-    plt.figure(figsize=(6, 5))
-    plt.title("Weights of the model")
-    plt.plot(model.coef_, color="darkblue", alpha=0.5, marker="o", label="ARD estimate")
-    plt.xlabel("Features")
-    plt.ylabel("Values of the weights")
-    plt.legend(loc="best")
+def display_weights(model):
+    plt.figure(figsize=(7, 6))
+    plt.ylabel("$w_m$")
+    plt.xlabel("$m$")
+    xs = list(range(len(model.coef_)))
+    plt.errorbar(xs, model.coef_, np.diag(model.sigma_), fmt="ro", marker="o", label="weight")
+    plt.xticks([0, 1, 2])
+    plt.legend(loc="lower left")
     plt.savefig("./images/weights.jpg")
 
 
@@ -102,7 +104,8 @@ def sample_0():
     model = train(train_xs, train_ys)
 
     # 重みを見る。
-    display_weights(train_xs, train_ys, model)
+    display_weights(model)
+    display_marginal_log_likelihood(model)
 
     # 訓練時の精度を見る。
     py, std = predict(model, train_xs)
