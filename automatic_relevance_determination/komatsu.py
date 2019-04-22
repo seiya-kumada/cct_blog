@@ -38,10 +38,10 @@ def display_weights(x, y, hasaki_names, model):
     plt.xlabel("Features")
     plt.ylabel("Values of the weights")
     plt.legend(loc="best")
-    plt.savefig("./weights.jpg")
+    plt.savefig("./komatsu/weights.jpg")
 
-    for (i, w) in enumerate(model.coef_):
-        print("[{:0>2}]{}: {}".format(i, hasaki_names[i], w))
+    # for (i, w) in enumerate(model.coef_):
+    #     print("[{:0>2}]{}: {}".format(i, hasaki_names[i], w))
 
 
 def display_weight_histogram(x, y, n_features, model):
@@ -51,7 +51,7 @@ def display_weight_histogram(x, y, n_features, model):
     plt.ylabel("Features")
     plt.xlabel("Values of the weights")
     plt.legend(loc="best")
-    plt.savefig("./histogram.jpg")
+    plt.savefig("./komatsu/histogram.jpg")
 
 
 def display_marginal_log_likelihood(model):
@@ -61,7 +61,7 @@ def display_marginal_log_likelihood(model):
     plt.ylabel("Score")
     plt.xlabel("Iterations")
     plt.legend(loc="best")
-    plt.savefig("./mll.jpg")
+    plt.savefig("./komatsu/mll.jpg")
 
 
 def predict(model, x, y):
@@ -74,12 +74,19 @@ def display_prediction(y, py, std):
     size, = y.shape
     plt.figure(figsize=(6, 5))
     plt.title("Prediction")
-    plt.plot(y, marker='o', color='blue', label="Ground Truth")
-    plt.plot(py, marker='o', color='red', label="Prediction")
+    xs = list(range(len(y)))
+    plt.scatter(xs, y, marker='.', color='blue', label="Ground Truth")
+    plt.scatter(xs, py, marker='.', color='red', label="Prediction")
+    plt.vlines(xs, ymin=-2, ymax=2, linestyle="dashed", alpha=0.2, linewidth=1)
     plt.ylabel("$y$")
     plt.xlabel("$x$")
     plt.legend(loc="best")
-    plt.savefig("./prediction.jpg")
+    plt.savefig("./komatsu/prediction.jpg")
+    errors = np.abs(y - py)
+    mean = np.mean(errors)
+    std = np.std(errors)
+    print("差分の絶対値の平均値: {}".format(mean))
+    print("差分の絶対値の標準偏差: {}".format(std))
 
 
 def display_error(y, py):
@@ -90,7 +97,7 @@ def display_error(y, py):
     plt.ylabel("error")
     plt.xlabel("$x$")
     plt.legend(loc="best")
-    plt.savefig("./error.jpg")
+    plt.savefig("./komatsu/error.jpg")
 
 
 def normalize(x, y):
@@ -101,7 +108,7 @@ def normalize(x, y):
     y_mean = np.mean(y, axis=0)
     y_std = np.std(y, axis=0)
     y = (y - y_mean) / y_std
-    return x, y
+    return x, y, (x_mean, x_std), (y_mean, y_std)
 
 
 def sample_0():
@@ -110,6 +117,8 @@ def sample_0():
 
     y = mamouryo[0]
     X = np.transpose(hasaki, (1, 0))
+
+    print("AAA", y.shape, X.shape)
     X, y = normalize(X, y)
     print(X.shape, y.shape)
     model = train(X, y)

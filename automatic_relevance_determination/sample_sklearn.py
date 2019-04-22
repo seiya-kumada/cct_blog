@@ -56,7 +56,7 @@ def display_prediction(y, py, std, name, hlines=False):
     plt.figure(figsize=(15, 7))
     xs = range(y.shape[0])
 
-    plt.scatter(xs, y, marker="o", label="Observed")
+    plt.scatter(xs, y, marker="o", label="Truth")
     if hlines:
         plt.vlines(list(range(y.shape[0])), ymin=-3, ymax=3, linestyle="dashed", alpha=0.5)
     plt.xlabel("sample index")

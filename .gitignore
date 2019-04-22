@@ -107,3 +107,7 @@ automatic_relevance_determination/*.jpg
 automatic_relevance_determination/.ipynb_checkpoints/
 automatic_relevance_determination/memo.xlsx
 automatic_relevance_determination/images/*
+automatic_relevance_determination/gp_images/
+automatic_relevance_determination/gp_komatsu/
+automatic_relevance_determination/komatsu/ 
+
