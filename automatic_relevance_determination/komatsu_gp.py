@@ -6,7 +6,7 @@ import komatsu
 from sklearn.model_selection import KFold
 import matplotlib.pyplot as plt
 
-K_FOLD_SIZE = 10
+K_FOLD_SIZE = 30
 
 
 def display_predictions(i, pys, ys, mean, sigma, name):
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     hasaki_names, hasaki = komatsu.load_data(komatsu.HASAKI_NAMES, komatsu.HASAKI)
     mamouryo_names, mamouryo = komatsu.load_data(komatsu.MAMOURYO_NAMES, komatsu.MAMOURYO)
 
-    ys = mamouryo[1]  # kireha-1
+    ys = mamouryo[1]
     xs = hasaki.transpose(1, 0)
 
     raw_ys = ys.copy()

@@ -115,7 +115,7 @@ def sample_0():
     hasaki_names, hasaki = load_data(HASAKI_NAMES, HASAKI)
     mamouryo_names, mamouryo = load_data(MAMOURYO_NAMES, MAMOURYO)
 
-    y = mamouryo[0]
+    y = mamouryo[1]
     X = np.transpose(hasaki, (1, 0))
 
     print("AAA", y.shape, X.shape)
