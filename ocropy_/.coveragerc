@@ -1,5 +1,0 @@
-[paths]
-source =
-    $PWD
-    $PWD/ocropus_venv/bin
-    /usr/local/lib/python2.7/dist-packages
