@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import re
+import argparse
+import sys
+
+import numpy as np
+from scipy.misc import imsave
+
+import ocrolib
+from ocrolib import lineest
+
+np.seterr(divide='raise',over='raise',invalid='raise',under='ignore')
+
+parser = argparse.ArgumentParser("dewarp lines as used for the recognizer")
+
+parser.add_argument("-e","--lineest",default="center",
+                    help="type of text line estimator, default: %(default)s")
+parser.add_argument("-l","--height",default=48,type=int,
+                    help="set the default height for line estimation, default: %(default)s")
+
+
+parser.add_argument("files",nargs="*")
+args = parser.parse_args()
+
+inputs = ocrolib.glob_all(args.files)
+if len(inputs)==0:
+    parser.print_help()
+    sys.exit(0)
+
+print("# inputs", len(inputs))
+
+if args.lineest=="center":
+    lnorm = lineest.CenterNormalizer()
+else:
+    raise Exception(args.lineest+": unknown line normalizer")
+
+lnorm.setHeight(args.height)
+
+for fname in inputs:
+    print("#", fname)
+    base,_ = ocrolib.allsplitext(fname)
+    try:
+        line = ocrolib.read_image_gray(fname)
+        lnorm.measure(np.amax(line)-line)
+        line = lnorm.normalize(line,cval=np.amax(line))
+        imsave(base+".dew.png",line)
+    except Exception as e:
+        print("ERROR", e)
+        continue

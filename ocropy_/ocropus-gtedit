@@ -1,0 +1,255 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import argparse
+import codecs
+import re
+import os.path
+import base64
+import urllib2
+
+from lxml import etree
+
+import ocrolib
+
+parser = argparse.ArgumentParser()
+subparsers = parser.add_subparsers(help="subcommands",dest="subparser_name")
+
+p_gttext = subparsers.add_parser("write",help="incorporate transcriptions into book dir")
+p_gttext.add_argument('-x','--extension',default='.gt.txt')
+p_gttext.add_argument('-O','--overwrite',action="store_true")
+p_gttext.add_argument('-e','--allowempty',action="store_true")
+p_gttext.add_argument('-D','--deleteempty',action="store_true")
+p_gttext.add_argument('gtfile')
+p_gttext.add_argument('bookdir')
+
+p_text = subparsers.add_parser("text",help="generate text")
+p_text.add_argument('-o','--output',default="correct.txt")
+p_text.add_argument('-r','--reffile',default="reference.html")
+p_text.add_argument('-x','--extension',default='.txt')
+p_text.add_argument('-H','--height',default=32,type=int)
+p_text.add_argument('files',nargs='+')
+
+p_org = subparsers.add_parser("org",help="generate orgmode text")
+p_org.add_argument('-o','--output',default="correct.txt")
+p_org.add_argument('-r','--reffile',default="reference.html")
+p_org.add_argument('-x','--extension',default='.txt')
+p_org.add_argument('-H','--height',default=32,type=int)
+p_org.add_argument('files',nargs='+')
+
+p_html = subparsers.add_parser("html",help="generate html")
+p_html.add_argument('-d','--debug',action="store_true")
+p_html.add_argument('-o','--output',default="correction.html")
+p_html.add_argument('-x','--extension',default='.txt')
+p_html.add_argument('-f','--fontsize',default=20,type=int)
+p_html.add_argument('-H','--height',default=24,type=int)
+p_html.add_argument("-M","--maxsize",default=10000,type=int)
+p_html.add_argument('files',nargs='+')
+
+p_ext = subparsers.add_parser("extract",help="extract from html")
+p_ext.add_argument('-p','--prefix',default=None)
+p_ext.add_argument('-O','--overwrite',action="store_true")
+p_ext.add_argument('-x','--extension',default=".gt.txt")
+p_ext.add_argument('-e','--allowempty',action="store_true")
+p_ext.add_argument('html')
+
+stream = None
+def P(x,*args):
+    global stream
+    stream.write(x%args)
+    stream.write("\n")
+
+args = parser.parse_args()
+
+if args.subparser_name=="write":
+    assert os.path.isdir(args.bookdir)
+    gtstream = codecs.open(args.gtfile,"r","utf-8")
+    for lineno,s in enumerate(gtstream.readlines()):
+        s = s.strip()
+        if s=="": continue
+        if s[0]=="#": continue
+        match = re.search(ur'^(\d{4})\.(\d{10})\s*(.*?)$(?i)',s)
+        if not match:
+            if "[[" not in s: print("???", lineno, ":", s)
+            continue
+        page,line,transcript = match.groups()
+        page = int(page)
+        line = int(line)
+        dest = args.bookdir+"/%04d/%06x"%(page,line)+args.extension
+        transcript = transcript.strip()
+        if transcript==u"" and args.deleteempty:
+            if os.path.exists(dest):
+                print(dest, ": empty transcript; removing")
+                os.unlink(dest)
+            continue
+        elif transcript==u"" and not args.allowempty:
+            print(dest, ": empty transcript; skipping")
+            continue
+        elif os.path.exists(dest) and not args.overwrite:
+            print("???", dest, ": already exists")
+            continue
+        print(dest, transcript)
+        ocrolib.write_text(dest,transcript)
+
+if args.subparser_name=="text":
+    stream = codecs.open(args.output,"w","utf-8")
+    for i,fname in enumerate(args.files):
+        base,_ = ocrolib.allsplitext(fname)
+        page,line = re.search(r'(\d{4})/([0-9a-f]{6})\.[^/]*$(?i)',fname).groups()
+        page = int(page)
+        line = int(line,16)
+        if os.path.exists(base+args.extension):
+            text = ocrolib.read_text(base+args.extension)
+        else:
+            text = u""
+        P(u"%04d.%010d\t%s",page,line,text)
+    stream.close()
+    stream = codecs.open(args.reffile,"w","utf-8")
+    P("<!DOCTYPE html>")
+    P("<html>")
+    P("<head>")
+    P('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>')
+    P("</head>")
+    P("<body>")
+    P("<table border=1>")
+    for i,fname in enumerate(args.files):
+        base,_ = ocrolib.allsplitext(fname)
+        page,line = re.search(r'(\d{4})/([0-9a-f]{6})\.[^/]*$(?i)',fname).groups()
+        page = int(page)
+        line = int(line,16)
+        P("<tr>")
+        P(u"<td>%04d.%010d</td>",page,line)
+        P(u"<td><img alt='line' src='%s' height=%d /></td>",fname,args.height)
+        P("</tr>")
+    P("</table>")
+    P("</html>")
+    stream.close()
+
+if args.subparser_name=="org":
+    stream = codecs.open(args.output,"w","utf-8")
+    if not ".dew.png" in args.files[0]:
+        print("# use of dewarped files (.dew.png) is recommended in org mode")
+    if not ".png" in args.files[0]:
+        print("# warning: your file arguments don't look like image files")
+    P("# -*- Org -*-")
+    for i,fname in enumerate(args.files):
+        base,_ = ocrolib.allsplitext(fname)
+        page,line = re.search(r'(\d{4})/([0-9a-f]{6})\.[^/]*$(?i)',fname).groups()
+        page = int(page)
+        line = int(line,16)
+        if os.path.exists(base+args.extension):
+            text = ocrolib.read_text(base+args.extension)
+        else:
+            text = u""
+        P(u"               \t[[%s]]",fname)
+        P(u"%04d.%010d\t%s",page,line,text)
+        P(u"")
+    P("# Local Variables:")
+    P("# eval: (iimage-mode)")
+    P("# eval: (set-face-attribute 'default (selected-frame) :height 180)")
+    P("# End:")
+    stream.close()
+
+def approx_split_range(n,k):
+    if n%k==0: 
+        chunks = [n//k]*k
+    else: 
+        l = n//k+1
+        d = n-k*(l-1)
+        chunks = [l-1+(i<d) for i in range(k)]
+    print(chunks)
+    return chunks
+
+def approx_split(l,k):
+    chunks = approx_split_range(len(l),k)
+    start = 0
+    for c in chunks:
+        yield l[start:start+c]
+        start += c
+
+if args.subparser_name=="html":
+    for i,fname in enumerate(args.files):
+        assert not os.path.isabs(fname),"absolute file names not allowed"
+
+    if len(args.files)<=args.maxsize:
+        chunks = [(args.output,args.files)]
+    else:
+        print("# too many lines for one output file; splitting")
+        chunks = approx_split(args.files,len(args.files)//args.maxsize)
+        base = re.sub(r'\..*?$','',args.output)
+        chunks = [(base+"-%03d"%i+".html",c) for i,c in enumerate(chunks)]
+        chunks[0] = (args.output,chunks[0][1])
+
+    for oname,files in chunks:
+        print("# writing", oname)
+        stream = codecs.open(oname,"w","utf-8")
+        # P("<!DOCTYPE html>")
+        P('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+        P("<html>")
+        P("<head>")
+        P('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />')
+        P('<title>%s</title>', oname)
+        P("</head>")
+        P("<body>")
+        for i,fname in enumerate(args.files):
+            base,_ = ocrolib.allsplitext(fname)
+            if os.path.exists(base+args.extension):
+                text = ocrolib.read_text(base+args.extension)
+            else:
+                text = u""
+            with open(fname,"rb") as pngstream: png = pngstream.read()
+            png = base64.b64encode(png)
+            png = "data:image/png;base64,"+png
+            P("<table>")
+            P("<tr><td style='border:0px;color:#808080;font-size:12px'>%s</td></tr>",fname)
+            P("<tr><td><img alt='line' src='%s' height='%d' /></td></tr>",png,args.height)
+            P("<tr><td style='border: solid 1px #808080;color: #000060;font-size:%dpx;min-height:%dpx' contenteditable='true' spellcheck='true'>%s</td></tr>",args.fontsize,args.fontsize,text)
+            P("</table>")
+            P("<p />")
+        P("</body>")
+        P("</html>")
+        stream.close()
+
+def url_decode(image):
+    prefix = "data:image/png;base64,"
+    if image.startswith(prefix):
+        data = image[len(prefix):]
+        data = base64.b64decode(data)
+    else:
+        data = urllib2.urlopen(image).read()
+    return data
+
+if args.subparser_name=="extract":
+    parser = etree.HTMLParser()
+    with codecs.open(args.html,"r","utf-8") as stream:
+        tree = etree.parse(stream,parser)
+    count = 0
+    for table in tree.iter('table'):
+        rows = [r for r in table.iter('tr')]
+        dest = rows[0].findtext(".//td")
+        src = rows[1].find(".//img").get("src")
+        png = url_decode(src)
+        transcript = rows[2].findtext(".//td")
+        if transcript=="" and not args.allowempty:
+            print("#", dest, "has empty transcript; skipping")
+            continue
+        count += 1
+        if args.prefix is not None:
+            dest = args.prefix+"/%04d/01%04x.bin.png"%((count//30)+1,(count%30)+1)
+        print(dest, "\t", transcript)
+        assert not os.path.isabs(dest)
+        assert ".." not in dest
+        assert "/." not in dest
+        d = os.path.dirname(dest)
+        if not os.path.exists(d): os.makedirs(d)
+        if os.path.exists(dest) and not args.overwrite:
+            print("#", dest, "exists, not writing")
+        else:
+            with open(dest,"wb") as stream: stream.write(png)
+        base,_ = ocrolib.allsplitext(dest)
+        gtname = base+args.extension
+        if os.path.exists(gtname) and not args.overwrite:
+            print("#", gtname, "exists, not writing")
+        else:
+            ocrolib.write_text(gtname,transcript)

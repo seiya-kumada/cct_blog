@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import glob
+import sys
+import os
+import signal
+import argparse
+
+import matplotlib
+matplotlib.use("AGG")
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.ndimage import interpolation
+
+import ocrolib
+from ocrolib import morph
+
+signal.signal(signal.SIGINT,lambda *args:sys.exit(1))
+
+parser = argparse.ArgumentParser(description = """
+Generate HTML for debugging a book directory.
+
+Input: a directory in standard OCRopus book format
+Output: index.html files and thumbnails showing recognition results
+""")
+parser.add_argument("book",default="book")
+parser.add_argument("-N","--npages",type=int,default=100000,help="max number of pages, default: %(default)s")
+args = parser.parse_args()
+
+
+def write_cseg(stream,cseg_file):
+    cseg = ocrolib.read_line_segmentation(cseg_file)
+    cseg = ocrolib.read_line_segmentation(cseg_file)
+    csegs = linerec.extract_csegs(cseg)
+    stream.write("<table><tr>")
+    for i,c in enumerate(csegs):
+        out = ".__"+cseg_file+"_%03d.png"%i
+        plt.imsave(out,np.amax(c.img)-c.img,cmap=plt.cm.gray)
+        stream.write("<td><img src=%s height=%d style='border: 1px #ccccff solid;'></td>"%(out,max(2,c.img.shape[0]/2)))
+    stream.write("</tr></table>")
+    stream.write("\n")
+
+
+def genpage(d):
+    print("===", d)
+    here = os.getcwd()
+    try:
+        os.chdir(d)
+        with open("index.html","w") as stream:
+            stream.write("<h1>%s</h1>\n"%d)
+            images = sorted(glob.glob("??????.bin.png"))
+            for img in images:
+                txt = ocrolib.fvariant(img,"txt","")
+                if os.path.exists(txt):
+                    with open(txt) as tf: text = tf.read()
+                    stream.write("<font color='#000066'><b>%s</b></font><br>\n"%text)
+                rtxt = ocrolib.fvariant(img,"txt","raw")
+                if os.path.exists(rtxt):
+                    with open(rtxt) as tf: rtext = tf.read()
+                    stream.write("<font color='gray'><b>%s</b></font><br>\n"%rtext)
+                stream.write("<p />\n")
+                image = ocrolib.read_image_gray(img)
+                stream.write("<img width='%d' src='%s'>\n"%(max(10,image.shape[1]/2),img))
+                stream.write("<br />\n")
+                stream.write("<font size=-2>")
+                stream.write("<a href=%s>%s</a> / "%("..",args.book))
+                stream.write("<a href=%s>%s</a> / "%("../"+d,d))
+                stream.write("<a href=%s>%s</a>"%(img,img))
+                stream.write("</font>")
+                stream.write("<p />\n")
+                cseg = ocrolib.fvariant(img,"cseg")
+                if os.path.exists(cseg):
+                    write_cseg(stream,cseg)
+                rseg_file = ocrolib.fvariant(img,"rseg")
+                if os.path.exists(rseg_file):
+                    rseg = ocrolib.read_line_segmentation(rseg_file)
+                    plt.figure(figsize=(20,1),dpi=150)
+                    morph.showlabels(rseg)
+                    figfile = ".__"+rseg_file+"_.png"
+                    plt.savefig(figfile)
+                    stream.write("<img height='50' src='%s'><br>\n"%figfile)
+                stream.write("<hr>\n")
+    finally:
+        os.chdir(here)
+
+os.chdir(args.book)
+with open("index.html","w") as stream:
+    for d in sorted(glob.glob("????"))[:args.npages]:
+        genpage(d)
+        if os.path.exists(d+".bin.png"):
+            image = ocrolib.read_image_gray(d+".bin.png")
+        else:
+            image = np.zeros((300,300))
+        out = ".__"+d+".png"
+        image = interpolation.zoom(image,(0.125,0.125),order=1)
+        plt.imsave(out,image,cmap=plt.cm.gray)
+        stream.write("<table border=1><tr>\n")
+        stream.write("<td>")
+        stream.write("<a href='%s/index.html'><img src='%s'></a>"%(d,out))
+        stream.write("<br>%s<br>"%d)
+        stream.write("</td>\n")
+        stream.write("<td>")
+        count = 0
+        for fname in sorted(glob.glob(d+"/??????.txt")):
+            with open(fname) as tf: s = tf.read()
+            if len(s)<20: continue
+            stream.write("%s<br>\n"%s[:100])
+            count += 1
+            if count>=10: break
+        stream.write("</td>\n")
+        stream.write("</tr></table>\n")

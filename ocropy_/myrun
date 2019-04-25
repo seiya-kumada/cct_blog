@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# ./ocropus-nlbin /Users/kumada/Projects/cct_blog/tesseract/text_detection/opencv-text-detection/images/sample_2.png -o book_2
+./ocropus-gpageseg 'book_2/0001.bin.png' --minscale 10

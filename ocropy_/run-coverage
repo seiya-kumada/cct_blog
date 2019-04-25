@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+COVERAGE="python2 -m coverage"
+
+python2 -c "\
+try:
+    import coverage
+    print('ok - python module coverage is installed')
+except ImportError:
+    print('\nYou need to install the coverage module first, e.g. \n$ pip2 install coverage\n')
+    exit(1)"
+
+$COVERAGE erase
+$COVERAGE run -p ./tests/run-unit
+RUNNER="$COVERAGE run -p" ./run-test-ci
+$COVERAGE combine
+rm -rf htmlcov
+$COVERAGE html
+echo "#     to see coverage results, browse to file://$PWD/htmlcov/index.html"
