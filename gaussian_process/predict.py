@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import matplotlib.pyplot as plt
 from pymc3.gp.util import plot_gp_dist
 import pymc3 as pm

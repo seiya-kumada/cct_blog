@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 # データへのパス
 DIR_PATH = "/Users/kumada/Data/小松/2019_03_15"
 HASAKI_NAMES = "hasaki_names.npy"
