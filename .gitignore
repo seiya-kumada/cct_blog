@@ -143,3 +143,6 @@ ocropy_/temp/
 ocropy_/OLD/
 ocropy_/build/
 ocropy_/models/
+ARD/gp_images/
+ARD/images/
+ARD/.ipynb_checkpoints/
