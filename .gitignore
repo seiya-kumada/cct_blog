@@ -146,3 +146,7 @@ ocropy_/models/
 ARD/gp_images/
 ARD/images/
 ARD/.ipynb_checkpoints/
+voronoi/opencv_voronoi/opencv_voronoi/*.jpg
+voronoi/opencv_voronoi/opencv_voronoi.xcodeproj/xcuserdata/
+voronoi/voronoi.xcworkspace/xcuserdata/
+voronoi/voronoi.xcworkspace/xcuserdata/
