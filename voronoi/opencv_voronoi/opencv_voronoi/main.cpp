@@ -14,8 +14,8 @@
 #include <boost/range/irange.hpp>
 
 // http://schima.hatenablog.com/entry/2014/01/24/205517
-// size of a window
-constexpr int IMAGE_SIZE{1000};
+
+constexpr int N_POINTS{1000};
 
 cv::Mat initialize_canvas(const std::vector<cv::Point2f>& points);
 void calculate_voronoi(cv::Subdiv2D& subdiv, const std::vector<cv::Point2f>& points, cv::Mat& canvas);
@@ -25,9 +25,8 @@ int main(int argc, const char * argv[]) {
     
     // make random points
     std::mt19937 mt{};
-    std::uniform_int_distribution<int> distribution{0, IMAGE_SIZE - 1};
+    std::uniform_int_distribution<int> distribution{0, N_POINTS - 1};
     std::vector<cv::Point2f> points{};
-    constexpr int N_POINTS{100};
     points.reserve(N_POINTS);
     for ([[maybe_unused]] auto i : boost::irange(0, N_POINTS))
     {
@@ -36,16 +35,17 @@ int main(int argc, const char * argv[]) {
         points.emplace_back(x, y);
     }
     
-
     // make an object
     cv::Subdiv2D subdiv{};
-    subdiv.initDelaunay(cv::Rect(0, 0, IMAGE_SIZE, IMAGE_SIZE));
+    subdiv.initDelaunay(cv::Rect(0, 0, N_POINTS, N_POINTS));
     subdiv.insert(points);
   
+    // make a delaunay triangulation
     auto canvas = initialize_canvas(points);
     calculate_delaunay(subdiv, points, canvas);
     cv::imwrite("/Users/kumada/Projects/cct_blog/voronoi/opencv_voronoi/opencv_voronoi/delaunay.jpg", canvas);
     
+    // make a voronoi diagram
     canvas = initialize_canvas(points);
     calculate_voronoi(subdiv, points, canvas);
     cv::imwrite("/Users/kumada/Projects/cct_blog/voronoi/opencv_voronoi/opencv_voronoi/voronoi.jpg", canvas);
@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
 cv::Mat initialize_canvas(const std::vector<cv::Point2f>& points)
 {
     // display random points
-    cv::Mat canvas = cv::Mat::zeros(IMAGE_SIZE, IMAGE_SIZE, CV_8UC3);
+    cv::Mat canvas = cv::Mat::zeros(N_POINTS, N_POINTS, CV_8UC3);
     for (const auto& point: points)
     {
         cv::circle(canvas, point, 4, cv::Scalar(0, 0, 255), -1);
