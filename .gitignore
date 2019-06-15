@@ -150,3 +150,5 @@ voronoi/opencv_voronoi/opencv_voronoi/*.jpg
 voronoi/opencv_voronoi/opencv_voronoi.xcodeproj/xcuserdata/
 voronoi/voronoi.xcworkspace/xcuserdata/
 voronoi/voronoi.xcworkspace/xcuserdata/
+sentence_classification_with_bert/pytorch_bert_japanese/__pycache__/
+sentence_classification_with_bert/sentence_classification/__pycache__/
