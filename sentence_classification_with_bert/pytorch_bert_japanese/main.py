@@ -20,9 +20,9 @@ def sample_0():
 
 def sample_1():
     tokenizer = bert_juman.JumanTokenizer()
-    tokens = tokenizer.tokenize("これは何ですか？")
+    tokens = tokenizer.tokenize("#")
     print(tokens)
 
 
 if __name__ == "__main__":
-    sample_0()
+    sample_1()
