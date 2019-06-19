@@ -19,7 +19,10 @@ if __name__ == "__main__":
         line = line.strip()
         tokens = line.split('\t')
         label = labels.append(int(tokens[1]))
-        sentence = sentences.append(tokens[0])
+        sentence = tokens[0]
+        sentence = sentence.replace("@", "")
+        sentence = sentence.replace("#", "")
+        sentences.append(sentence)
 
     size = len(sentences)
     vs = np.empty((size, params.DIM))

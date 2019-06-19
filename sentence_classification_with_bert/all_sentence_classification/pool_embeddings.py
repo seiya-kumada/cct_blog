@@ -4,9 +4,9 @@ import os
 import glob
 import numpy as np
 
-ROOT_DIR_PATH = "/home/ubuntu/data/sentence_classification/all_titles/sentences/"
-POOLING_STRATEGY = "REDUCE_MAX"
-OUT_DIR_PATH = "/home/ubuntu/data/sentence_classification/all_titles/pooling_sentences/max/data"
+ROOT_DIR_PATH = "/home/ubuntu/data/sentence_classification/3_titles/sentences/"
+POOLING_STRATEGY = "REDUCE_MEAN_MAX"
+OUT_DIR_PATH = "/home/ubuntu/data/sentence_classification/3_titles/pooling_sentences/mean_max/data"
 
 
 def convert_to_single_embedding(pooling_strategy, embedding):
