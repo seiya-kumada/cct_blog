@@ -6,11 +6,17 @@ import numpy as np
 import random
 RATE = 0.7
 
-ROOT_DIR_PATH = "/home/ubuntu/data/sentence_classification/3_titles/pooling_sentences/mean_max/data"
+ROOT_DIR_PATH = "/home/ubuntu/data/sentence_classification/all_titles/pooling_sentences/max/data"
 LABEL_MAP = {
     "it-life-hack": 0,
     "movie-enter": 1,
     "sports-watch": 2,
+    "dokujo-tsushin": 3,
+    "kaden-channel": 4,
+    "livedoor-homme": 5,
+    "peachy": 6,
+    "smax": 7,
+    "topic-news": 8,
 }
 
 

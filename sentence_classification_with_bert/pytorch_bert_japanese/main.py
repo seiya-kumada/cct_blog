@@ -20,7 +20,7 @@ def sample_0():
 
 def sample_1():
     tokenizer = bert_juman.JumanTokenizer()
-    tokens = tokenizer.tokenize("#")
+    tokens = tokenizer.tokenize("@a#n")
     print(tokens)
 
 
