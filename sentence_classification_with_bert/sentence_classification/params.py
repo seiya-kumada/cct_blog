@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-POOLING_STRATEGY = "CLS_TOKEN"
-DIM = 768
-MODE = "cls"
+POOLING_STRATEGY = "REDUCE_MEAN_MAX"
+DIM = 768 * 2
+MODE = "mean_max"
 PHASE = "test"
 TITLES = "all_titles"
 PATH = "/home/ubuntu/data/sentence_classification/{}/{}.txt".format(TITLES, PHASE)
