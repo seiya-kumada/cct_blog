@@ -153,3 +153,6 @@ voronoi/voronoi.xcworkspace/xcuserdata/
 sentence_classification_with_bert/pytorch_bert_japanese/__pycache__/
 sentence_classification_with_bert/sentence_classification/__pycache__/
 sentence_classification_with_bert/all_sentence_classification/__pycache__/
+thrust/sample_0/build/*
+thrust/sample_1/build/*
+
