@@ -5,6 +5,7 @@
 #include <list>
 #include <thrust/transform.h>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <chrono>
 #include <utility>
 // https://stackoverflow.com/questions/36551469/triggering-c11-support-in-nvcc-with-cmake
@@ -15,12 +16,14 @@
 
 namespace
 {
+    void test_opencv();
     void test_cpu();
     void test_gpu();
 }
 
 int main(void)
 {
+    test_opencv();
     test_cpu();
     test_gpu();
     return 0;
@@ -52,7 +55,28 @@ namespace
             return (uchar)(g);
         }
     };
-    
+
+    void test_opencv()
+    {
+        // load RGB image
+        auto src_image = cv::imread(PATH);
+
+        cv::Mat gray_image {};
+        auto start = std::chrono::system_clock::now();
+        for (auto i = 0; i < ITERATIONS; ++i)
+        {
+            cv::cvtColor(src_image, gray_image, cv::COLOR_BGR2GRAY);
+        }
+        auto end = std::chrono::system_clock::now();
+
+        cv::imwrite("opencv_hoge.jpg", gray_image);
+
+        // display time 
+        auto t = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        std::cout << "opencv " << t << " [ms]" << std::endl; 
+ 
+    }
+
     void test_cpu()
     {
         // load RGB image
@@ -67,20 +91,21 @@ namespace
 
         // make destination buffer
         std::vector<uchar> dst_buffer(rows * cols);
-
+        
+        cv::Mat gray_image {};
         auto start = std::chrono::system_clock::now();
         for (auto i = 0; i < ITERATIONS; ++i)
         {
             std::transform(src_buffer.begin(), src_buffer.end(), dst_buffer.begin(), gray_converter());
+            gray_image = cv::Mat(rows, cols, CV_8UC1, dst_buffer.data());
         }
         auto end = std::chrono::system_clock::now();
 
-        cv::Mat gray_image(rows, cols, CV_8UC1, dst_buffer.data());
-        cv::imwrite("./hoge.jpg", gray_image);
+        cv::imwrite("opencv_hoge.jpg", gray_image);
 
         // display time 
         auto t = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        std::cout << t << " [ms]" << std::endl; 
+        std::cout << "cpu " << t << " [ms]" << std::endl; 
     }
 
     void test_gpu()
@@ -97,15 +122,21 @@ namespace
         
         // make ouput buffer on GPU device
         thrust::device_vector<uchar> dst_buffer(rows * cols);
-
+        
+        thrust::host_vector<uchar> host_image {};
+        cv::Mat gray_image {};
         auto start = std::chrono::system_clock::now();
         for (auto i = 0; i < ITERATIONS; ++i)
         {
             thrust::transform(src_buffer.begin(), src_buffer.end(), dst_buffer.begin(), gray_converter());
+            thrust::host_vector<uchar> host_image = dst_buffer;
+            gray_image = cv::Mat(rows, cols, CV_8UC1, host_image.data());
         }
         auto end = std::chrono::system_clock::now();
 
+        cv::imwrite("opencv_hoge.jpg", gray_image);
+        
         auto t = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        std::cout << t << " [ms]" << std::endl; 
+        std::cout << "gpu " << t << " [ms]" << std::endl; 
     }
 }
