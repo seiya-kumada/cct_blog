@@ -17,6 +17,8 @@
 namespace
 {
     void test_container();
+    void test_stl_algorithm();
+    void test_algorithm();
     void test_opencv();
     void test_cpu();
     void test_gpu();
@@ -25,6 +27,8 @@ namespace
 int main(void)
 {
     test_container();
+    test_stl_algorithm();
+    test_algorithm();
     test_opencv();
     test_cpu();
     test_gpu();
@@ -64,6 +68,28 @@ namespace
 
         // copy関数を使います。
         thrust::copy(dv.begin(), dv.end(), hv.begin());
+    }
+
+    void test_stl_algorithm()
+    {
+        std::vector<int> sv {1, 2, 3};
+        std::cout << sv[0] << " " << sv[1] << " " << sv[2] << std::endl;
+
+        std::vector<int> dv(3);
+        std::transform(sv.begin(), sv.end(), dv.begin(), std::negate<int>());    
+        std::cout << dv[0] << " " << dv[1] << " " << dv[2] << std::endl;
+    }
+
+
+    void test_algorithm()
+    {
+        thrust::device_vector<int> sv(3);
+        thrust::sequence(sv.begin(), sv.end(), 1);
+        std::cout << sv[0] << " " << sv[1] << " " << sv[2] << std::endl;
+
+        thrust::device_vector<int> dv(3);
+        thrust::transform(sv.begin(), sv.end(), dv.begin(), thrust::negate<int>());    
+        std::cout << dv[0] << " " << dv[1] << " " << dv[2] << std::endl;
     }
 
     const std::string PATH = "/home/ubuntu/data/thrust/image.jpg";
