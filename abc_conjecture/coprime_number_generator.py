@@ -56,11 +56,11 @@ class Generator:
 
 if __name__ == "__main__":
     gen = Generator(2, 1)
-    values = gen.generate(10)
+    values = gen.generate(7)
     for m, n in values:
         print(m, n)
 
     gen = Generator(3, 1)
-    values = gen.generate(10)
+    values = gen.generate(7)
     for m, n in values:
         print(m, n)
