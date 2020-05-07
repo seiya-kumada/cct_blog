@@ -11,6 +11,7 @@ from pyro.infer import TraceEnum_ELBO
 from pyro.infer.autoguide import AutoDelta
 from pyro import poutine
 from pyro.infer import SVI
+import sys
 # from torch.distributions import constraints
 
 DIR_PATH = "/home/ubuntu/data/cct_blog/pyro/train/"
@@ -78,45 +79,42 @@ def model(data):
         )
 
 
-def run_mcmc(model, data):
+def run_mcmc(data):
     kernel = NUTS(model)
     mcmc = MCMC(kernel, num_samples=250, warmup_steps=50)
     mcmc.run(data)
 
 
 def initialize(data):
-    print("A")
     pyro.clear_param_store()
     optim = pyro.optim.Adam({'lr': 0.1, 'betas': [0.8, 0.99]})
     elbo = TraceEnum_ELBO(max_plate_nesting=2)
     # global global_guide
     global_guide = AutoDelta(poutine.block(model, expose=['weights', 'mus', 'lambdas']))
-    print("B")
     svi = SVI(model, global_guide, optim, loss=elbo)
-    print("C")
     svi.loss(model, global_guide, data)
-    print("D")
     return svi
 
 
 def run_map(data):
-    print("AAA")
     svi = initialize(data)
     losses = []
-
-    print("BBB")
-    for i in range(100):
+    for i in range(200):
         loss = svi.step(data)
         losses.append(loss)
         print('.' if i % 100 else '\n', end='')
+        sys.stdout.flush()
+    print("")
 
 
 if __name__ == "__main__":
     pyro.enable_validation(True)
     pyro.set_rng_seed(1)
 
-    N = 2
-    data = load_data(DIR_PATH)[:N, :]
-    assert(data.size() == (N, 8192))
+    N = 912
+    M = 10
+    data = load_data(DIR_PATH)[:N, :M]
+    assert(data.size() == (N, M))
 
-    run_map(data)
+    # run_map(data)
+    run_mcmc(data)
