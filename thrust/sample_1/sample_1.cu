@@ -26,12 +26,12 @@ namespace
 
 int main(void)
 {
-    test_container();
-    test_stl_algorithm();
-    test_algorithm();
-    test_opencv();
+    //test_container();
+    //test_stl_algorithm();
+    //test_algorithm();
+    //test_opencv();
     test_cpu();
-    test_gpu();
+    //test_gpu();
     return 0;
 }
 
@@ -195,19 +195,20 @@ namespace
         auto rows = src_image.rows;
         auto cols = src_image.cols;
 
-        // copy image to container on GPU device
-        // uchar3 means a sequence of (uchar,uchar,uchar)
-        uchar3* ptr = reinterpret_cast<uchar3*>(src_image.data);
-        thrust::device_vector<uchar3> src_buffer(ptr, ptr + rows * cols);
-        
         // make ouput buffer on GPU device
-        thrust::device_vector<uchar> dst_buffer(src_buffer.size());
+        thrust::device_vector<uchar> dst_buffer(rows * cols);
         
-        thrust::host_vector<uchar> host_image(src_buffer.size());
+        thrust::host_vector<uchar> host_image(rows * cols);
         cv::Mat gray_image {};
         auto gc = gray_converter();
         auto bg = binary_generator(128);
         auto start = std::chrono::system_clock::now();
+        
+        // copy image to container on GPU device
+        // uchar3 means a sequence of (uchar,uchar,uchar)
+        uchar3* ptr = reinterpret_cast<uchar3*>(src_image.data);
+        thrust::device_vector<uchar3> src_buffer(ptr, ptr + rows * cols);
+ 
         for (auto i = 0; i < ITERATIONS; ++i)
         {
             thrust::transform(src_buffer.begin(), src_buffer.end(), dst_buffer.begin(), gc);
