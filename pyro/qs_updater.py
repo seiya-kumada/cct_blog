@@ -7,8 +7,8 @@ import torch
 
 class QsUpdater:
 
-    def __init__(self, pi, K):
-        self.pi = pi
+    def __init__(self, eta, K):
+        self.eta = eta
         self.K = K
 
     def update(self, W, nu, m, beta, alpha, dataset):
@@ -35,7 +35,7 @@ class QsUpdater:
         factors = torch.sum(r, dim=1)
         for n in range(N):
             r[n] = r[n] / factors[n]
-        self.pi = r
+        self.eta = r
 
 
 class TestQsUpdater(unittest.TestCase):
@@ -43,8 +43,8 @@ class TestQsUpdater(unittest.TestCase):
     def test_(self):
         dataset = torch.tensor([[2.0, 1.0], [3.0, 2.0]])
         K = 3
-        pi = torch.empty(2, K)
-        updater = QsUpdater(pi, K=K)
+        eta = torch.empty(2, K)
+        updater = QsUpdater(eta, K=K)
         W = torch.empty(K, 2, 2)
         nu = torch.empty(K, 2)
         m = torch.empty(K, 2)

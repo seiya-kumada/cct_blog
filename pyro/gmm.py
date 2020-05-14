@@ -60,16 +60,16 @@ if __name__ == "__main__":
     try:
         hyperparams = pa.HyperParameters(dim=DIM, k=K, nu=NU)
         params = pa.Parameters(dim=DIM, k=K)
-        qs_updater = qs.QsUpdater(params.pi)
+        qs_updater = qs.QsUpdater(params.eta)
         qp_updater = qp.QpiUpdater()
         qm_updater = qm.QmusigmaUpdater()
         dataset = make_dataset(OBS_NUM, DIM)
 
         # display_graph(dataset)
 
-        # for _ in range(MAX_ITER):
-        #     for _ in range(OBS_NUM):
-        #         qs_updater.update(dataset)
+        for _ in range(MAX_ITER):
+            qs_updater.update(
+                hyperparams.W, hyperparams.nu, hyperparams.m, hyperparams.beta, hyperparams.alpha, dataset)
         #     for _ in range(K):
         #         qp_updater.update()
         #     qm_updater.update()

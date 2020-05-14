@@ -10,7 +10,7 @@ class Parameters:
         self.mu = torch.zeros(k, dim)
         tmp = [torch.eye(dim) for _ in range(k)]
         self.Lambda = torch.stack(tmp, dim=0)
-        self.pi = torch.ones(k) / k
+        self.eta = torch.ones(k) / k
 
 
 class HyperParameters:
@@ -33,7 +33,7 @@ class TestParameters(unittest.TestCase):
         params = Parameters(dim=DIM, k=K)
         self.assertTrue(torch.all(params.mu == torch.zeros(K, DIM)))
         self.assertTrue(params.Lambda.size() == (K, DIM, DIM))
-        self.assertEqual(1, torch.sum(params.pi))
+        self.assertEqual(1, torch.sum(params.eta))
 
 
 class TestHyerParameters(unittest.TestCase):
