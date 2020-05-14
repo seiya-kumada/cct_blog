@@ -3,7 +3,8 @@
 import parameters as pa
 import qs_updater as qs
 import qpi_updater as qp
-import qmusigma_updater as qm
+import qmu_updater as qm
+import qlambda_updater as ql
 import torch
 import torch.distributions as D
 import matplotlib.pyplot as plt
@@ -62,16 +63,24 @@ if __name__ == "__main__":
         params = pa.Parameters(dim=DIM, k=K)
         qs_updater = qs.QsUpdater(params.eta)
         qp_updater = qp.QpiUpdater()
-        qm_updater = qm.QmusigmaUpdater()
+        qm_updater = qm.QmuUpdater()
+        ql_updater = ql.QlambdaUpdater()
         dataset = make_dataset(OBS_NUM, DIM)
 
         # display_graph(dataset)
 
         for _ in range(MAX_ITER):
             qs_updater.update(
-                hyperparams.W, hyperparams.nu, hyperparams.m, hyperparams.beta, hyperparams.alpha, dataset)
-        #     for _ in range(K):
-        #         qp_updater.update()
+                dataset,
+                ql_updater.W,
+                ql_updater.nu,
+                qm_updater.m,
+                qm_updater.beta,
+                qp_updater.alpha,
+                dataset)
+            qm_updater.update(
+                dataset,
+                qs_updater.eta)
         #     qm_updater.update()
     except Exception as e:
         print("Exception: {}".format(e))

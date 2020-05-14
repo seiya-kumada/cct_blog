@@ -7,19 +7,19 @@ import torch
 
 class QsUpdater:
 
-    def __init__(self, eta, K):
-        self.eta = eta
+    def __init__(self, N, K):
         self.K = K
+        self.eta = torch.empty(N, K)
 
-    def update(self, W, nu, m, beta, alpha, dataset):
+    def update(self, dataset, W, nu, m, beta, alpha):
         N, _ = dataset.size()
         r = torch.empty(N, self.K)
         for n in range(N):
+            x = dataset[n]
             for k in range(self.K):
                 Wk = W[k]
                 nk = nu[k]
                 Lambda = utils.update_with_4_119(Wk, nk)
-                x = dataset[n]
                 a = torch.dot(x, torch.matmul(Lambda, x))
                 mk = m[k]
                 Lambda_mu = utils.update_with_4_121(Wk, nk, mk)
