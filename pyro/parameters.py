@@ -4,15 +4,6 @@ import torch
 import unittest
 
 
-# class Parameters:
-#
-#     def __init__(self, dim, k):
-#         self.mu = torch.zeros(k, dim)
-#         tmp = [torch.eye(dim) for _ in range(k)]
-#         self.Lambda = torch.stack(tmp, dim=0)
-#         self.eta = torch.ones(k) / k
-
-
 class HyperParameters:
 
     def __init__(self, dim, k, nu):
@@ -24,16 +15,6 @@ class HyperParameters:
             raise ValueError("nu must be greater than dim - 1")
         self.nu = nu
 
-
-# class TestParameters(unittest.TestCase):
-
-    # def test_init(self):
-    #     K = 3
-    #     DIM = 10
-    #     params = Parameters(dim=DIM, k=K)
-    #     self.assertTrue(torch.all(params.mu == torch.zeros(K, DIM)))
-    #     self.assertTrue(params.Lambda.size() == (K, DIM, DIM))
-    #     self.assertEqual(1, torch.sum(params.eta))
 
 class TestHyerParameters(unittest.TestCase):
 
