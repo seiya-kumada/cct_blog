@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import torch
-import math
+# import math
 import unittest
 
 
@@ -12,15 +12,26 @@ def update_with_4_119(W, nu):
     return torch.einsum("kde,kf->kde", W, nu)
 
 
+def f(nk, d):
+    return torch.tensor((nk + 1 - d) / 2.0)
+
+
+# test ok
 def update_with_4_120(W, nu):
     # W:K,D,D
     # nu:K,1
-
-    _, D, _ = W.size()
-    a = sum([torch.digamma(torch.tensor([(nu + 1.0 - d) * 0.5])).item() for d in range(D)])
-    b = torch.logdet(W).item()
-    c = D * math.log(2)
-    return a + b + c
+    K, D, _ = W.size()
+    p = torch.empty(K, D)
+    for k in range(K):
+        for d in range(D):
+            p[k, d] = torch.digamma(f(nu[k, 0].item(), 1 + d))
+    x = torch.matmul(p, torch.ones(D))
+    print("x ", x)
+    print("W ", W)
+    y = torch.logdet(W)
+    print("y ", y)
+    z = x + D * torch.log(torch.ones(K, dtype=float)) + y
+    return z.reshape(K, 1)
 
 
 # test ok
@@ -45,9 +56,11 @@ def update_with_4_122(W, nu, m, beta):
     return a * nu + D / beta
 
 
-def update_with_4_62(alpha, index_k):
+# test ok
+def update_with_4_62(alpha):
+    # alpha:K,1
     a = torch.sum(alpha)
-    return torch.digamma(torch.tensor([alpha[index_k]])) - torch.digamma(torch.tensor([a]))
+    return (torch.digamma(alpha) - torch.digamma(a)).reshape(-1, 1)
 
 
 class TestUtils(unittest.TestCase):
@@ -55,19 +68,22 @@ class TestUtils(unittest.TestCase):
     def test_update_with_4_119(self):
         K = 3
         D = 2
-        nu = torch.arange(K).reshape(K, 1)
+        nu = torch.arange(K, dtype=float).reshape(K, 1)
         self.assertTrue(nu.size() == (K, 1))
-        W = torch.arange(12).reshape(K, D, D)
+        W = torch.arange(12, dtype=float).reshape(K, D, D)
         a = update_with_4_119(W, nu)
         self.assertTrue(a.size() == (K, D, D))
         for k in range(K):
             self.assertTrue(torch.all(a[k] == nu[k] * W[k]))
 
     def test_update_with_4_120(self):
-        nu = 5
-        W = torch.eye(2)
+        K = 2
+        D = 3
+        W = torch.arange(1, 1 + K * D * D, dtype=float).reshape(K, D, D)
+        nu = torch.arange(1, 1 + K, dtype=float).reshape(K, 1) / 100.0
         a = update_with_4_120(W, nu)
-        self.assertAlmostEqual(a, 3.01223533964696)
+        self.assertTrue(a.size() == (K, 1))
+        print(a)
 
     def test_update_with_4_121(self):
         K = 3
@@ -103,9 +119,10 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(a.size() == (K, 1))
 
     def test_update_with_4_62(self):
-        alpha = torch.tensor([1.0, 1.0])
-        a = update_with_4_62(alpha, 0)
-        self.assertAlmostEqual(-1.0, a, delta=1.0e-5)
+        K = 2
+        alpha = torch.ones(K, dtype=float)
+        a = update_with_4_62(alpha)
+        self.assertTrue(a.size() == (K, 1))
 
 
 if __name__ == "__main__":
