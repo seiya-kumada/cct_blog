@@ -26,10 +26,7 @@ def update_with_4_120(W, nu):
         for d in range(D):
             p[k, d] = torch.digamma(f(nu[k, 0].item(), 1 + d))
     x = torch.matmul(p, torch.ones(D))
-    print("x ", x)
-    print("W ", W)
     y = torch.logdet(W)
-    print("y ", y)
     z = x + D * torch.log(torch.ones(K, dtype=float)) + y
     return z.reshape(K, 1)
 
@@ -79,11 +76,12 @@ class TestUtils(unittest.TestCase):
     def test_update_with_4_120(self):
         K = 2
         D = 3
-        W = torch.arange(1, 1 + K * D * D, dtype=float).reshape(K, D, D)
+        t = torch.eye(D, dtype=float)
+        s = [t for _ in range(K)]
+        W = torch.stack(s, dim=0)  # torch.arange(1, 1 + K * D * D, dtype=float).reshape(K, D, D)
         nu = torch.arange(1, 1 + K, dtype=float).reshape(K, 1) / 100.0
         a = update_with_4_120(W, nu)
         self.assertTrue(a.size() == (K, 1))
-        print(a)
 
     def test_update_with_4_121(self):
         K = 3

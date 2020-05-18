@@ -8,7 +8,7 @@ class HyperParameters:
 
     def __init__(self, dim, k, nu):
         self.beta = 0.0
-        self.m = torch.zeros(dim)
+        self.m = torch.zeros(dim).reshape(-1, 1)
         self.W = torch.eye(dim)
         self.alpha = torch.ones(k)
         if nu <= dim - 1:
