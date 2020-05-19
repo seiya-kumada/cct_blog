@@ -8,8 +8,8 @@ import parameters as pa
 class QmuUpdater:
 
     def __init__(self, hyper_params):
-        self.m = hyper_params.m
-        self.beta = hyper_params.beta
+        self.m = None
+        self.beta = None
         self.hyper_params = hyper_params
 
     # eta: (N, K)

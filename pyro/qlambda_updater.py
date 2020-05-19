@@ -9,10 +9,10 @@ class QlambdaUpdater:
 
     def __init__(self, hyper_params):
         self.hyper_params = hyper_params
-        self.nu = hyper_params.nu
-        self.W = hyper_params.W
+        self.nu = None
+        self.W = None
 
-    def update(self, eta, beta, m, dataset):
+    def update(self, dataset, eta, beta, m):
         # eta: (N,K)
         # dataset: (N,D)
         # beta: (K,1)
@@ -40,7 +40,7 @@ class TestQlambdaUpdater(unittest.TestCase):
         dataset = torch.arange(N * D, dtype=float).reshape(N, D)
         hyper_params = pa.HyperParameters(dim=D, k=K, nu=D)
         updater = QlambdaUpdater(hyper_params)
-        updater.update(eta, beta, m, dataset)
+        updater.update(dataset, eta, beta, m)
         self.assertTrue((K, D, D) == updater.W.size())
         self.assertTrue((K, 1) == updater.nu.size())
 

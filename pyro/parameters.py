@@ -7,10 +7,10 @@ import unittest
 class HyperParameters:
 
     def __init__(self, dim, k, nu):
-        self.beta = 0.0
-        self.m = torch.zeros(dim).reshape(-1, 1)
-        self.W = torch.eye(dim)
-        self.alpha = torch.ones(k)
+        self.beta = 0.1
+        self.m = torch.zeros(dim).reshape(1, -1)  # (1,dim)
+        self.W = torch.eye(dim)  # (dim,dim)
+        self.alpha = torch.ones(k).reshape(k)  # (k)
         if nu <= dim - 1:
             raise ValueError("nu must be greater than dim - 1")
         self.nu = nu

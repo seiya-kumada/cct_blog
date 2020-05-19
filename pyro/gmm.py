@@ -59,12 +59,11 @@ def make_dataset(obs_num, dim):
 
 if __name__ == "__main__":
     try:
-        hyperparams = pa.HyperParameters(dim=DIM, k=K, nu=NU)
-        params = pa.Parameters(dim=DIM, k=K)
-        qs_updater = qs.QsUpdater(params.eta)
-        qp_updater = qp.QpiUpdater()
-        qm_updater = qm.QmuUpdater()
-        ql_updater = ql.QlambdaUpdater()
+        hyper_params = pa.HyperParameters(dim=DIM, k=K, nu=NU)
+        qs_updater = qs.QsUpdater()
+        qp_updater = qp.QpiUpdater(hyper_params)
+        qm_updater = qm.QmuUpdater(hyper_params)
+        ql_updater = ql.QlambdaUpdater(hyper_params)
         dataset = make_dataset(OBS_NUM, DIM)
 
         # display_graph(dataset)
@@ -78,9 +77,8 @@ if __name__ == "__main__":
                 qm_updater.beta,
                 qp_updater.alpha,
                 dataset)
-            qm_updater.update(
-                dataset,
-                qs_updater.eta)
-        #     qm_updater.update()
+            ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
+            qm_updater.update(dataset, qs_updater.eta)
+            qp_updater.update(dataset, qs_updater.eta)
     except Exception as e:
         print("Exception: {}".format(e))
