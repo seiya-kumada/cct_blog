@@ -10,23 +10,21 @@ class QsUpdater:
     def __init__(self):
         self.eta = None
 
-    # W:(K,D,D), nu:(K,1), m:(K,D), beta:(K,1), alpha:(K,1)
+    # W:(K,D,D), nu:(K), m:(K,D), beta:(K), alpha:(K)
     def update(self, dataset, W, nu, m, beta, alpha):
-        Phi = torch.einsum('nd,ne->nde', dataset, dataset)  # (N,D,D)
+        Phi = torch.einsum('ni,nj->nij', dataset, dataset)  # (N,D,D)
         Lam = utils.update_with_4_119(W, nu)  # (K,D,D)
         #
-        a = torch.einsum('nde,kde->nk', Phi, Lam)  # (N,K)
+        a = torch.einsum('nij,kji->nk', Phi, Lam)  # (N,K)
         lm = utils.update_with_4_121(W, nu, m)  # (K,D)
         #
         b = torch.einsum('nd,kd->nk', dataset, lm)  # (N,K)
         c = utils.update_with_4_122(W, nu, m, beta).squeeze()  # (K)
         d = utils.update_with_4_120(W, nu).squeeze()  # (K)
         e = utils.update_with_4_62(alpha).squeeze()  # (K)
-        # print("e ", e.size())
-
         f = torch.exp(-0.5 * a + b - 0.5 * c + 0.5 * d + e)  # (N,K)
-        s = (1.0 / torch.sum(f, dim=1)).reshape(-1, 1)  # (N)
-        return torch.einsum("nk,ne->nk", f, s)
+        s = (1.0 / torch.sum(f, dim=1))  # (N,)
+        return torch.einsum("nk,n->nk", f, s)
 
 
 class TestQsUpdater(unittest.TestCase):
@@ -58,8 +56,16 @@ class TestQsUpdater(unittest.TestCase):
         c = torch.einsum('nd,kd->nk', a, b)
         self.assertTrue(c.size() == (N, K))
 
-    # W:(K,D,D), nu:(K,1), m:(K,D), beta:(K,1), alpha:(K,1)
     def test_3(self):
+        N = 2
+        K = 4
+        f = torch.arange(N * K).reshape(N, K)
+        e = torch.arange(N).reshape(N, 1)
+        g = torch.einsum("nk,ne->nk", f, e)
+        self.assertTrue(torch.all(torch.tensor([[0, 0, 0, 0], [4, 5, 6, 7]]) == g))
+
+    # W:(K,D,D), nu:(K), m:(K,D), beta:(K,1), alpha:(K,1)
+    def test_4(self):
         N = 2
         D = 3
         K = 4
@@ -67,10 +73,10 @@ class TestQsUpdater(unittest.TestCase):
         t = torch.eye(D, dtype=float)
         s = [t for _ in range(K)]
         W = torch.stack(s, dim=0)
-        nu = torch.arange(1, 1 + K, dtype=float).reshape(K, 1) / 100.0
+        nu = torch.arange(1, 1 + K, dtype=float) / 100.0
         m = torch.arange(1, 1 + K * D, dtype=float).reshape(K, D)
-        beta = torch.arange(1, 1 + K, dtype=float).reshape(K, 1)
-        alpha = torch.arange(1, 1 + K, dtype=float).reshape(K, 1)
+        beta = torch.arange(1, 1 + K, dtype=float)
+        alpha = torch.arange(1, 1 + K, dtype=float)
 
         updater = QsUpdater()
         a = updater.update(dataset, W, nu, m, beta, alpha)
