@@ -14,8 +14,8 @@ import random
 
 DIM = 2
 K = 3
-NU = 1000
-MAX_ITER = 1
+NU = 1000 * torch.ones(K)
+MAX_ITER = 10
 OBS_NUM = 30
 SEED = 1
 torch.manual_seed(SEED)
@@ -30,7 +30,8 @@ def display_graph(dataset):
         xs.append(x)
         ys.append(y)
     plt.scatter(xs, ys, marker='.')
-    plt.show()
+    plt.savefig('./dataset.jpg')
+    # plt.show()
 
 
 def make_dataset(obs_num, dim):
@@ -68,15 +69,15 @@ if __name__ == "__main__":
 
         # display_graph(dataset)
 
-        for _ in range(MAX_ITER):
+        for i in range(MAX_ITER):
+            print(i)
             qs_updater.update(
                 dataset,
                 ql_updater.W,
                 ql_updater.nu,
                 qm_updater.m,
                 qm_updater.beta,
-                qp_updater.alpha,
-                dataset)
+                qp_updater.alpha)
             ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
             qm_updater.update(dataset, qs_updater.eta)
             qp_updater.update(dataset, qs_updater.eta)

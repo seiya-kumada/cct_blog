@@ -15,8 +15,7 @@ class QpiUpdater:
         # eta:(N,K)
         # dataset:(N,D)
         N, K = eta.size()
-        alpha = torch.matmul(torch.t(eta), torch.ones(N, dtype=float)) + self.hyper_params.alpha
-        self.alpha = alpha.reshape(K, 1)
+        self.alpha = torch.matmul(torch.t(eta), torch.ones(N, dtype=torch.float32)) + self.hyper_params.alpha
 
 
 class TestQpiUpdater(unittest.TestCase):
@@ -25,12 +24,12 @@ class TestQpiUpdater(unittest.TestCase):
         N = 2
         D = 3
         K = 4
-        eta = torch.arange(N * K, dtype=float).reshape(N, K)
-        dataset = torch.arange(N * D, dtype=float).reshape(N, D)
-        hyper_params = pa.HyperParameters(dim=D, k=K, nu=D)
+        eta = torch.arange(N * K, dtype=torch.float32).reshape(N, K)
+        dataset = torch.arange(N * D, dtype=torch.float32).reshape(N, D)
+        hyper_params = pa.HyperParameters(dim=D, k=K, nu=D * torch.ones(K))
         updater = QpiUpdater(hyper_params)
         updater.update(dataset, eta)
-        self.assertTrue((K, 1) == updater.alpha.size())
+        self.assertTrue((K,) == updater.alpha.size())
 
 
 if __name__ == "__main__":

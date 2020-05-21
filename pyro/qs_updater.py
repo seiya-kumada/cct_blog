@@ -14,7 +14,6 @@ class QsUpdater:
     def update(self, dataset, W, nu, m, beta, alpha):
         Phi = torch.einsum('ni,nj->nij', dataset, dataset)  # (N,D,D)
         Lam = utils.update_with_4_119(W, nu)  # (K,D,D)
-        #
         a = torch.einsum('nij,kji->nk', Phi, Lam)  # (N,K)
         lm = utils.update_with_4_121(W, nu, m)  # (K,D)
         #
@@ -24,7 +23,7 @@ class QsUpdater:
         e = utils.update_with_4_62(alpha).squeeze()  # (K)
         f = torch.exp(-0.5 * a + b - 0.5 * c + 0.5 * d + e)  # (N,K)
         s = (1.0 / torch.sum(f, dim=1))  # (N,)
-        return torch.einsum("nk,n->nk", f, s)
+        self.eta = torch.einsum("nk,n->nk", f, s).float()
 
 
 class TestQsUpdater(unittest.TestCase):
@@ -79,9 +78,9 @@ class TestQsUpdater(unittest.TestCase):
         alpha = torch.arange(1, 1 + K, dtype=float)
 
         updater = QsUpdater()
-        a = updater.update(dataset, W, nu, m, beta, alpha)
-        self.assertTrue(a.size() == (N, K))
-        t = torch.sum(a, dim=1)
+        updater.update(dataset, W, nu, m, beta, alpha)
+        self.assertTrue(updater.eta.size() == (N, K))
+        t = torch.sum(updater.eta, dim=1)
         self.assertAlmostEqual(1, t[0].item())
         self.assertAlmostEqual(1, t[1].item())
 

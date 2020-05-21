@@ -1,0 +1,8 @@
+#!/bin/bash
+
+./parameters.py
+./qlambda_updater.py
+./qmu_updater.py
+./qpi_updater.py
+./qs_updater.py
+./utils.py
