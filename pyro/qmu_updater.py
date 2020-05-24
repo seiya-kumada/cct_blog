@@ -8,7 +8,8 @@ import parameters as pa
 class QmuUpdater:
 
     def __init__(self, hyper_params):
-        self.m = hyper_params.m
+        # self.m = hyper_params.m
+        self.m = torch.tensor([[-1.0, 0.0], [0, 1.0], [1.0, 0.0]], dtype=torch.float32)
         self.beta = hyper_params.beta
         self.hyper_params = hyper_params
 

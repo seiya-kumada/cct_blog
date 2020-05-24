@@ -9,7 +9,7 @@ class HyperParameters:
     def __init__(self, dim, k, nu):
         self.beta = 0.1 * torch.ones(k)
         self.m = torch.zeros(k, dim)
-        ws = [10 * torch.eye(dim) for _ in range(k)]
+        ws = [torch.eye(dim) for _ in range(k)]
         self.W = torch.stack(ws, dim=0)
         self.alpha = torch.ones(k)
         if nu[0] <= dim - 1:

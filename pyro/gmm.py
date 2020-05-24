@@ -14,7 +14,7 @@ import random
 
 DIM = 2
 K = 3
-NU = 1000 * torch.ones(K)
+NU = DIM * torch.ones(K)
 MAX_ITER = 10
 OBS_NUM = 30
 SEED = 1
@@ -69,8 +69,8 @@ if __name__ == "__main__":
 
         # display_graph(dataset)
 
+        print(qm_updater.m)
         for i in range(MAX_ITER):
-            print(i)
             qs_updater.update(
                 dataset,
                 ql_updater.W,
@@ -81,5 +81,7 @@ if __name__ == "__main__":
             ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
             qm_updater.update(dataset, qs_updater.eta)
             qp_updater.update(dataset, qs_updater.eta)
+            print(qm_updater.m)
+
     except Exception as e:
         print("Exception: {}".format(e))
