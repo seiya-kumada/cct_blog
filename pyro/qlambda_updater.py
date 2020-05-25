@@ -23,6 +23,11 @@ class QlambdaUpdater:
         b = torch.einsum('kd,ke->kde', self.hyper_params.m, self.hyper_params.m)  # K,D,D
         c = torch.einsum('kd,ke->kde', m, m)  # K,D,D
         self.W = (a + self.hyper_params.beta.reshape(-1, 1, 1) * b - beta.reshape(K, 1, 1) * c + self.hyper_params.W.inverse()).inverse()
+
+        min_det = torch.min(torch.det(self.W))
+        if min_det < 0:
+            raise Exception("invalid determinant detected")
+
         self.hyper_params.beta.reshape(-1, 1, 1) * b
         N, _ = dataset.size()
         self.nu = torch.matmul(torch.t(eta), torch.ones(N, dtype=torch.float32)) + self.hyper_params.nu

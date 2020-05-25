@@ -15,12 +15,13 @@ import random
 DIM = 2
 K = 3
 NU = DIM * torch.ones(K)
-MAX_ITER = 10
-OBS_NUM = 30
-SEED = 1
-torch.manual_seed(SEED)
-random.seed(SEED)
-np.random.seed(SEED)
+MAX_ITER = 100
+OBS_NUM = 300
+SEED = 123
+EPSILON = 1.0e-5
+# torch.manual_seed(SEED)
+# random.seed(SEED)
+# np.random.seed(SEED)
 
 
 def display_graph(dataset):
@@ -31,7 +32,7 @@ def display_graph(dataset):
         ys.append(y)
     plt.scatter(xs, ys, marker='.')
     plt.savefig('./dataset.jpg')
-    # plt.show()
+    return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
 
 
 def make_dataset(obs_num, dim):
@@ -67,9 +68,17 @@ if __name__ == "__main__":
         ql_updater = ql.QlambdaUpdater(hyper_params)
         dataset = make_dataset(OBS_NUM, DIM)
 
-        # display_graph(dataset)
-
+        (x_range, y_range) = display_graph(dataset)
+        cxs = np.random.uniform(x_range[0], x_range[1], K)
+        cys = np.random.uniform(y_range[0], y_range[1], K)
+        cs = []
+        for (cx, cy) in zip(cxs, cys):
+            cs.append([cx, cy])
+        # initialize mu
+        qm_updater.m = torch.tensor(cs).float()
         print(qm_updater.m)
+
+        prev_m = qm_updater.m.clone()
         for i in range(MAX_ITER):
             qs_updater.update(
                 dataset,
@@ -81,7 +90,12 @@ if __name__ == "__main__":
             ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
             qm_updater.update(dataset, qs_updater.eta)
             qp_updater.update(dataset, qs_updater.eta)
-            print(qm_updater.m)
+            diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
+            if diff_m < EPSILON:
+                print("diff is {} at {}".format(diff_m, i))
+                break
+            prev_m = qm_updater.m.clone()
+        print(qm_updater.m)
 
     except Exception as e:
         print("Exception: {}".format(e))

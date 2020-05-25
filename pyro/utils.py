@@ -26,6 +26,7 @@ def update_with_4_120(W, nu):
         for d in range(D):
             p[k, d] = torch.digamma(f(nu[k].item(), 1 + d))
     x = torch.matmul(p, torch.ones(D))
+    # y = torch.log(torch.abs(torch.det(W)))
     y = torch.logdet(W)
     z = x + D * torch.log(2.0 * torch.ones(K, dtype=float)) + y
     return z
