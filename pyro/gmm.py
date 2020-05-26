@@ -19,9 +19,9 @@ MAX_ITER = 100
 OBS_NUM = 300
 SEED = 123
 EPSILON = 1.0e-5
-# torch.manual_seed(SEED)
-# random.seed(SEED)
-# np.random.seed(SEED)
+torch.manual_seed(SEED)
+random.seed(SEED)
+np.random.seed(SEED)
 
 
 def display_graph(dataset):

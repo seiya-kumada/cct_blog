@@ -13,7 +13,7 @@
 #include <opencv2/imgproc.hpp>
 
 //const std::string PATH = "/Users/kumada/Projects/text_detection/opencv-text-recognition/images/sample2.png";
-const std::string PATH = "/Users/kumada/Projects/text_detection/opencv-text-detection/images/sample_3.png";
+const std::string PATH = "/Users/kumada/Projects/cct_blog/tesseract/text_detection/opencv-text-detection/images/hikyori.png";
 
 template<typename T>
 struct Type;
@@ -73,5 +73,5 @@ int sample_1(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-    return sample_1(argc, argv);
+    return sample_0(argc, argv);
 }
