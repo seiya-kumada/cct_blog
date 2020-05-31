@@ -16,8 +16,8 @@ DIM = 2
 K = 3
 NU = DIM * torch.ones(K)
 MAX_ITER = 1000
-OBS_NUM = 300
-SEED = 1
+OBS_NUM = 1000
+# SEED = 1
 EPSILON = 1.0e-5
 CENTERS = torch.tensor([
     [-10.0, 0.0],
@@ -39,6 +39,24 @@ def display_graph(dataset):
     plt.scatter(xs, ys, marker='.')
     plt.savefig('./dataset.jpg')
     return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
+
+
+LABELS = {0: "red", 1: "green", 2: "blue"}
+
+
+# eta:(N,K), dataset:(N,D)
+def save_results(eta, dataset):
+    red = np.array([1, 0, 0])
+    green = np.array([0, 1, 0])
+    blue = np.array([0, 0, 1])
+
+    colors = []
+    for indices in eta:
+        c = red * indices[0].numpy() + green * indices[1].numpy() + blue * indices[2].numpy()
+        colors.append(c)
+
+    plt.scatter(dataset[:, 0], dataset[:, 1], marker='.', c=colors)
+    plt.savefig('./results.jpg')
 
 
 def make_dataset(obs_num, dim):
@@ -112,7 +130,7 @@ if __name__ == "__main__":
         print("final m ")
         for m in qm_updater.m * std + mean:
             print(m.tolist())
-        # print("answer ", CENTERS)
+        save_results(qs_updater.eta, dataset)
 
     except Exception as e:
         print("Exception: {}".format(e))
