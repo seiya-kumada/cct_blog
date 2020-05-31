@@ -9,6 +9,9 @@ import torch
 import torch.distributions as D
 import matplotlib.pyplot as plt
 import numpy as np
+# import gauss
+import dirichlet
+import wishart
 # import random
 
 
@@ -89,6 +92,12 @@ def check(dataset):
     print(mean)
 
 
+def predict(ql_updater, qm_updater, qp_updater):
+    diri = dirichlet.Dirichlet(qp_updater.alpha)
+    wish = wishart.Wishart(ql_updater.nu.numpy(), ql_updater.W.numpy())
+    print(diri, wish)
+
+
 if __name__ == "__main__":
     try:
         hyper_params = pa.HyperParameters(dim=DIM, k=K, nu=NU)
@@ -131,6 +140,7 @@ if __name__ == "__main__":
         for m in qm_updater.m * std + mean:
             print(m.tolist())
         save_results(qs_updater.eta, dataset)
+        predict(ql_updater, qm_updater, qp_updater)
 
     except Exception as e:
         print("Exception: {}".format(e))

@@ -10,6 +10,7 @@ class QpiUpdater:
     def __init__(self, hyper_params):
         self.alpha = hyper_params.alpha
         self.hyper_params = hyper_params
+        self.dist = None
 
     def update(self, dataset, eta):
         # eta:(N,K)
