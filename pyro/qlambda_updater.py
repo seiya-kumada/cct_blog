@@ -10,7 +10,8 @@ class QlambdaUpdater:
     def __init__(self, hyper_params):
         self.hyper_params = hyper_params
         self.nu = hyper_params.nu
-        self.W = hyper_params.W
+        self.W = hyper_params.W.clone()
+        self.hyper_params = hyper_params
 
     def update(self, dataset, eta, beta, m):
         # eta: (N,K)
@@ -26,7 +27,8 @@ class QlambdaUpdater:
 
         min_det = torch.min(torch.det(self.W))
         if min_det < 0:
-            raise Exception("invalid determinant detected")
+            self.W = self.hyper_params.W.clone()
+            # raise Exception("invalid determinant detected")
 
         self.hyper_params.beta.reshape(-1, 1, 1) * b
         N, _ = dataset.size()

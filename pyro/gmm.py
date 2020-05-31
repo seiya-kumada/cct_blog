@@ -9,19 +9,25 @@ import torch
 import torch.distributions as D
 import matplotlib.pyplot as plt
 import numpy as np
-import random
+# import random
 
 
 DIM = 2
 K = 3
 NU = DIM * torch.ones(K)
-MAX_ITER = 100
+MAX_ITER = 1000
 OBS_NUM = 300
-SEED = 123
+SEED = 1
 EPSILON = 1.0e-5
-torch.manual_seed(SEED)
-random.seed(SEED)
-np.random.seed(SEED)
+CENTERS = torch.tensor([
+    [-10.0, 0.0],
+    [10.0, 0.0],
+    [0.0, 10.0]])
+
+
+# torch.manual_seed(SEED)
+# random.seed(SEED)
+# np.random.seed(SEED)
 
 
 def display_graph(dataset):
@@ -36,15 +42,15 @@ def display_graph(dataset):
 
 
 def make_dataset(obs_num, dim):
-    loc_0 = torch.tensor([-10.0, 0])
+    loc_0 = CENTERS[0]
     cov_0 = torch.eye(dim) * 2.0
     dis_0 = D.MultivariateNormal(loc=loc_0, covariance_matrix=cov_0)
 
-    loc_1 = torch.tensor([10.0, 0])
+    loc_1 = CENTERS[1]
     cov_1 = torch.eye(dim) * 2.0
     dis_1 = D.MultivariateNormal(loc=loc_1, covariance_matrix=cov_1)
 
-    loc_2 = torch.tensor([0, 10.0])
+    loc_2 = CENTERS[2]
     cov_2 = torch.eye(dim) * 2.0
     dis_2 = D.MultivariateNormal(loc=loc_2, covariance_matrix=cov_2)
 
@@ -59,6 +65,12 @@ def make_dataset(obs_num, dim):
     return torch.stack(values, dim=0)
 
 
+def check(dataset):
+    std, mean = torch.std_mean(dataset, dim=0)
+    print(std)
+    print(mean)
+
+
 if __name__ == "__main__":
     try:
         hyper_params = pa.HyperParameters(dim=DIM, k=K, nu=NU)
@@ -67,8 +79,10 @@ if __name__ == "__main__":
         qm_updater = qm.QmuUpdater(hyper_params)
         ql_updater = ql.QlambdaUpdater(hyper_params)
         dataset = make_dataset(OBS_NUM, DIM)
-
+        std, mean = torch.std_mean(dataset, dim=0)
+        dataset = (dataset - mean) / std
         (x_range, y_range) = display_graph(dataset)
+
         cxs = np.random.uniform(x_range[0], x_range[1], K)
         cys = np.random.uniform(y_range[0], y_range[1], K)
         cs = []
@@ -76,7 +90,7 @@ if __name__ == "__main__":
             cs.append([cx, cy])
         # initialize mu
         qm_updater.m = torch.tensor(cs).float()
-        print(qm_updater.m)
+        # print("initial m ", qm_updater.m)
 
         prev_m = qm_updater.m.clone()
         for i in range(MAX_ITER):
@@ -95,7 +109,10 @@ if __name__ == "__main__":
                 print("diff is {} at {}".format(diff_m, i))
                 break
             prev_m = qm_updater.m.clone()
-        print(qm_updater.m)
+        print("final m ")
+        for m in qm_updater.m * std + mean:
+            print(m.tolist())
+        # print("answer ", CENTERS)
 
     except Exception as e:
         print("Exception: {}".format(e))

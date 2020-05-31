@@ -2,11 +2,11 @@
 # -*- coding:utf-8 -*-
 import torch
 import unittest
-import numpy as np
+# import numpy as np
 
-SEED = 1
-np.random.seed(SEED)
-torch.manual_seed(SEED)
+# SEED = 1
+# np.random.seed(SEED)
+# torch.manual_seed(SEED)
 
 
 class HyperParameters:
@@ -14,8 +14,10 @@ class HyperParameters:
     def __init__(self, dim, k, nu):
         self.beta = 0.1 * torch.ones(k)
         self.m = torch.zeros(k, dim)
-        vs = torch.diag(torch.tensor(np.random.uniform(0, 1, dim))).float()
-        # ws = [torch.eye(dim) for _ in range(k)]
+
+        # vs = torch.diag(torch.tensor(np.random.uniform(0, 1, dim))).float()
+        vs = torch.diag(torch.ones(dim)).float()
+
         ws = [vs for _ in range(k)]
         self.W = torch.stack(ws, dim=0)
         self.alpha = torch.ones(k)
