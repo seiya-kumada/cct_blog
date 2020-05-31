@@ -156,3 +156,5 @@ sentence_classification_with_bert/all_sentence_classification/__pycache__/
 thrust/sample_0/build/*
 thrust/sample_1/build/*
 pyro/*.jpg
+pyro/log
+pyro/myrun
