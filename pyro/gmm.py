@@ -9,7 +9,7 @@ import torch
 import torch.distributions as D
 import matplotlib.pyplot as plt
 import numpy as np
-# import gauss
+import gauss
 import dirichlet
 import wishart
 # import random
@@ -19,14 +19,14 @@ DIM = 2
 K = 3
 NU = DIM * torch.ones(K)
 MAX_ITER = 1000
-OBS_NUM = 1000
+OBS_NUM = 100
 # SEED = 1
 EPSILON = 1.0e-5
 CENTERS = torch.tensor([
     [-10.0, 0.0],
     [10.0, 0.0],
     [0.0, 10.0]])
-
+TRIAL_NUM = 1
 
 # torch.manual_seed(SEED)
 # random.seed(SEED)
@@ -44,7 +44,7 @@ def display_graph(dataset):
     return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
 
 
-LABELS = {0: "red", 1: "green", 2: "blue"}
+# LABELS = {0: "red", 1: "green", 2: "blue"}
 
 
 # eta:(N,K), dataset:(N,D)
@@ -92,10 +92,47 @@ def check(dataset):
     print(mean)
 
 
+class Predictor:
+
+    def __init__(self, ql_updater, qm_updater, qp_updater):
+        diri = dirichlet.Dirichlet(qp_updater.alpha)
+        self.wishs = [wishart.Wishart(ql_updater.nu.numpy()[k], ql_updater.W.numpy()[k]) for k in range(K)]
+        self.pis = diri.sample()
+
+    def predict(self, x):
+        group = []
+        for _ in range(TRIAL_NUM):
+            ys = []
+            for k in range(K):
+                Lambda = self.wishs[k].sample().astype(np.float32)
+                g_mu = gauss.Gauss(qm_updater.m[k], qm_updater.beta[k] * Lambda)
+                mu = g_mu.sample()
+                g_x = gauss.Gauss(mu, torch.tensor(Lambda))
+                y = self.pis[k] * g_x.probs(x)
+                ys.append(y)
+            ys /= np.sum(ys)
+            group.append(ys)
+        return np.array(group)
+
+
 def predict(ql_updater, qm_updater, qp_updater):
-    diri = dirichlet.Dirichlet(qp_updater.alpha)
-    wish = wishart.Wishart(ql_updater.nu.numpy(), ql_updater.W.numpy())
-    print(diri, wish)
+    pred = Predictor(ql_updater, qm_updater, qp_updater)
+    x0 = torch.tensor([0.0, 1.5])
+    x1 = torch.tensor([1.25, -0.75])
+    x2 = torch.tensor([-1.25, -0.75])
+    x3 = torch.tensor([-0.5, 0.0])
+    ys = pred.predict(x0)
+    for y in ys:
+        print(y)
+    ys = pred.predict(x1)
+    for y in ys:
+        print(y)
+    ys = pred.predict(x2)
+    for y in ys:
+        print(y)
+    ys = pred.predict(x3)
+    for y in ys:
+        print(y)
 
 
 if __name__ == "__main__":
@@ -133,7 +170,7 @@ if __name__ == "__main__":
             qp_updater.update(dataset, qs_updater.eta)
             diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
             if diff_m < EPSILON:
-                print("diff is {} at {}".format(diff_m, i))
+                print("> diff is {} at {}".format(diff_m, i))
                 break
             prev_m = qm_updater.m.clone()
         print("final m ")

@@ -3,6 +3,7 @@
 import unittest
 import torch.distributions as dist
 import torch
+import math
 
 
 class Gauss:
@@ -13,16 +14,21 @@ class Gauss:
     def sample(self):
         return self.dist.sample()
 
+    def probs(self, x):
+        return torch.exp(self.dist.log_prob(x))
+
 
 class TestGauss(unittest.TestCase):
 
     def test(self):
-        D = 3
-        mu = torch.ones(D)
+        D = 1
+        mu = torch.zeros(D)
         Lambda = torch.eye(D)
         d = Gauss(mu, Lambda)
         s = d.sample()
         self.assertTrue((D,) == s.size())
+        p = d.probs(torch.zeros(D))
+        self.assertAlmostEqual(p, 1.0 / math.sqrt(2 * math.pi), 1.0e-4)
 
 
 if __name__ == "__main__":
