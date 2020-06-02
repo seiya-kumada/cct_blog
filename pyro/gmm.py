@@ -66,6 +66,8 @@ def save_results(eta, dataset):
         c = RED * indices[0].numpy() + GREEN * indices[1].numpy() + BLUE * indices[2].numpy()
         colors.append(c)
 
+    plt.figure(figsize=(5, 5))
+    plt.axes().set_aspect("equal")
     plt.scatter(dataset[:, 0], dataset[:, 1], marker='.', c=colors)
 
     plt.xlim(X_MIN, X_MAX)
@@ -141,7 +143,9 @@ def predict(ql_updater, qm_updater, qp_updater):
         c = RED * az[0] + GREEN * az[1] + BLUE * az[2]
         colors.append(c)
 
-    plt.scatter(xs.ravel(), ys.ravel(), marker='.', c=colors, alpha=0.3)
+    plt.figure(figsize=(5, 5))
+    plt.axes().set_aspect("equal")
+    plt.scatter(xs.ravel(), ys.ravel(), marker='o', c=colors, alpha=0.3)
 
     plt.xlim(X_MIN, X_MAX)
     plt.ylim(Y_MIN, Y_MAX)
