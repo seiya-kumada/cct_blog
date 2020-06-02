@@ -26,7 +26,15 @@ CENTERS = torch.tensor([
     [-10.0, 0.0],
     [10.0, 0.0],
     [0.0, 10.0]])
-TRIAL_NUM = 1
+TRIAL_NUM = 5
+X_MIN = -1.6
+X_MAX = 1.6
+Y_MIN = -1.25
+Y_MAX = 2.25
+RED = np.array([1, 0, 0])
+GREEN = np.array([0, 1, 0])
+BLUE = np.array([0, 0, 1])
+
 
 # torch.manual_seed(SEED)
 # random.seed(SEED)
@@ -49,16 +57,19 @@ def display_graph(dataset):
 
 # eta:(N,K), dataset:(N,D)
 def save_results(eta, dataset):
-    red = np.array([1, 0, 0])
-    green = np.array([0, 1, 0])
-    blue = np.array([0, 0, 1])
+    # red = np.array([1, 0, 0])
+    # green = np.array([0, 1, 0])
+    # blue = np.array([0, 0, 1])
 
     colors = []
     for indices in eta:
-        c = red * indices[0].numpy() + green * indices[1].numpy() + blue * indices[2].numpy()
+        c = RED * indices[0].numpy() + GREEN * indices[1].numpy() + BLUE * indices[2].numpy()
         colors.append(c)
 
     plt.scatter(dataset[:, 0], dataset[:, 1], marker='.', c=colors)
+
+    plt.xlim(X_MIN, X_MAX)
+    plt.ylim(Y_MIN, Y_MAX)
     plt.savefig('./results.jpg')
 
 
@@ -115,24 +126,26 @@ class Predictor:
         return np.array(group)
 
 
+def repeat(pred, p):
+    pass
+
+
 def predict(ql_updater, qm_updater, qp_updater):
     pred = Predictor(ql_updater, qm_updater, qp_updater)
-    x0 = torch.tensor([0.0, 1.5])
-    x1 = torch.tensor([1.25, -0.75])
-    x2 = torch.tensor([-1.25, -0.75])
-    x3 = torch.tensor([-0.5, 0.0])
-    ys = pred.predict(x0)
-    for y in ys:
-        print(y)
-    ys = pred.predict(x1)
-    for y in ys:
-        print(y)
-    ys = pred.predict(x2)
-    for y in ys:
-        print(y)
-    ys = pred.predict(x3)
-    for y in ys:
-        print(y)
+    h = 0.1
+    colors = []
+    xs, ys = np.meshgrid(np.arange(X_MIN, X_MAX, h).astype(np.float32),  np.arange(Y_MIN, Y_MAX, h).astype(np.float32))
+    for x, y in zip(xs.ravel(), ys.ravel()):
+        z = pred.predict(torch.tensor([x, y]))
+        az = np.mean(z, axis=0)
+        c = RED * az[0] + GREEN * az[1] + BLUE * az[2]
+        colors.append(c)
+
+    plt.scatter(xs.ravel(), ys.ravel(), marker='.', c=colors, alpha=0.3)
+
+    plt.xlim(X_MIN, X_MAX)
+    plt.ylim(Y_MIN, Y_MAX)
+    plt.savefig('./predict.jpg')
 
 
 if __name__ == "__main__":
