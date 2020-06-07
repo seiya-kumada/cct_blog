@@ -26,15 +26,19 @@ EPSILON = 1.0e-5
 #     [-10.0, 0.0],
 #     [10.0, 0.0],
 #     [0.0, 10.0]])
+
 CENTERS = torch.tensor([
     [-2.0, -2.0],
     [8.0, 0.0],
     [0.0, 8.0]])
+
 TRIAL_NUM = 10
+
 X_MIN = -1.6
 X_MAX = 1.6
 Y_MIN = -1.25
 Y_MAX = 2.25
+
 # X_MIN = -2.5
 # X_MAX = 2.5
 # Y_MIN = -2.5
@@ -56,6 +60,10 @@ def display_graph(dataset):
     for (x, y) in dataset.numpy():
         xs.append(x)
         ys.append(y)
+    plt.figure(figsize=(5, 5))
+    plt.axes().set_aspect("equal")
+    plt.xlim(X_MIN, X_MAX)
+    plt.ylim(Y_MIN, Y_MAX)
     plt.scatter(xs, ys, marker='.')
     plt.savefig('./dataset.jpg')
     return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
@@ -204,36 +212,36 @@ if __name__ == "__main__":
         dataset = (dataset - mean) / std
         (x_range, y_range) = display_graph(dataset)
 
-        cxs = np.random.uniform(x_range[0], x_range[1], K)
-        cys = np.random.uniform(y_range[0], y_range[1], K)
-        cs = []
-        for (cx, cy) in zip(cxs, cys):
-            cs.append([cx, cy])
-        # initialize mu
-        qm_updater.m = torch.tensor(cs).float()
+        # cxs = np.random.uniform(x_range[0], x_range[1], K)
+        # cys = np.random.uniform(y_range[0], y_range[1], K)
+        # cs = []
+        # for (cx, cy) in zip(cxs, cys):
+        #     cs.append([cx, cy])
+        # # initialize mu
+        # qm_updater.m = torch.tensor(cs).float()
 
-        prev_m = qm_updater.m.clone()
-        for i in range(MAX_ITER):
-            qs_updater.update(
-                dataset,
-                ql_updater.W,
-                ql_updater.nu,
-                qm_updater.m,
-                qm_updater.beta,
-                qp_updater.alpha)
-            ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
-            qm_updater.update(dataset, qs_updater.eta)
-            qp_updater.update(dataset, qs_updater.eta)
-            diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
-            if diff_m < EPSILON:
-                print("> diff is {} at {}".format(diff_m, i))
-                break
-            prev_m = qm_updater.m.clone()
-        print("final m ")
-        for m in qm_updater.m * std + mean:
-            print(m.tolist())
+        # prev_m = qm_updater.m.clone()
+        # for i in range(MAX_ITER):
+        #     qs_updater.update(
+        #         dataset,
+        #         ql_updater.W,
+        #         ql_updater.nu,
+        #         qm_updater.m,
+        #         qm_updater.beta,
+        #         qp_updater.alpha)
+        #     ql_updater.update(dataset, qs_updater.eta, qm_updater.beta, qm_updater.m)
+        #     qm_updater.update(dataset, qs_updater.eta)
+        #     qp_updater.update(dataset, qs_updater.eta)
+        #     diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
+        #     if diff_m < EPSILON:
+        #         print("> diff is {} at {}".format(diff_m, i))
+        #         break
+        #     prev_m = qm_updater.m.clone()
+        # print("final m ")
+        # for m in qm_updater.m * std + mean:
+        #     print(m.tolist())
 
-        xs, ys, colors = predict(ql_updater, qm_updater, qp_updater)
-        save_all_results(qs_updater.eta, dataset, xs, ys, colors)
+        # xs, ys, colors = predict(ql_updater, qm_updater, qp_updater)
+        # save_all_results(qs_updater.eta, dataset, xs, ys, colors)
     except Exception as e:
         print("Exception: {}".format(e))
