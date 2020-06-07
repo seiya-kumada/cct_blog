@@ -10,8 +10,12 @@ class QsUpdater:
     def __init__(self):
         self.eta = None
 
-    # W:(K,D,D), nu:(K), m:(K,D), beta:(K), alpha:(K)
+    # dataset:(N,D), W:(K,D,D), nu:(K), m:(K,D), beta:(K), alpha:(K)
     def update(self, dataset, W, nu, m, beta, alpha):
+        self.eta = QsUpdater.calculate_eta(dataset, W, nu, m, beta, alpha)
+
+    @staticmethod
+    def calculate_eta(dataset, W, nu, m, beta, alpha):
         Phi = torch.einsum('ni,nj->nij', dataset, dataset)  # (N,D,D)
         Lam = utils.update_with_4_119(W, nu)  # (K,D,D)
         a = torch.einsum('nij,kji->nk', Phi, Lam)  # (N,K)
@@ -23,7 +27,7 @@ class QsUpdater:
         e = utils.update_with_4_62(alpha).squeeze()  # (K)
         f = torch.exp(-0.5 * a + b - 0.5 * c + 0.5 * d + e)  # (N,K)
         s = (1.0 / torch.sum(f, dim=1))  # (N,)
-        self.eta = torch.einsum("nk,n->nk", f, s).float()
+        return torch.einsum("nk,n->nk", f, s).float()
 
 
 class TestQsUpdater(unittest.TestCase):
