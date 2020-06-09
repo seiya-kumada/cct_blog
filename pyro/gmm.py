@@ -6,7 +6,7 @@ import qpi_updater as qp
 import qmu_updater as qm
 import qlambda_updater as ql
 import torch
-import torch.distributions as D
+import dataset as ds
 import matplotlib.pyplot as plt
 import numpy as np
 import gauss
@@ -21,17 +21,7 @@ MAX_ITER = 1000
 OBS_NUM = 100
 SEED = 1
 EPSILON = 1.0e-5
-CENTERS = torch.tensor([
-    [-10.0, 0.0],
-    [10.0, 0.0],
-    [0.0, 10.0]])
-
-# CENTERS = torch.tensor([
-#     [-2.0, -2.0],
-#     [8.0, 0.0],
-#     [0.0, 8.0]])
-
-TRIAL_NUM = 100
+TRIAL_NUM = 1
 
 X_MIN = -1.6
 X_MAX = 1.6
@@ -66,54 +56,6 @@ def display_graph(dataset):
     plt.scatter(xs, ys, marker='.')
     plt.savefig('./dataset.jpg')
     return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
-
-
-def make_dataset_0(obs_num, dim):
-    loc_0 = CENTERS[0]
-    cov_0 = torch.eye(dim) * 2.0
-    dis_0 = D.MultivariateNormal(loc=loc_0, covariance_matrix=cov_0)
-
-    loc_1 = CENTERS[1]
-    cov_1 = torch.eye(dim) * 2.0
-    dis_1 = D.MultivariateNormal(loc=loc_1, covariance_matrix=cov_1)
-
-    loc_2 = CENTERS[2]
-    cov_2 = torch.eye(dim) * 2.0
-    dis_2 = D.MultivariateNormal(loc=loc_2, covariance_matrix=cov_2)
-
-    values = []
-    for _ in range(OBS_NUM // K):
-        a = dis_0.sample()
-        b = dis_1.sample()
-        c = dis_2.sample()
-        values.append(a)
-        values.append(b)
-        values.append(c)
-    return torch.stack(values, dim=0)
-
-
-def make_dataset_1(obs_num, dim):
-    loc_0 = CENTERS[0]
-    cov_0 = torch.tensor([[10.0, 9], [9, 10]])
-    dis_0 = D.MultivariateNormal(loc=loc_0, covariance_matrix=cov_0)
-
-    loc_1 = CENTERS[1]
-    cov_1 = torch.eye(dim) * 2.0
-    dis_1 = D.MultivariateNormal(loc=loc_1, covariance_matrix=cov_1)
-
-    loc_2 = CENTERS[2]
-    cov_2 = torch.eye(dim) * 2.0
-    dis_2 = D.MultivariateNormal(loc=loc_2, covariance_matrix=cov_2)
-
-    values = []
-    for _ in range(OBS_NUM // K):
-        a = dis_0.sample()
-        b = dis_1.sample()
-        c = dis_2.sample()
-        values.append(a)
-        values.append(b)
-        values.append(c)
-    return torch.stack(values, dim=0)
 
 
 def check(dataset):
@@ -216,7 +158,7 @@ if __name__ == "__main__":
         qp_updater = qp.QpiUpdater(hyper_params)
         qm_updater = qm.QmuUpdater(hyper_params)
         ql_updater = ql.QlambdaUpdater(hyper_params)
-        dataset = make_dataset_0(OBS_NUM, DIM)
+        dataset = ds.make_dataset_0(OBS_NUM, DIM, K)
         std, mean = torch.std_mean(dataset, dim=0)
         dataset = (dataset - mean) / std
         (x_range, y_range) = display_graph(dataset)
