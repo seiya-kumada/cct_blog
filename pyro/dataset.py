@@ -94,5 +94,27 @@ def make_d_dataset(obs_num, dim, k):
     return torch.stack(values, dim=0)
 
 
+def make_d_dataset_(obs_num, dim, k):
+    assert(k <= dim)
+    centers = torch.zeros(k, dim)
+    for i, c in enumerate(centers):
+        c[i] = 10
+
+    dises = []
+    for i in range(k):
+        loc = centers[i]
+        cov = torch.eye(dim) * 2.0
+        dis = D.MultivariateNormal(loc=loc, covariance_matrix=cov)
+        dises.append(dis)
+
+    values = []
+    for _ in range(obs_num // k):
+        vs = [dis.sample() for dis in dises]
+        values.extend(vs)
+
+    return torch.stack(values, dim=0)
+
+
 if __name__ == "__main__":
-    pass
+
+    make_d_dataset_(obs_num=30, dim=4, k=4)

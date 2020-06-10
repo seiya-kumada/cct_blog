@@ -12,6 +12,7 @@ import numpy as np
 import gauss
 import wishart
 import random
+import sklearn.cluster as cl
 
 
 DIM = 2
@@ -37,7 +38,6 @@ RED = np.array([1.0, 0.0, 0.0])
 GREEN = np.array([0.0, 1.0, 0.0])
 BLUE = np.array([0.0, 0.0, 1.0])
 
-
 torch.manual_seed(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
@@ -55,7 +55,6 @@ def display_graph(dataset):
     plt.ylim(Y_MIN, Y_MAX)
     plt.scatter(xs, ys, marker='.')
     plt.savefig('./dataset.jpg')
-    return ((np.min(xs), np.max(xs)), (np.min(ys), np.max(ys)))
 
 
 def check(dataset):
@@ -151,6 +150,11 @@ def save_all_results(eta, dataset, xs, ys, pcolors):
     plt.savefig('./predict.jpg')
 
 
+def make_initial_positions_with_kmeans(dataset, k):
+    p = cl.KMeans(n_clusters=k).fit(dataset)
+    return p.cluster_centers_
+
+
 if __name__ == "__main__":
     try:
         hyper_params = pa.HyperParameters(dim=DIM, k=K, nu=NU)
@@ -161,13 +165,10 @@ if __name__ == "__main__":
         dataset = ds.make_dataset_0(OBS_NUM, DIM, K)
         std, mean = torch.std_mean(dataset, dim=0)
         dataset = (dataset - mean) / std
-        (x_range, y_range) = display_graph(dataset)
+        display_graph(dataset)
 
-        cxs = np.random.uniform(x_range[0], x_range[1], K)
-        cys = np.random.uniform(y_range[0], y_range[1], K)
-        cs = []
-        for (cx, cy) in zip(cxs, cys):
-            cs.append([cx, cy])
+        cs = make_initial_positions_with_kmeans(dataset, K)
+
         # initialize mu
         qm_updater.m = torch.tensor(cs).float()
 

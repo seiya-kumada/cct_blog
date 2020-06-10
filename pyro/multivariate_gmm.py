@@ -7,30 +7,21 @@ import qmu_updater as qm
 import qlambda_updater as ql
 import torch
 import dataset as ds
-# import matplotlib.pyplot as plt
+import sklearn.cluster as cl
 import numpy as np
 import gauss
 import wishart
 # import random
 
-
-DIM = 4
-K = 4
+# K <= DIM
+DIM = 6
+K = 3
 NU = DIM * torch.ones(K)
 MAX_ITER = 100
 OBS_NUM = 100
 # SEED = 1
-EPSILON = 1.0e-5
+EPSILON = 1.0e-8
 TRIAL_NUM = 1
-
-# RED = np.array([1.0, 0.0, 0.0])
-# GREEN = np.array([0.0, 1.0, 0.0])
-# BLUE = np.array([0.0, 0.0, 1.0])
-
-
-# torch.manual_seed(SEED)
-# random.seed(SEED)
-# np.random.seed(SEED)
 
 
 # (N,D)
@@ -73,56 +64,6 @@ class Predictor:
         return np.array(group)
 
 
-# eta:(N,K), dataset:(N,D)
-# def save_results(eta, dataset):
-#     # red = np.array([1, 0, 0])
-#     # green = np.array([0, 1, 0])
-#     # blue = np.array([0, 0, 1])
-#
-#     colors = []
-#     for indices in eta:
-#         c = RED * indices[0].numpy() + GREEN * indices[1].numpy() + BLUE * indices[2].numpy()
-#         colors.append(c)
-#
-#     plt.figure(figsize=(5, 5))
-#     plt.axes().set_aspect("equal")
-#     plt.scatter(dataset[:, 0], dataset[:, 1], marker='.', c=colors)
-#
-#     plt.xlim(X_MIN, X_MAX)
-#     plt.ylim(Y_MIN, Y_MAX)
-#     plt.savefig('./results.jpg')
-
-
-# def predict(ql_updater, qm_updater, qp_updater):
-#     pred = Predictor(ql_updater, qm_updater, qp_updater)
-#     h = 0.025
-#     colors = []
-#     xs, ys = np.meshgrid(np.arange(X_MIN, X_MAX, h).astype(np.float32),  np.arange(Y_MIN, Y_MAX, h).astype(np.float32))
-#     for x, y in zip(xs.ravel(), ys.ravel()):
-#         z = pred.predict(torch.tensor([x, y]))
-#         az = np.mean(z, axis=0)
-#         c = RED * az[0] + GREEN * az[1] + BLUE * az[2]
-#         colors.append(c)
-#     return xs, ys, colors
-
-
-# def save_all_results(eta, dataset, xs, ys, pcolors):
-#
-#     plt.figure(figsize=(5, 5))
-#     plt.axes().set_aspect("equal")
-#
-#     colors = []
-#     for indices in eta:
-#         c = RED * indices[0].numpy() + GREEN * indices[1].numpy() + BLUE * indices[2].numpy()
-#         colors.append(c)
-#
-#     plt.scatter(dataset[:, 0], dataset[:, 1], marker='.', c=colors)
-#     plt.scatter(xs.ravel(), ys.ravel(), marker=".", c=pcolors, alpha=0.1)
-#     plt.xlim(X_MIN, X_MAX)
-#     plt.ylim(Y_MIN, Y_MAX)
-#     plt.savefig('./predict.jpg')
-
-
 def make_initial_positions(mins, maxs):
     cs = []
     for (mi, ma) in zip(mins, maxs):
@@ -137,6 +78,11 @@ def print_mu(mu, std, means):
         print(m.tolist())
 
 
+def make_initial_positions_with_kmeans(dataset, k):
+    p = cl.KMeans(n_clusters=k).fit(dataset)
+    return p.cluster_centers_
+
+
 if __name__ == "__main__":
     try:
         hyper_params = pa.HyperParameters(dim=DIM, k=K, nu=NU)
@@ -144,11 +90,10 @@ if __name__ == "__main__":
         qp_updater = qp.QpiUpdater(hyper_params)
         qm_updater = qm.QmuUpdater(hyper_params)
         ql_updater = ql.QlambdaUpdater(hyper_params)
-        dataset = ds.make_d_dataset(OBS_NUM, DIM, K)
+        dataset = ds.make_d_dataset_(OBS_NUM, DIM, K)  # K <= D
         std, mean = torch.std_mean(dataset, dim=0)  # (N,D)
         dataset = (dataset - mean) / std
-        mins, maxs = find_minmax(dataset)
-        cs = make_initial_positions(mins, maxs)
+        cs = make_initial_positions_with_kmeans(dataset, K)
 
         is_ok = False
         # initialize mu
@@ -169,7 +114,7 @@ if __name__ == "__main__":
             qm_updater.update(dataset, qs_updater.eta)
             qp_updater.update(dataset, qs_updater.eta)
             diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
-            # print("> diff {} {} {}".format(diff_m, qm_updater.m, prev_m))
+            # print("> diff {}".format(diff_m))
             if diff_m < EPSILON:
                 # print("> diff is {} at {}".format(diff_m, i))
                 is_ok = True
@@ -183,7 +128,5 @@ if __name__ == "__main__":
 
         print_mu(qm_updater.m, std, mean)
 
-        # xs, ys, colors = predict(ql_updater, qm_updater, qp_updater)
-        # save_all_results(qs_updater.eta, dataset, xs, ys, colors)
     except Exception as e:
         print("Exception: {}".format(e))
