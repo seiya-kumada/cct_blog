@@ -14,7 +14,7 @@ import wishart
 # import random
 
 # K <= DIM
-DIM = 6
+DIM = 20
 K = 3
 NU = DIM * torch.ones(K)
 MAX_ITER = 100
@@ -75,7 +75,7 @@ def make_initial_positions(mins, maxs):
 
 def print_mu(mu, std, means):
     for m in mu * std + mean:
-        print(m.tolist())
+        print(m.tolist()[:3])
 
 
 def make_initial_positions_with_kmeans(dataset, k):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             qm_updater.update(dataset, qs_updater.eta)
             qp_updater.update(dataset, qs_updater.eta)
             diff_m = torch.max(torch.abs(qm_updater.m - prev_m))
-            # print("> diff {}".format(diff_m))
+            # print("> diff {} {} {}".format(diff_m, qm_updater.m, prev_m))
             if diff_m < EPSILON:
                 # print("> diff is {} at {}".format(diff_m, i))
                 is_ok = True
