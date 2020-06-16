@@ -2,6 +2,28 @@
 # -*- coding:utf-8 -*-
 import torch
 import torch.distributions as D
+from sklearn.datasets import load_iris
+import numpy as np
+
+
+def make_iris_dataset():
+    iris = load_iris()
+    data = iris.data
+    targets = iris.target
+    # names = iris.target_names
+    # 0:setosa, 1:versicolor, 2:virginica
+
+    xs = data[:, 2].astype(np.float32)
+    ys = data[:, 3].astype(np.float32)
+    cs = []
+    for t in targets:
+        if t == 0:  # setosa
+            cs.append("r")
+        if t == 1:  # versicolor
+            cs.append("g")
+        if t == 2:  # virginica
+            cs.append("b")
+    return torch.tensor(np.stack([xs, ys], axis=1)), cs
 
 
 def make_dataset_0(obs_num, dim, k):
@@ -116,5 +138,5 @@ def make_d_dataset_(obs_num, dim, k):
 
 
 if __name__ == "__main__":
-
-    make_d_dataset_(obs_num=30, dim=4, k=4)
+    vs, cs = make_iris_dataset()
+    print(vs)
