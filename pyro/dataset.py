@@ -13,17 +13,9 @@ def make_iris_dataset():
     # names = iris.target_names
     # 0:setosa, 1:versicolor, 2:virginica
 
-    xs = data[:, 2].astype(np.float32)
+    xs = data[:, 1].astype(np.float32)
     ys = data[:, 3].astype(np.float32)
-    cs = []
-    for t in targets:
-        if t == 0:  # setosa
-            cs.append("r")
-        if t == 1:  # versicolor
-            cs.append("g")
-        if t == 2:  # virginica
-            cs.append("b")
-    return torch.tensor(np.stack([xs, ys], axis=1)), cs
+    return torch.tensor(np.stack([xs, ys], axis=1)), targets
 
 
 def make_dataset_0(obs_num, dim, k):

@@ -33,22 +33,26 @@ RED = np.array([1.0, 0.0, 0.0])
 GREEN = np.array([0.0, 1.0, 0.0])
 BLUE = np.array([0.0, 0.0, 1.0])
 
+COLOR_MAP = {0: RED, 1: GREEN, 2: BLUE}
 torch.manual_seed(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
 
 
-def display_graph(dataset):
+def display_graph(dataset, colors):
     xs = []
     ys = []
-    for (x, y) in dataset.numpy():
+    cs = []
+    for (x, y), c in zip(dataset.numpy(), colors):
         xs.append(x)
         ys.append(y)
+        cs.append(COLOR_MAP[c])
+
     plt.figure(figsize=(5, 5))
     plt.axes().set_aspect("equal")
     plt.xlim(X_MIN, X_MAX)
     plt.ylim(Y_MIN, Y_MAX)
-    plt.scatter(xs, ys, marker='.')
+    plt.scatter(xs, ys, marker='.', c=cs)
     plt.savefig('./dataset.jpg')
 
 
@@ -86,7 +90,11 @@ class Predictor:
                 g_x = gauss.Gauss(mu, torch.tensor(Lambda))
                 y = eta[k] * g_x.probs(x)
                 ys.append(y)
-            ys /= np.sum(ys)
+            total = np.sum(ys)
+            if total == 0:
+                ys = [0] * len(ys)
+            else:
+                ys /= total
             group.append(ys)
         return np.array(group)
 
@@ -157,10 +165,10 @@ if __name__ == "__main__":
         qp_updater = qp.QpiUpdater(hyper_params)
         qm_updater = qm.QmuUpdater(hyper_params)
         ql_updater = ql.QlambdaUpdater(hyper_params)
-        dataset, _ = ds.make_iris_dataset()
+        dataset, colors = ds.make_iris_dataset()
         std, mean = torch.std_mean(dataset, dim=0)
         dataset = (dataset - mean) / std
-        display_graph(dataset)
+        display_graph(dataset, colors)
 
         cs = make_initial_positions_with_kmeans(dataset, K)
 
