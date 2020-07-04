@@ -9,8 +9,8 @@ if __name__ == "__main__":
 
     # 内積を計算する。dotを使用した場合。
     z = x.dot(y)
-    print(z)
+    assert(z == 10)
 
     # einsumの場合。
     u = np.einsum("i,i", x, y)
-    print(u)
+    assert(u == z)
