@@ -12,5 +12,5 @@ if __name__ == "__main__":
     assert(z == 10)
 
     # einsumの場合。
-    u = np.einsum("i,i", x, y)
+    u = np.einsum("i,i->", x, y)
     assert(u == z)

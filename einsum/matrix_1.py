@@ -9,3 +9,11 @@ if __name__ == "__main__":
 
     z = np.einsum("ni,nj->ij", x, y)
     assert(np.all(z == np.array([[2, 6], [4, 12], [6, 18]])))
+
+
+    x = np.arange(16).reshape(2, 2, 2, 2)
+    y = np.arange(8).reshape(2, 2, 2)
+    z = np.arange(16).reshape(2, 2, 2, 2)
+    w = np.einsum("iabc,abc,abcj->ij", x, y, z)
+    assert((2, 2) == w.shape)
+
