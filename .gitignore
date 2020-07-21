@@ -158,3 +158,6 @@ thrust/sample_1/build/*
 pyro/*.jpg
 pyro/log
 pyro/myrun
+vae_by_pyro/pyro_source/
+vae_by_pyro/utils/.data/
+vae_by_pyro/utils/__pycache__/
