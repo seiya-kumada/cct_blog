@@ -15,11 +15,65 @@ import numpy as np
 import myutils
 import custom_dataset as cd
 import torch
+import matplotlib
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 
+matplotlib.use('Agg')
 INPUT_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_2/train/patches_25_with_blob_positions"
+TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/test/ng/patches_25"
 IMAGE_SIZE = 25
 DATA_SIZE = 25 * 25  # 784
 BATCH_SIZE = 200
+
+
+def plot_tsne(train_z_locs, test_z_locs):
+    model_tsne = TSNE(n_components=2, random_state=0)
+
+    train_z_states = train_z_locs.detach().cpu().numpy()
+    train_z_embed = model_tsne.fit_transform(train_z_states)
+
+    test_z_states = test_z_locs.detach().cpu().numpy()
+    test_z_embed = model_tsne.fit_transform(test_z_states)
+
+    fig = plt.figure()
+    plt.scatter(train_z_embed[:, 0], train_z_embed[:, 1], s=10, label="train")
+    plt.scatter(test_z_embed[:, 0], test_z_embed[:, 1], s=10, label="test")
+    plt.title("Latent Variable T-SNE per Class")
+    plt.legend(loc="best")
+    fig.savefig('./vae_results/embedding.png')
+
+
+def draw_distributions(vae, train_loader, test_loader, is_cuda):
+    train_z_locs = extract_z_locs(vae, train_loader, is_cuda, 10)
+    test_z_locs = extract_z_locs(vae, test_loader, is_cuda, 10)
+    plot_tsne(train_z_locs, test_z_locs)
+
+
+def extract_z_locs(vae, loader, is_cuda, num):
+    z_locs = []
+    for i, (x, _) in enumerate(loader):
+        if is_cuda:
+            x = x.cuda()
+        z_loc, z_scale = vae.encoder(x)
+        z_locs.append(z_loc)
+        if i == num:
+            break
+    z_locs = torch.cat(z_locs, dim=0)
+    return z_locs
+
+
+def draw_distribution(vae, loader, is_cuda):
+    z_locs = []
+    for i, (x, _) in enumerate(loader):
+        if is_cuda:
+            x = x.cuda()
+        z_loc, z_scale = vae.encoder(x)
+        z_locs.append(z_loc)
+        if i == 10:
+            break
+    z_locs = torch.cat(z_locs, dim=0)
+    plot_tsne(z_locs)
 
 
 def main(args):
@@ -103,12 +157,14 @@ def main(args):
             test_elbo.append(total_epoch_loss_test)
             print("[epoch %03d]  average test loss: %.4f" % (epoch, total_epoch_loss_test))
 
-        if epoch == args.tsne_iter:
-            print("HHH", epoch)
-            # mnist_test_tsne(vae=vae, test_loader=test_loader)
-            plot_llk(np.array(train_elbo), np.array(test_elbo))
+    # draw_distribution(vae=vae, loader=train_loader, is_cuda=args.cuda)
+    plot_llk(np.array(train_elbo), np.array(test_elbo))
+    torch.save(vae.state_dict(), "./vae.pth")
 
-    return vae
+    paths = myutils.load_images(TEST_DIR_PATH)
+    test_dataset = cd.CustomDataset(IMAGE_SIZE, paths)
+    test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    draw_distributions(vae=vae, train_loader=train_loader, test_loader=test_loader, is_cuda=args.cuda)
 
 
 if __name__ == "__main__":
@@ -119,7 +175,6 @@ if __name__ == "__main__":
     parser.add_argument('--cuda', action='store_true', default=False, help='whether to use cuda')
     parser.add_argument('--jit', action='store_true', default=False, help='whether to use PyTorch jit')
     parser.add_argument('-visdom', '--visdom_flag', action="store_true", help='Whether plotting in visdom is desired')
-    parser.add_argument('-i-tsne', '--tsne_iter', default=100, type=int, help='epoch when tsne visualization runs')
     args = parser.parse_args()
 
     model = main(args)
