@@ -3,14 +3,17 @@
 
 import vae_model
 import argparse
-from utils.vae_plots import mnist_test_tsne, plot_llk, plot_vae_samples
+# from utils.vae_plots import mnist_test_tsne, plot_llk  # , plot_vae_samples
+from utils.vae_plots import plot_llk  # , plot_vae_samples
 from pyro.optim import Adam
 import pyro
 from utils.mnist_cached import setup_data_loaders
 from utils.mnist_cached import MNISTCached as MNIST
 from pyro.infer import SVI, JitTrace_ELBO, Trace_ELBO
-import visdom
+# import visdom
 import numpy as np
+
+DATA_SIZE = 784
 
 
 def main(args):
@@ -22,7 +25,7 @@ def main(args):
     train_loader, test_loader = setup_data_loaders(MNIST, use_cuda=args.cuda, batch_size=256)
 
     # setup the VAE
-    vae = vae_model.VAE(use_cuda=args.cuda)
+    vae = vae_model.VAE(data_size=DATA_SIZE, use_cuda=args.cuda)
 
     # setup the optimizer
     adam_args = {"lr": args.learning_rate}
@@ -33,8 +36,8 @@ def main(args):
     svi = SVI(vae.model, vae.guide, optimizer, loss=elbo)
 
     # setup visdom for visualization
-    if args.visdom_flag:
-        vis = visdom.Visdom()
+    # if args.visdom_flag:
+    #     vis = visdom.Visdom()
 
     train_elbo = []
     test_elbo = []
@@ -68,19 +71,19 @@ def main(args):
                 # compute ELBO estimate and accumulate loss
                 test_loss += svi.evaluate_loss(x)
 
-                # pick three random test images from the first mini-batch and
-                # visualize how well we're reconstructing them
-                if i == 0:
-                    if args.visdom_flag:
-                        plot_vae_samples(vae, vis)
-                        reco_indices = np.random.randint(0, x.shape[0], 3)
-                        for index in reco_indices:
-                            test_img = x[index, :]
-                            reco_img = vae.reconstruct_img(test_img)
-                            vis.image(test_img.reshape(28, 28).detach().cpu().numpy(),
-                                      opts={'caption': 'test image'})
-                            vis.image(reco_img.reshape(28, 28).detach().cpu().numpy(),
-                                      opts={'caption': 'reconstructed image'})
+        #         # pick three random test images from the first mini-batch and
+        #         # visualize how well we're reconstructing them
+        #         if i == 0:
+        #             if args.visdom_flag:
+        #                 plot_vae_samples(vae, vis)
+        #                 reco_indices = np.random.randint(0, x.shape[0], 3)
+        #                 for index in reco_indices:
+        #                     test_img = x[index, :]
+        #                     reco_img = vae.reconstruct_img(test_img)
+        #                     vis.image(test_img.reshape(28, 28).detach().cpu().numpy(),
+        #                               opts={'caption': 'test image'})
+        #                     vis.image(reco_img.reshape(28, 28).detach().cpu().numpy(),
+        #                               opts={'caption': 'reconstructed image'})
 
             # report test diagnostics
             normalizer_test = len(test_loader.dataset)
@@ -89,7 +92,7 @@ def main(args):
             print("[epoch %03d]  average test loss: %.4f" % (epoch, total_epoch_loss_test))
 
         if epoch == args.tsne_iter:
-            mnist_test_tsne(vae=vae, test_loader=test_loader)
+            # mnist_test_tsne(vae=vae, test_loader=test_loader)
             plot_llk(np.array(train_elbo), np.array(test_elbo))
 
     return vae
