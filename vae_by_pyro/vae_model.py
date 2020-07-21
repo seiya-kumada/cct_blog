@@ -5,23 +5,25 @@ import torch.nn as nn
 import torch
 import pyro
 import pyro.distributions as dist
+from torchsummary import summary
 
 
 class Encoder(nn.Module):
 
-    def __init__(self, z_dim, hidden_dim):
+    def __init__(self, data_size, z_dim, hidden_dim):
         super().__init__()
         # setup the three linear transformations used
-        self.fc1 = nn.Linear(784, hidden_dim)
+        self.fc1 = nn.Linear(data_size, hidden_dim)
         self.fc21 = nn.Linear(hidden_dim, z_dim)
         self.fc22 = nn.Linear(hidden_dim, z_dim)
         # setup the non-linearities
         self.softplus = nn.Softplus()
+        self.data_size = data_size
 
     def forward(self, x):
         # define the forward computation on the image x
         # first shape the mini-batch to have pixels in the rightmost dimension
-        x = x.reshape(-1, 784)
+        x = x.reshape(-1, self.data_size)
         # then compute the hidden units
         hidden = self.softplus(self.fc1(x))
         # then return a mean vector and a (positive) square root covariance
@@ -33,13 +35,14 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
 
-    def __init__(self, z_dim, hidden_dim):
+    def __init__(self, data_size, z_dim, hidden_dim):
         super().__init__()
         # setup the two linear transformations used
         self.fc1 = nn.Linear(z_dim, hidden_dim)
-        self.fc21 = nn.Linear(hidden_dim, 784)
+        self.fc21 = nn.Linear(hidden_dim, data_size)
         # setup the non-linearities
         self.softplus = nn.Softplus()
+        self.data_size = data_size
 
     def forward(self, z):
         # define the forward computation on the latent z
@@ -55,12 +58,12 @@ class VAE(nn.Module):
 
     # by default our latent space is 50-dimensional
     # and we use 400 hidden units
-    def __init__(self, z_dim=50, hidden_dim=400, use_cuda=False):
+    def __init__(self, data_size, z_dim=50, hidden_dim=400, use_cuda=False):
         super().__init__()
         # create the encoder and decoder networks
-        self.encoder = Encoder(z_dim, hidden_dim)
-        self.decoder = Decoder(z_dim, hidden_dim)
-
+        self.encoder = Encoder(data_size, z_dim, hidden_dim)
+        self.decoder = Decoder(data_size, z_dim, hidden_dim)
+        self.data_size = data_size
         if use_cuda:
             # calling cuda() here will put all the parameters of
             # the encoder and decoder networks into gpu memory
@@ -81,7 +84,7 @@ class VAE(nn.Module):
             # decode the latent code z
             loc_img = self.decoder.forward(z)
             # score against actual images
-            pyro.sample("obs", dist.Bernoulli(loc_img).to_event(1), obs=x.reshape(-1, 784))
+            pyro.sample("obs", dist.Bernoulli(loc_img).to_event(1), obs=x.reshape(-1, self.data_size))
             # return the loc so we can visualize it later
             return loc_img
 
@@ -104,3 +107,13 @@ class VAE(nn.Module):
         # decode the image (note we don't sample in image space)
         loc_img = self.decoder(z)
         return loc_img
+
+
+if __name__ == "__main__":
+    print("_/_/_/Encoder")
+    encoder = Encoder(20, 400).to("cuda")
+    summary(encoder, (3, 28, 28))
+
+    print("_/_/_/Decoder")
+    decoder = Decoder(20, 400).to("cuda")
+    summary(decoder, (3, 20))
