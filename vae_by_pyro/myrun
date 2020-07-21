@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./train_vae_with_m.py --cuda --num-epochs 101 --tsne_iter 100
