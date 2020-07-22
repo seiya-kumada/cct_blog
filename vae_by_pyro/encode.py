@@ -17,7 +17,7 @@ from sklearn.manifold import TSNE
 
 matplotlib.use('Agg')
 INPUT_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_2/train/patches_25_with_blob_positions"
-TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_4/ok_patches"
+TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_4/ng_patches"
 MODEL_PATH = "./vae.pth"
 IMAGE_SIZE = 25
 DATA_SIZE = 25 * 25  # 784
@@ -28,16 +28,18 @@ def plot_tsne(train_z_locs, test_z_locs):
     model_tsne = TSNE(n_components=2, random_state=0)
 
     train_z_states = train_z_locs.detach().cpu().numpy()
-    train_z_embed = model_tsne.fit_transform(train_z_states)
-
     test_z_states = test_z_locs.detach().cpu().numpy()
-    test_z_embed = model_tsne.fit_transform(test_z_states)
+    all_z_states = np.concatenate([train_z_states, test_z_states], axis=0)
+    train_size, _ = train_z_states.shape
+    test_size, _ = test_z_states.shape
+    colors = [0] * train_size + [1] * test_size
+
+    all_z_embed = model_tsne.fit_transform(all_z_states)
 
     fig = plt.figure()
-    plt.scatter(train_z_embed[:, 0], train_z_embed[:, 1], s=10, label="train")
-    plt.scatter(test_z_embed[:, 0], test_z_embed[:, 1], s=10, label="test")
-    plt.title("Latent Variable T-SNE per Class")
-    plt.legend(loc="best")
+    plt.scatter(all_z_embed[:, 0], all_z_embed[:, 1], s=10, c=colors, alpha=0.1)
+    plt.title("0: Train, 1: Test")
+    plt.colorbar()
     fig.savefig('./vae_results/embedding.png')
 
 
