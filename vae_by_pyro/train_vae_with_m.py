@@ -3,14 +3,10 @@
 
 import vae_model
 import argparse
-# from utils.vae_plots import mnist_test_tsne, plot_llk  # , plot_vae_samples
 from utils.vae_plots import plot_llk  # , plot_vae_samples
 from pyro.optim import Adam
 import pyro
-# from utils.mnist_cached import setup_data_loaders
-# from utils.mnist_cached import MNISTCached as MNIST
 from pyro.infer import SVI, JitTrace_ELBO, Trace_ELBO
-# import visdom
 import numpy as np
 import myutils
 import custom_dataset as cd
@@ -21,7 +17,7 @@ from sklearn.manifold import TSNE
 
 matplotlib.use('Agg')
 INPUT_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_2/train/patches_25_with_blob_positions"
-TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/test/ng/patches_25"
+TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/test/ok/patches_25"
 IMAGE_SIZE = 25
 DATA_SIZE = 25 * 25  # 784
 BATCH_SIZE = 200
@@ -80,10 +76,6 @@ def main(args):
     # clear param store
     pyro.clear_param_store()
 
-    # setup MNIST data loaders
-    # train_loader, test_loader
-    # train_loader, test_loader = setup_data_loaders(MNIST, use_cuda=args.cuda, batch_size=256)
-
     paths = myutils.load_images(INPUT_DIR_PATH)
     train_dataset = cd.CustomDataset(IMAGE_SIZE, paths)
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -100,10 +92,6 @@ def main(args):
     # setup the inference algorithm
     elbo = JitTrace_ELBO() if args.jit else Trace_ELBO()
     svi = SVI(vae.model, vae.guide, optimizer, loss=elbo)
-
-    # setup visdom for visualization
-    # if args.visdom_flag:
-    #     vis = visdom.Visdom()
 
     train_elbo = []
     test_elbo = []
@@ -136,20 +124,6 @@ def main(args):
                     x = x.cuda()
                 # compute ELBO estimate and accumulate loss
                 test_loss += svi.evaluate_loss(x)
-
-        #         # pick three random test images from the first mini-batch and
-        #         # visualize how well we're reconstructing them
-        #         if i == 0:
-        #             if args.visdom_flag:
-        #                 plot_vae_samples(vae, vis)
-        #                 reco_indices = np.random.randint(0, x.shape[0], 3)
-        #                 for index in reco_indices:
-        #                     test_img = x[index, :]
-        #                     reco_img = vae.reconstruct_img(test_img)
-        #                     vis.image(test_img.reshape(28, 28).detach().cpu().numpy(),
-        #                               opts={'caption': 'test image'})
-        #                     vis.image(reco_img.reshape(28, 28).detach().cpu().numpy(),
-        #                               opts={'caption': 'reconstructed image'})
 
             # report test diagnostics
             normalizer_test = len(train_loader.dataset)
