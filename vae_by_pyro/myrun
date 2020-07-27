@@ -1,4 +1,4 @@
 #!/bin/bash
 
-#./train_vae_with_m.py --cuda --num-epochs 50
+#./train_vae_with_m.py --cuda
 ./encode.py --cuda

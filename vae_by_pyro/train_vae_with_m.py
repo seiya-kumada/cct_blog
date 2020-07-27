@@ -18,8 +18,8 @@ from sklearn.manifold import TSNE
 matplotlib.use('Agg')
 INPUT_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/pattern_2/train/patches_25_with_blob_positions"
 TEST_DIR_PATH = "/home/ubuntu/data/mitsubishi_motors/isu_detection/test/ok/patches_25"
-IMAGE_SIZE = 25
-DATA_SIZE = 25 * 25  # 784
+IMAGE_SIZE = 28
+DATA_SIZE = IMAGE_SIZE * IMAGE_SIZE
 BATCH_SIZE = 200
 
 
@@ -83,7 +83,7 @@ def main(args):
     print("> custom_loader:{}".format(len(train_loader)))
 
     # setup the VAE
-    vae = vae_model.VAE(data_size=DATA_SIZE, z_dim=20, use_cuda=args.cuda)
+    vae = vae_model.VAE(data_size=DATA_SIZE, use_cuda=args.cuda)
 
     # setup the optimizer
     adam_args = {"lr": args.learning_rate}

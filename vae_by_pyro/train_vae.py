@@ -3,8 +3,8 @@
 
 import vae_model
 import argparse
-# from utils.vae_plots import mnist_test_tsne, plot_llk  # , plot_vae_samples
-from utils.vae_plots import plot_llk  # , plot_vae_samples
+from utils.vae_plots import mnist_test_tsne, plot_llk  # , plot_vae_samples
+# from utils.vae_plots import plot_llk  # , plot_vae_samples
 from pyro.optim import Adam
 import pyro
 from utils.mnist_cached import setup_data_loaders
@@ -90,10 +90,8 @@ def main(args):
             total_epoch_loss_test = test_loss / normalizer_test
             test_elbo.append(total_epoch_loss_test)
             print("[epoch %03d]  average test loss: %.4f" % (epoch, total_epoch_loss_test))
-
-        if epoch == args.tsne_iter:
-            # mnist_test_tsne(vae=vae, test_loader=test_loader)
-            plot_llk(np.array(train_elbo), np.array(test_elbo))
+    mnist_test_tsne(vae=vae, test_loader=test_loader)
+    plot_llk(np.array(train_elbo), np.array(test_elbo))
 
     return vae
 
