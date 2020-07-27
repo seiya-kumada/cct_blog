@@ -86,7 +86,7 @@ def main(args):
     print("> custom_loader:{}".format(len(train_loader)))
 
     # setup the VAE
-    vae = vae_model.VAE(data_size=DATA_SIZE, use_cuda=args.cuda)
+    vae = vae_model.VAE(data_size=DATA_SIZE, z_dim=20, use_cuda=args.cuda)
 
     # load the trained model
     vae.load_state_dict(torch.load(MODEL_PATH))
