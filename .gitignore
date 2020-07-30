@@ -162,3 +162,4 @@ vae_by_pyro/pyro_source/
 vae_by_pyro/utils/.data/*
 vae_by_pyro/utils/__pycache__/*
 vae_by_pyro/vae.pth
+curse_of_dimensionality/fig.jpg
