@@ -38,7 +38,7 @@ if __name__ == "__main__":
         min_y = np.min(ys)
         plt.rcParams["font.size"] = 12
         plt.figure(figsize=(10, 4))
-        plt.plot(xs, ys, label="till {:02}".format(i))
+        plt.plot(xs, ys, label="N={}".format(i))
         plt.xlabel("$x$")
         plt.ylabel("$y$")
         plt.xticks([2, 3, 5, 7, 8, 9, 11, 13], ["2", "3", "5", "7", "(8)", "(9)", "11", "13"])
