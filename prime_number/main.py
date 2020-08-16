@@ -44,5 +44,5 @@ if __name__ == "__main__":
         plt.xticks([2, 3, 5, 7, 8, 9, 11, 13], ["2", "3", "5", "7", "(8)", "(9)", "11", "13"])
         plt.vlines([2, 3, 5, 7, 11, 13], ymin=min_y, ymax=max_y, linestyles='dotted')
         plt.legend(loc="upper right")
-        plt.savefig("./primes_{:02}.jpg".format(i))
+        plt.savefig("./images/python/primes_{:02}.jpg".format(i))
         plt.clf()
