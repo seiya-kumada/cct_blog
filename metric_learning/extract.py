@@ -7,8 +7,8 @@ import collections
 import pickle
 
 
-MODEL_PATH = "./mnist_cnn.pt"
-OUTPUT_PATH = "./fs.pkl"
+MODEL_PATH = "./outputs/metric/mnist_cnn.pt"
+OUTPUT_PATH = "./outputs/metric/fs.pkl"
 
 
 def store(fs, ts, rs):
@@ -28,6 +28,7 @@ def extract_features(mdl, dvc, ldr):
     for data, target in ldr:
         data, target = data.to(dvc), target.to(dvc)
         features = mdl.extract(data)
+        features = features.cpu().numpy()
         store(features, target, results)
     check(results)
     return results
