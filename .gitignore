@@ -164,3 +164,5 @@ vae_by_pyro/utils/__pycache__/*
 vae_by_pyro/vae.pth
 curse_of_dimensionality/fig.jpg
 prime_number/images/*
+data/*
+metric_learning/outputs/*
