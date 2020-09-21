@@ -7,8 +7,8 @@ import collections
 import pickle
 
 
-MODEL_PATH = "./outputs/metric/mnist_cnn.pt"
-OUTPUT_PATH = "./outputs/metric/fs.pkl"
+MODEL_PATH = "./mnist_cnn.pt"
+OUTPUT_PATH = "./fs.pkl"
 
 
 def store(fs, ts, rs):

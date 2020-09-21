@@ -151,7 +151,7 @@ def main():
     train_loader = torch.utils.data.DataLoader(dataset1, **kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **kwargs)
 
-    model = Net_(alpha=16, is_metric=True).to(device)
+    model = Net_(alpha=100, is_metric=True).to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
