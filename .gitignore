@@ -166,3 +166,5 @@ curse_of_dimensionality/fig.jpg
 prime_number/images/*
 data/*
 metric_learning/outputs/*
+metric_learning/fs.pkl
+metric_learning/mnist_cnn.pt

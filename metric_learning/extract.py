@@ -37,7 +37,7 @@ def extract_features(mdl, dvc, ldr):
 if __name__ == "__main__":
     torch.manual_seed(1)
     device = torch.device("cuda")
-    model = main.Net_().to(device)
+    model = main.NetWithMetricLearning().to(device)
     model.load_state_dict(torch.load(MODEL_PATH))
 
     kwargs = {'batch_size': 64}
