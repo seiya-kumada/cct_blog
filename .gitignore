@@ -168,3 +168,5 @@ data/*
 metric_learning/outputs/*
 prime_number/*.jpg
 metric_learning/*.jpg
+metric_learning/fs.pkl
+metric_learning/mnist_cnn.pt

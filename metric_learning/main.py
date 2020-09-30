@@ -71,6 +71,43 @@ class Net_(nn.Module):
         return output
 
 
+# modify Net_
+class NetWithMetricLearning(nn.Module):
+
+    def __init__(self, alpha=16, is_metric=False):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.conv2 = nn.Conv2d(32, 64, 3, 1)
+        self.dropout1 = nn.Dropout2d(0.25)
+        self.dropout2 = nn.Dropout2d(0.5)
+        self.fc1 = nn.Linear(9216, 128)
+        self.fc2 = nn.Linear(128, 10)
+        self.is_metric = is_metric
+        self.alpha = alpha
+
+    def extract(self, x):
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = F.max_pool2d(x, 2)
+        x = self.dropout1(x)
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.dropout2(x)
+        if self.is_metric:
+            l2 = torch.sqrt((x**2).sum())
+            x = self.alpha * (x / l2)
+        return x
+
+    def forward(self, x):
+        x = self.extract(x)
+        x = self.fc2(x)
+        output = F.log_softmax(x, dim=1)
+        return output
+
+
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -151,7 +188,7 @@ def main():
     train_loader = torch.utils.data.DataLoader(dataset1, **kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **kwargs)
 
-    model = Net_(alpha=100, is_metric=True).to(device)
+    model = NetWithMetricLearning(alpha=16, is_metric=True).to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
