@@ -96,13 +96,13 @@ class NetWithMetricLearning(nn.Module):
         x = self.fc1(x)
         x = F.relu(x)
         x = self.dropout2(x)
-        if self.is_metric:
-            l2 = torch.sqrt((x**2).sum())
-            x = self.alpha * (x / l2)
         return x
 
     def forward(self, x):
         x = self.extract(x)
+        if self.is_metric:
+            l2 = torch.sqrt((x**2).sum())
+            x = self.alpha * (x / l2)
         x = self.fc2(x)
         output = F.log_softmax(x, dim=1)
         return output
