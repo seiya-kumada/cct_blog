@@ -4,7 +4,7 @@ import pickle
 import sklearn.manifold as manifold
 import matplotlib.pyplot as plt
 
-FEATURE_PATH = "/Users/kumada/Data/cct_blog/metric_learning/features/metric_16_features.pkl"
+FEATURE_PATH = "/Users/kumada/Downloads/fs.pkl"
 
 
 def store(l, fs, rls, rfs):
