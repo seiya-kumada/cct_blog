@@ -78,6 +78,12 @@ where
 }
 
 fn main() {
+
+    //_/_/_/ 型は自動推定
+    
+    let x = 3; // i32
+    let y = String::from("hoge"); // String
+
     //_/_/_/ 変数はデフォルトでimmutableである。
 
     //let x = 3;
