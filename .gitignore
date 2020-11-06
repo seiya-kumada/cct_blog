@@ -170,3 +170,4 @@ prime_number/*.jpg
 metric_learning/*.jpg
 metric_learning/fs.pkl
 metric_learning/mnist_cnn.pt
+rust/example/target/
