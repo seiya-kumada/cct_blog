@@ -78,9 +78,8 @@ where
 }
 
 fn main() {
-
     //_/_/_/ 型は自動推定
-    
+
     let x = 3; // i32
     let y = String::from("hoge"); // String
 
@@ -118,13 +117,21 @@ fn main() {
     print_typename(t); /* String 標準ライブラリにある型 */
 
     //_/_/_/ 所有権（ownership）は共有できない。
-    /* スマートポインタの件も */
 
     let x = String::from("world");
     let y = x; /* 所有権がyに移る。*/
     //println!("{}", x); /* コンパイル時エラー */
     /* 所有権を失ったオブジェクトに対する操作はコンパイル時に検出される。*/
 
+    let x = String::from("hello");
+    let y = &x;
+    let z = &x;
+    println!("{} {}", y, z);
+
+    let mut x = String::from("hello");
+    let y = &mut x;
+    let z = &mut x;
+    //println!("{} {}", y, z); /* コンパイルエラーになる。*/
     //_/_/_/ C++のクラスに相当するものはない。構造体はある。
 
     let p = Person {
@@ -173,7 +180,7 @@ fn main() {
 
     let v = vec![1, 2, 3];
     /* コンパイル時に置き換えられる真の意味のテンプレート */
-    print_typename(v);
+    //print_typename(v);
     /* 特殊化は? */
 
     //_/_/_/ traitsがある。
