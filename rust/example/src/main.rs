@@ -14,6 +14,10 @@ fn print_typename<T>(_: T) {
     println!("{}", std::any::type_name::<T>());
 }
 
+//fn print_typename<bool>(_: bool) {
+//    println!("Happy birthday");
+//}
+
 /* 構造体 */
 struct Person {
     name: String,
