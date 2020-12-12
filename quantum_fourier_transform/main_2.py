@@ -2,19 +2,45 @@
 # -*- using:utf-8 -*-
 import math
 from blueqat import Circuit
+# https://qiita.com/KeiichiroHiga/items/7fae38f8c2004dfcd246
 
 
-# 配列が入力[x_0,...,x_N-1}
-def qft(init):
-    a = len(init)  # 4
-    lb = format(a - 1, 'b')  # 11
-    b = len(lb)  # 2
+def qft(x):
+    ll = len(x)
+    lb = format(ll - 1, 'b')
+    b = len(lb)
 
-    c_qft = Circuit()
-    for i in range(b):  # i=0,1
-        c_qft.h[i]
-        for j in range(1, b - i):  # when i=0, j=1, when i=1
-            c_qft.phase(math.pi / 2**(j + 1))[i + j, i]
+    # 状態|0>に演算子Fを作用させる。
+    F = Circuit()  # 初期状態は|0>
+    for i in range(b):
+        F.h[i]
+        for j in range(1, b - i):
+            F.cphase(math.pi / 2**(j + 1))[i + j, i]
+
+    w = []
+    for j in range(ll):
+        c = Circuit()
+        b = format(j, 'b')
+        bl = len(b)
+
+        # Fが作用する状態|j>を作る。
+        for a in range(bl):
+            if b[bl - a - 1] == '1':
+                c = c.x[len(lb) - 1 - a]
+
+        # F|0>,F|1>,...を計算する。
+        # 今作った状態に結合すれば良い。
+        d = c + F
+        e = d.run()  # w_k,k=0,1,...
+        w.append(e)
+
+    y = []
+    for k in range(ll):
+        y_k = 0
+        for j in range(ll):
+            y_k += w[j][k] * x[j]
+        y.append(y_k)
+    return y
 
 
 def qft_with_2qbit_00():
@@ -95,4 +121,5 @@ def qft_with_3qbit_110():
 
 
 if __name__ == "__main__":
-    qft([1, 2, 3, 4])
+    y = qft([1, 1, 1, 1])
+    print(y)
