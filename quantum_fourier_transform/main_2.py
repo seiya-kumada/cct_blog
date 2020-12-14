@@ -2,6 +2,8 @@
 # -*- using:utf-8 -*-
 import math
 from blueqat import Circuit
+import numpy as np
+
 # https://qiita.com/KeiichiroHiga/items/7fae38f8c2004dfcd246
 
 
@@ -15,7 +17,7 @@ def qft(x):
     for i in range(b):
         F.h[i]
         for j in range(1, b - i):
-            F.cphase(math.pi / 2**(j + 1))[i + j, i]
+            F.cphase(math.pi / 2**(j))[i + j, i]
 
     w = []
     for j in range(ll):
@@ -120,6 +122,17 @@ def qft_with_3qbit_110():
         print("[{}]{}".format(b, v))
 
 
+def fun(j):
+    return 5.0 * np.sin(4.0 * np.pi * j / 16)
+
+
 if __name__ == "__main__":
-    y = qft([1, 1, 1, 1])
-    print(y)
+    xs = []
+    for i in range(16):
+        xs.append(fun(i))
+
+    ys = qft(xs)
+    for (i, y) in enumerate(ys):
+        v = np.abs(y)
+        b = "{:04b}".format(i)
+        print("[{}]{}".format(b, v))
