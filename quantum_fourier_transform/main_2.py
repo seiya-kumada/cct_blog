@@ -30,8 +30,8 @@ def qft(x):
             if b[bl - a - 1] == '1':
                 c = c.x[len(lb) - 1 - a]
 
-        # F|0>,F|1>,...を計算する。
-        # 今作った状態に結合すれば良い。
+        # F|j>を計算する。
+        # |j>を作る回路cの後ろにフーリエ変換する回路Fを結合する。
         d = c + F
         e = d.run()  # w_k,k=0,1,...
         w.append(e)
@@ -122,17 +122,37 @@ def qft_with_3qbit_110():
         print("[{}]{}".format(b, v))
 
 
+Q = 4
+N = int(math.pow(2, Q))
+
+
 def fun(j):
-    return 5.0 * np.sin(4.0 * np.pi * j / 16)
+    return 5.0 * np.sin(2.0 * 2.0 * np.pi * j / N)
+
+
+def normal_ft(k, xs):
+    s = 0.0
+    for j in range(N):
+        s += xs[j] * np.exp(complex(0, 2.0 * np.pi * k * j / N))
+    return s / np.sqrt(N)
 
 
 if __name__ == "__main__":
     xs = []
-    for i in range(16):
+    for i in range(N):
         xs.append(fun(i))
 
+    print("> Classical Fourier Transformation")
+    for k in range(N):
+        y = normal_ft(k, xs)
+        v = np.abs(y)
+        b = "{:04b}".format(k)
+        print("[{}]{}".format(b, v))
+
+    print()
+    print("> Quantume Fourier Transformation")
     ys = qft(xs)
     for (i, y) in enumerate(ys):
         v = np.abs(y)
         b = "{:04b}".format(i)
-        print("[{}]{}".format(b, v))
+        print("[{}]{} {}".format(b, v, y))
