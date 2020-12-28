@@ -10,6 +10,16 @@ fn fun_0(v: &i32) {
 }
 
 /* template */
+fn print_list<T>(list: &[T])
+where
+    T: std::fmt::Display,
+{
+    for item in list {
+        println!("{}", item);
+    }
+}
+
+/* template */
 fn print_typename<T>(_: T) {
     println!("{}", std::any::type_name::<T>());
 }
@@ -27,11 +37,11 @@ struct Person {
 /* メソッドの定義 */
 impl Person {
     fn get_name(&self) -> &String {
-        &self.name /* Pythonライクなアクセス */
+        &self.name /* Pythonライクなメンバ変数へのアクセス */
     }
 
     fn get_age(&self) -> &i32 {
-        &self.age /* セミコロン書かないとreturnされる。*/
+        &self.age /* 行末にセミコロン書かないと自動的にreturnされる。*/
     }
 
     fn print() {
@@ -184,7 +194,7 @@ fn main() {
 
     let v = vec![1, 2, 3];
     /* コンパイル時に置き換えられる真の意味のテンプレート */
-    //print_typename(v);
+    print_list(&v);
     /* 特殊化は? */
 
     //_/_/_/ traitsがある。

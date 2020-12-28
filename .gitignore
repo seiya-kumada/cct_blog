@@ -171,3 +171,6 @@ metric_learning/*.jpg
 metric_learning/fs.pkl
 metric_learning/mnist_cnn.pt
 rust/example/target/
+cvae_by_pixyz/data/
+cvae_by_pixyz/results/
+cvae_by_pixyz/runs/
