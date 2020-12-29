@@ -3,6 +3,7 @@
 import torch
 from pixyz.distributions import Normal
 from pixyz.distributions import Bernoulli
+from pixyz.distributions import Categorical
 from torch import nn
 from torch.nn import functional as F
 
@@ -31,7 +32,7 @@ class Inference(Normal):
         return {"loc": self.fc31(h), "scale": F.softplus(self.fc32(h))}
 
 
-# p(z|z,y)
+# p(x|z,y)
 class Generator(Bernoulli):
 
     def __init__(self):
@@ -45,3 +46,24 @@ class Generator(Bernoulli):
         h = F.relu(self.fc1(torch.cat([z, y], 1)))
         h = F.relu(self.fc2(h))
         return {"probs": torch.sigmoid(self.fc3(h))}
+
+
+# p(y|z,x)
+class Generator_(Categorical):
+
+    def __init__(self):
+        super().__init__(var=["y"], cond_var=["z", "x"], name="p")
+
+        self.fc1 = nn.Linear(Z_DIM + Y_DIM, H_DIM)
+        self.fc2 = nn.Linear(H_DIM, H_DIM)
+        self.fc3 = nn.Linear(H_DIM, X_DIM)
+
+    def forward(self, z, x):
+        h = F.relu(self.fc1(torch.cat([z, x], 1)))
+        h = F.relu(self.fc2(h))
+        return {"probs": torch.sigmoid(self.fc3(h))}
+
+
+if __name__ == "__main__":
+    p = Categorical(var=['x'], probs=0.5)
+    print(p.sample(batch_n=1))

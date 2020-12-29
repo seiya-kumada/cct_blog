@@ -20,6 +20,7 @@ EPOCHS = 10
 SEED = 1
 CLASS_SIZE = 10
 SAVE_ROOT_DIR_PATH = './results'
+PLOT_NUMBER = 5
 
 torch.manual_seed(SEED)
 torch.random.manual_seed(SEED)
@@ -64,7 +65,7 @@ def reconstruct_image(p, q, x, y):
         return x_reconst.view(-1, 1, 28, 28)
 
 
-def generate(z, y, p):
+def generate_image(z, y, p):
     with torch.no_grad():
         # p(x|y,z)
         sample = p.sample_mean({"z": z, "y": y}).view(-1, 1, 28, 28).cpu()
@@ -123,7 +124,10 @@ if __name__ == "__main__":
     x_fixed = x_fixed[:8].to(device)
     y_fixed = y_fixed[:8]
     y_fixed = torch.eye(CLASS_SIZE)[y_fixed].to(device)
-    z_fixed = prior.sample(batch_n=64)['z']
+
+    # z_sample = 0.5 * torch.randn(64, net.Z_DIM).to(device)
+    z_sample = prior.sample(batch_n=64)['z'].to(device)
+    y_sample = torch.eye(CLASS_SIZE)[[PLOT_NUMBER] * 64].to(device)
 
     train_loss_list = []
     test_loss_list = []
@@ -136,14 +140,19 @@ if __name__ == "__main__":
         print(f'    [Epoch {epoch}] train loss {train_loss_list[-1]:.4f}')
         print(f'    [Epoch {epoch}] test  loss {test_loss_list[-1]:.4f}\n')
 
+        # ELBOを描画する。
+        plot_figure(epoch, train_loss_list, test_loss_list)
+
+        # 再構築画像を作る。
         x_reconst = reconstruct_image(p, q, x_fixed, y_fixed)
         save_image(
             torch.cat([x_fixed.view(-1, 1, 28, 28), x_reconst], dim=0),
-            os.path.join(SAVE_ROOT_DIR_PATH, f'reconst_{epoch}.png'), nrow=8)
+            os.path.join(SAVE_ROOT_DIR_PATH, f'reconst_{epoch}.png'),
+            nrow=8)
 
-        plot_figure(epoch, train_loss_list, test_loss_list)
-        # gen = generate(z_sample, y_sample, p)
-        # save_image(
-        #     gen,
-        #     os.path.join(SAVE_ROOT_DIR_PATH, "gen_{}.png".format(epoch)),
-        #     nrow=8)
+        # zとyから画像を作る。
+        x_generated = generate_image(z_sample, y_sample, p)
+        save_image(
+            x_generated,
+            os.path.join(SAVE_ROOT_DIR_PATH, f'gen_{epoch}.png'),
+            nrow=8)
