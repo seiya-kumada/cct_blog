@@ -10,45 +10,58 @@ from pixyz.losses import Expectation
 from pixyz.losses import LogProb
 from pixyz.models import Model
 from torch import optim
-# from torchvision.utils import save_image
-# import os
-from tensorboardX import SummaryWriter
-import datetime
-import pixyz
-
+from torchvision.utils import save_image
+import os
+from matplotlib import pyplot as plt
 
 ROOT_DIR_PATH = './data'
 BATCH_SIZE = 128
-EPOCHS = 1
+EPOCHS = 10
 SEED = 1
 CLASS_SIZE = 10
 SAVE_ROOT_DIR_PATH = './results'
 
-
-def learn(epoch, model, device, loader, phase):
-    sum_loss = 0
-    for batch_idx, (x, y) in enumerate(loader, 1):
-        x = x.to(device)
-        y = torch.eye(CLASS_SIZE)[y].to(device)
-        loss = model.train({"x": x, "y": y})
-        sum_loss += loss
-
-    sum_loss = sum_loss * loader.batch_size / len(loader.dataset)
-    print('Epoch: {} {} loss: {:.4f}'.format(epoch, phase, sum_loss))
-    return sum_loss
+torch.manual_seed(SEED)
+torch.random.manual_seed(SEED)
+torch.cuda.manual_seed(SEED)
 
 
-def plot_reconstruction(x, y, p, q):
+def learn(eph, mdl, dvc, ldr, phs):
+    # モードの切り替え
+    if phs is "Train":
+        learning_process = mdl.train
+    else:
+        learning_process = mdl.test
+
+    log_interval = len(ldr) // 10   # 進捗を表示する間隔
+    if log_interval == 0:
+        log_interval = 1
+
+    loss = 0
+    for batch_idx, (x, y) in enumerate(ldr, 1):
+        x = x.to(dvc)
+        y = torch.eye(CLASS_SIZE)[y].to(dvc)
+        running_loss = learning_process({"x": x, "y": y})
+        loss += running_loss
+
+        if batch_idx % log_interval == 0:
+            print(f'{"train" if phs == "Train" else "test"}... [Epoch:{epoch}/Batches:{batch_idx}] loss: {running_loss / len(x):.4f}')
+
+    loss = loss * ldr.batch_size / len(ldr.dataset)
+    # print('Epoch: {} {} loss: {:.4f}'.format(eph, phs, sum_loss))
+    return loss.item()
+
+
+def reconstruct_image(p, q, x, y):
     with torch.no_grad():
         # q(z|x,y)
         z = q.sample({"x": x, "y": y}, return_all=False)
         z.update({"y": y})
 
         # p(x|z,y)
-        recon_batch = p.sample_mean(z).view(-1, 1, 28, 28)
+        x_reconst = p.sample_mean(z)
 
-        recon = torch.cat([x.view(-1, 1, 28, 28), recon_batch]).cpu()
-        return recon
+        return x_reconst.view(-1, 1, 28, 28)
 
 
 def generate(z, y, p):
@@ -56,6 +69,17 @@ def generate(z, y, p):
         # p(x|y,z)
         sample = p.sample_mean({"z": z, "y": y}).view(-1, 1, 28, 28).cpu()
         return sample
+
+
+def plot_figure(eph, train_losses, test_losses):
+    # 損失値のグラフを作成し保存
+    plt.plot(list(range(1, eph + 1)), train_losses, label='train')
+    plt.plot(list(range(1, eph + 1)), test_losses, label='test')
+    plt.xlabel('ephs')
+    plt.ylabel('loss')
+    plt.legend()
+    plt.savefig(os.path.join(SAVE_ROOT_DIR_PATH, 'loss.png'))
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -91,36 +115,33 @@ if __name__ == "__main__":
     prior = Normal(loc=torch.tensor(0.0), scale=torch.tensor(1.0),
                    var=["z"], features_shape=[net.Z_DIM], name="p_{prior}").to(device)
 
-    # print(p)
-    # print(q)
-    # print(prior)
-
     loss = (KullbackLeibler(q, prior) - Expectation(q, LogProb(p))).mean()
     model = Model(loss=loss, distributions=[p, q], optimizer=optim.Adam, optimizer_params={"lr": 1e-3})
     # print(model)
 
-    _x, _y = next(iter(test_loader))
-    _x = _x.to(device)
-    _y = torch.eye(CLASS_SIZE)[_y].to(device)
+    x_fixed, y_fixed = next(iter(test_loader))
+    x_fixed = x_fixed[:8].to(device)
+    y_fixed = y_fixed[:8]
+    y_fixed = torch.eye(CLASS_SIZE)[y_fixed].to(device)
+    z_fixed = prior.sample(batch_n=64)['z']
 
-    dt_now = datetime.datetime.now()
-    exp_time = dt_now.strftime('%Y%m%d_%H:%M:%S')
-    v = pixyz.__version__
-    nb_name = 'cvae'
-    writer = SummaryWriter("runs/" + v + "." + nb_name + exp_time)
-
+    train_loss_list = []
+    test_loss_list = []
     for epoch in range(1, EPOCHS + 1):
         train_loss = learn(epoch, model, device, train_loader, "Train")
         test_loss = learn(epoch, model, device, test_loader, "Test")
+        train_loss_list.append(train_loss)
+        test_loss_list.append(test_loss)
 
-        recon = plot_reconstruction(_x[:8], _y[:8], p, q)
-        writer.add_images('Image_reconstrunction', recon, epoch)
+        print(f'    [Epoch {epoch}] train loss {train_loss_list[-1]:.4f}')
+        print(f'    [Epoch {epoch}] test  loss {test_loss_list[-1]:.4f}\n')
 
-        # save_image(
-        #     torch.cat([_x[:8], recon], dim=0),
-        #     os.path.join(SAVE_ROOT_DIR_PATH, "reconst_{}.png".format(epoch)),
-        #     nrow=8)
+        x_reconst = reconstruct_image(p, q, x_fixed, y_fixed)
+        save_image(
+            torch.cat([x_fixed.view(-1, 1, 28, 28), x_reconst], dim=0),
+            os.path.join(SAVE_ROOT_DIR_PATH, f'reconst_{epoch}.png'), nrow=8)
 
+        plot_figure(epoch, train_loss_list, test_loss_list)
         # gen = generate(z_sample, y_sample, p)
         # save_image(
         #     gen,
