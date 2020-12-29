@@ -54,16 +54,21 @@ class Generator_(Categorical):
     def __init__(self):
         super().__init__(var=["y"], cond_var=["z", "x"], name="p")
 
-        self.fc1 = nn.Linear(Z_DIM + Y_DIM, H_DIM)
+        self.fc1 = nn.Linear(Z_DIM + X_DIM, H_DIM)
         self.fc2 = nn.Linear(H_DIM, H_DIM)
-        self.fc3 = nn.Linear(H_DIM, X_DIM)
+        self.fc3 = nn.Linear(H_DIM, Y_DIM)
 
     def forward(self, z, x):
         h = F.relu(self.fc1(torch.cat([z, x], 1)))
         h = F.relu(self.fc2(h))
-        return {"probs": torch.sigmoid(self.fc3(h))}
+        h = self.fc3(h)
+        return {"probs": torch.softmax(h, dim=1)}
 
 
 if __name__ == "__main__":
-    p = Categorical(var=['x'], probs=0.5)
-    print(p.sample(batch_n=1))
+    z = torch.empty(3, Z_DIM).fill_(1.0 / Z_DIM)
+    x = torch.empty(3, X_DIM).fill_(1.0 / X_DIM)
+    p = Generator_()
+    r = p(z, x)
+    c = Categorical(probs=r['probs'])
+    print(c.sample())
