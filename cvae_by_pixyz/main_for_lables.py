@@ -19,7 +19,7 @@ BATCH_SIZE = 128
 EPOCHS = 10
 SEED = 1
 CLASS_SIZE = 10
-SAVE_ROOT_DIR_PATH = './results/images'
+SAVE_ROOT_DIR_PATH = './results/labels/'
 PLOT_NUMBER = 5
 
 torch.manual_seed(SEED)
@@ -49,26 +49,25 @@ def learn(eph, mdl, dvc, ldr, phs):
             print(f'{"train" if phs == "Train" else "test"}... [Epoch:{epoch}/Batches:{batch_idx}] loss: {running_loss / len(x):.4f}')
 
     loss = loss * ldr.batch_size / len(ldr.dataset)
-    # print('Epoch: {} {} loss: {:.4f}'.format(eph, phs, sum_loss))
     return loss.item()
 
 
-def reconstruct_images(p, q, x, y):
+def reconstruct_labels(p, q, x, y):
     with torch.no_grad():
         # q(z|x,y)
         z = q.sample({"x": x, "y": y}, return_all=False)
-        z.update({"y": y})
+        z.update({"x": x})
 
-        # p(x|z,y)
-        x_reconst = p.sample_mean(z)
+        # p(y|z,x)
+        y_reconst = p.sample_mean(z)
 
-        return x_reconst.view(-1, 1, 28, 28)
+        return y_reconst
 
 
-def generate_images(z, y, p):
+def generate_labels(z, x, p):
     with torch.no_grad():
         # p(x|y,z)
-        sample = p.sample_mean({"z": z, "y": y}).view(-1, 1, 28, 28).cpu()
+        sample = p.sample_mean({"z": z, "x": x}).cpu()
         return sample
 
 
@@ -106,8 +105,8 @@ if __name__ == "__main__":
     else:
         device = "cpu"
 
-    # p(x|y,z)
-    p = net.Generator().to(device)
+    # p(y|x,z)
+    p = net.Generator_().to(device)
 
     # q(z|x,y)
     q = net.Inference().to(device)
@@ -120,13 +119,18 @@ if __name__ == "__main__":
     model = Model(loss=loss, distributions=[p, q], optimizer=optim.Adam, optimizer_params={"lr": 1e-3})
     # print(model)
 
-    x_fixed, y_fixed = next(iter(test_loader))
-    x_fixed = x_fixed[:8].to(device)
-    y_fixed = y_fixed[:8]
-    y_fixed = torch.eye(CLASS_SIZE)[y_fixed].to(device)
+    x_org, y_org = next(iter(test_loader))
 
-    z_sample = prior.sample(batch_n=64)['z'].to(device)
-    y_sample = torch.eye(CLASS_SIZE)[[PLOT_NUMBER] * 64].to(device)
+    # 再構築用サンプルデータ
+    x_fixed = x_org[:8].to(device)
+    y_fixed = y_org[:8]
+    y_fixed = torch.eye(CLASS_SIZE)[y_fixed].to(device)
+    y_answers_1 = torch.argmax(y_fixed, dim=1)
+
+    # 識別器用サンプルデータ
+    z_sample = prior.sample(batch_n=8)['z'].to(device)
+    x_sample = x_org[8:16].to(device)
+    y_answers_2 = y_org[8:16]
 
     train_loss_list = []
     test_loss_list = []
@@ -142,16 +146,14 @@ if __name__ == "__main__":
         # ELBOを描画する。
         plot_figure(epoch, train_loss_list, test_loss_list)
 
-        # 再構築画像を作る。
-        reconstructed_images = reconstruct_images(p, q, x_fixed, y_fixed)
-        save_image(
-            torch.cat([x_fixed.view(-1, 1, 28, 28), reconstructed_images], dim=0),
-            os.path.join(SAVE_ROOT_DIR_PATH, f'reconst_{epoch}.png'),
-            nrow=8)
+        # 再構築ラベルを作る。
+        reconstructed_labels = reconstruct_labels(p, q, x_fixed, y_fixed)
+        predictions = torch.argmax(reconstructed_labels, dim=1)
+        print("reconstructed labels:    ", predictions.tolist())
+        print("answers:                 ", y_answers_1.tolist())
 
-        # zとyから画像を作る。
-        generated_images = generate_images(z_sample, y_sample, p)
-        save_image(
-            generated_images,
-            os.path.join(SAVE_ROOT_DIR_PATH, f'gen_{epoch}.png'),
-            nrow=8)
+        # zとxからラベルを作る。識別器
+        generated_labels = generate_labels(z_sample, x_sample, p)
+        predictions = torch.argmax(generated_labels, dim=1)
+        print("generated labels:    ", predictions.tolist())
+        print("answers:             ", y_answers_2.tolist())
