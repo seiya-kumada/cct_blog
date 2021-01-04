@@ -57,7 +57,7 @@ def reconstruct_images(p, q, x, y):
     with torch.no_grad():
         # q(z|x,y)
         z = q.sample({"x": x, "y": y}, return_all=False)
-        z.update({"y": y})
+        z.update({"y": y})  # (z,y)
 
         # p(x|z,y)
         x_reconst = p.sample_mean(z)

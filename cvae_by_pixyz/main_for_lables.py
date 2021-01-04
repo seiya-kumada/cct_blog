@@ -52,6 +52,20 @@ def learn(eph, mdl, dvc, ldr, phs):
     return loss.item()
 
 
+def calculate_accuracy(epoch, p, prior, dvc, ldr):
+    with torch.no_grad():
+        s = 0.0
+        for x, y in ldr:
+            z = prior.sample(batch_n=len(x))['z'].to(device)
+            x = x.to(dvc)
+            t = p.sample_mean({"z": z, "x": x}).cpu()
+            t = torch.argmax(t, dim=1)
+            d = (t == y)
+            r = torch.sum(d)
+            s += r
+        return s / len(ldr.dataset)
+
+
 def reconstruct_labels(p, q, x, y):
     with torch.no_grad():
         # q(z|x,y)
@@ -71,14 +85,14 @@ def generate_labels(z, x, p):
         return sample
 
 
-def plot_figure(eph, train_losses, test_losses):
+def plot_figure(eph, train_losses, test_losses, name):
     # 損失値のグラフを作成し保存
     plt.plot(list(range(1, eph + 1)), train_losses, label='train')
     plt.plot(list(range(1, eph + 1)), test_losses, label='test')
-    plt.xlabel('ephs')
-    plt.ylabel('loss')
+    plt.xlabel('epochs')
+    plt.ylabel(name)
     plt.legend()
-    plt.savefig(os.path.join(SAVE_ROOT_DIR_PATH, 'loss.png'))
+    plt.savefig(os.path.join(SAVE_ROOT_DIR_PATH, f'{name}.png'))
     plt.close()
 
 
@@ -132,8 +146,12 @@ if __name__ == "__main__":
     x_sample = x_org[8:16].to(device)
     y_answers_2 = y_org[8:16]
 
+    z_samples = prior.sample(batch_n=BATCH_SIZE)['z'].to(device)
+
     train_loss_list = []
     test_loss_list = []
+    train_accuracy_list = []
+    test_accuracy_list = []
     for epoch in range(1, EPOCHS + 1):
         train_loss = learn(epoch, model, device, train_loader, "Train")
         test_loss = learn(epoch, model, device, test_loader, "Test")
@@ -144,7 +162,7 @@ if __name__ == "__main__":
         print(f'    [Epoch {epoch}] test  loss {test_loss_list[-1]:.4f}\n')
 
         # ELBOを描画する。
-        plot_figure(epoch, train_loss_list, test_loss_list)
+        plot_figure(epoch, train_loss_list, test_loss_list, "ELBO")
 
         # 再構築ラベルを作る。
         reconstructed_labels = reconstruct_labels(p, q, x_fixed, y_fixed)
@@ -157,3 +175,12 @@ if __name__ == "__main__":
         predictions = torch.argmax(generated_labels, dim=1)
         print("generated labels:    ", predictions.tolist())
         print("answers:             ", y_answers_2.tolist())
+
+        # 正解率を計算する。
+        train_accuracy = calculate_accuracy(epoch, p, prior, device, train_loader)
+        test_accuracy = calculate_accuracy(epoch, p, prior, device, test_loader)
+        train_accuracy_list.append(train_accuracy)
+        test_accuracy_list.append(test_accuracy)
+
+        # 正解率を描画する。
+        plot_figure(epoch, train_accuracy_list, test_accuracy_list, "accuracy")
